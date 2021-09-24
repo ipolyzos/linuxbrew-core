@@ -2,17 +2,17 @@ class Minikube < Formula
   desc "Run a Kubernetes cluster locally"
   homepage "https://minikube.sigs.k8s.io/"
   url "https://github.com/kubernetes/minikube.git",
-      tag:      "v1.19.0",
-      revision: "15cede53bdc5fe242228853e737333b09d4336b5"
+      tag:      "v1.23.2",
+      revision: "0a0ad764652082477c00d51d2475284b5d39ceed"
   license "Apache-2.0"
   head "https://github.com/kubernetes/minikube.git"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "8704e50e9352938720b0e17b685c7958f69dbd52b3077df8babb2d3bc64e66b5"
-    sha256 cellar: :any_skip_relocation, big_sur:       "6f8af400d4277ccc4a6f2c09b69995ba6f4a8fd5c11295c16201b5171232bf20"
-    sha256 cellar: :any_skip_relocation, catalina:      "b4873d9893a068b12f6c4b8c2e728e6617f9f6c6f2b957bd9b117a3a57f4d8cf"
-    sha256 cellar: :any_skip_relocation, mojave:        "d742d09ccb67f4643d26f54442a0560d5858d40b3fc960d2e6daa242a0cf5a25"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "6d10aae03c7f9eac396ccf8538eb6fb2ad8b44126fd9addf577cfd24e2e86b09"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "d070d46f911a23fa36f155179e9dd62c2a562d070d4a6c739978031a704cfd1e"
+    sha256 cellar: :any_skip_relocation, big_sur:       "0f123e76f821fa427496a1d73551cdcd5c4b7cc74c3d6c8fb45f6259fd17635e"
+    sha256 cellar: :any_skip_relocation, catalina:      "faa91becd0ebb93d8af0ce849ff57516f3cb090a2c350b0b1800250729f7f573"
+    sha256 cellar: :any_skip_relocation, mojave:        "0103f2958d7609a9157e7de9c69b24bcc86e858a912080063aec594d0e07fcdb"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "0c002fcc34ac0e4678ab22f11dd3f9abb4272e95b06f98a2b5d94bf6b0a33b0b" # linuxbrew-core
   end
 
   depends_on "go" => :build
@@ -28,6 +28,9 @@ class Minikube < Formula
 
     output = Utils.safe_popen_read("#{bin}/minikube", "completion", "zsh")
     (zsh_completion/"_minikube").write output
+
+    output = Utils.safe_popen_read("#{bin}/minikube", "completion", "fish")
+    (fish_completion/"minikube.fish").write output
   end
 
   test do

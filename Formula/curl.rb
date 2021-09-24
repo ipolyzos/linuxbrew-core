@@ -1,10 +1,9 @@
 class Curl < Formula
   desc "Get a file from an HTTP, HTTPS or FTP server"
   homepage "https://curl.se"
-  url "https://curl.se/download/curl-7.76.1.tar.bz2"
-  sha256 "7a8e184d7d31312c4ebf6a8cb59cd757e61b2b2833a9ed4f9bf708066e7695e9"
+  url "https://curl.se/download/curl-7.79.1.tar.bz2"
+  sha256 "de62c4ab9a9316393962e8b94777a570bb9f71feb580fb4475e412f2f9387851"
   license "curl"
-  revision 1 unless OS.mac?
 
   livecheck do
     url "https://curl.se/download/"
@@ -12,11 +11,11 @@ class Curl < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_big_sur: "d5e39cd979f5db2758087d9fbc3815c3e8f98e348ad6125dd1d6d0ab78752b64"
-    sha256 cellar: :any,                 big_sur:       "47b216dc054a7de14e08aee5f8a04f787e56e5ddaebc6d0f88749bfafc2d7e7c"
-    sha256 cellar: :any,                 catalina:      "46342400a65674400880a4ff5085d1170895bcb99b2c3a5067c1802ee343d1bb"
-    sha256 cellar: :any,                 mojave:        "3a6eb3e2dd53b6b5d3989744f9f422aef0be650ee6cb3b8b735b3f8239281f48"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "a477edaef9698293f0f7662be0bdfe59de1a2455ff72ffb538cef9fa4711fe9f"
+    sha256 cellar: :any,                 arm64_big_sur: "848ef1fcbd49c13bf4dc0890f6666fef3cedc3eb545be8fbbb4efad168137ee0"
+    sha256 cellar: :any,                 big_sur:       "0ecffc9a6220064210b9506cdc34cdf4f118fbed2f51fd6b7fe608c2e42649aa"
+    sha256 cellar: :any,                 catalina:      "4ec3be96813a0aabb4489a2a47363490e022d6ed0693fdb917dae666c081582b"
+    sha256 cellar: :any,                 mojave:        "484934e11387cc3c72964577f609f701783c7d55add3fa0df03245e3f5e8c590"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "88caede39c8b0df2aab1e02ab7c8dd8d89859f9321c287d025850b4edc1d3bb5"
   end
 
   head do
@@ -32,7 +31,6 @@ class Curl < Formula
   depends_on "pkg-config" => :build
   depends_on "brotli"
   depends_on "libidn2"
-  depends_on "libmetalink"
   depends_on "libssh2"
   depends_on "nghttp2"
   depends_on "openldap"
@@ -58,18 +56,15 @@ class Curl < Formula
       --with-secure-transport
       --with-default-ssl-backend=openssl
       --with-libidn2
-      --with-libmetalink
       --with-librtmp
       --with-libssh2
       --without-libpsl
     ]
 
-    on_macos do
-      args << "--with-gssapi"
-    end
-
-    on_linux do
-      args << "--with-gssapi=#{Formula["krb5"].opt_prefix}"
+    args << if OS.mac?
+      "--with-gssapi"
+    else
+      "--with-gssapi=#{Formula["krb5"].opt_prefix}"
     end
 
     system "./configure", *args

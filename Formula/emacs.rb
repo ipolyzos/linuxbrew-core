@@ -11,7 +11,7 @@ class Emacs < Formula
     sha256 big_sur:       "5d3af874e5acd76ddc881406ed1e7db8b84f96e01812961f3bee347d278a28ac"
     sha256 catalina:      "53b0d78af688a20e12e89751217c9da81cc9621222f289836d44011762355879"
     sha256 mojave:        "4b3cd25d5f6977ecad49d9b5ebd2dec3c7e41efa8f4f22d2805917e0024cf3af"
-    sha256 x86_64_linux:  "f126293d40062ae4bded0ee496cd82036293b661a213d77eda965775d7061d37"
+    sha256 x86_64_linux:  "f126293d40062ae4bded0ee496cd82036293b661a213d77eda965775d7061d37" # linuxbrew-core
   end
 
   head do
@@ -77,28 +77,9 @@ class Emacs < Formula
     (man1/"ctags.1.gz").unlink
   end
 
-  plist_options manual: "emacs"
-
-  def plist
-    <<~EOS
-      <?xml version="1.0" encoding="UTF-8"?>
-      <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-      <plist version="1.0">
-      <dict>
-        <key>KeepAlive</key>
-        <true/>
-        <key>Label</key>
-        <string>#{plist_name}</string>
-        <key>ProgramArguments</key>
-        <array>
-          <string>#{opt_bin}/emacs</string>
-          <string>--fg-daemon</string>
-        </array>
-        <key>RunAtLoad</key>
-        <true/>
-      </dict>
-      </plist>
-    EOS
+  service do
+    run [opt_bin/"emacs", "--fg-daemon"]
+    keep_alive true
   end
 
   test do

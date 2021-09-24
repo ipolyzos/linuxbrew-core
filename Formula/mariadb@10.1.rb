@@ -22,22 +22,11 @@ class MariadbAT101 < Formula
   depends_on "groonga"
   depends_on "openssl@1.1"
 
-  uses_from_macos "bison" => :build
   uses_from_macos "bzip2"
   uses_from_macos "ncurses"
-  uses_from_macos "zlib"
 
   on_linux do
     depends_on "linux-pam"
-  end
-
-  fails_with gcc: "4"
-  fails_with gcc: "5"
-  fails_with gcc: "6"
-
-  unless OS.mac?
-    depends_on "gcc@7" => :build
-    depends_on "libcsv"
   end
 
   def install
@@ -70,14 +59,6 @@ class MariadbAT101 < Formula
       -DCOMPILATION_COMMENT=Homebrew
     ]
 
-    on_linux do
-      args << "-DWITH_NUMA=OFF"
-      args << "-DPLUGIN_ROCKSDB=NO"
-      args << "-DPLUGIN_MROONGA=NO"
-      args << "-DENABLE_DTRACE=NO"
-      args << "-DCONNECT_WITH_JDBC=OFF"
-    end
-
     # disable TokuDB, which is currently not supported on macOS
     args << "-DPLUGIN_TOKUDB=NO"
 
@@ -86,7 +67,7 @@ class MariadbAT101 < Formula
     system "make", "install"
 
     # Avoid references to the Homebrew shims directory
-    inreplace bin/"mysqlbug", HOMEBREW_SHIMS_PATH/"mac/super/", "" unless OS.linux?
+    inreplace bin/"mysqlbug", "#{Superenv.shims_path}/", ""
 
     # Fix my.cnf to point to #{etc} instead of /etc
     (etc/"my.cnf.d").mkpath

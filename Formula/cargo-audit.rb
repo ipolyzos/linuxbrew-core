@@ -1,32 +1,44 @@
 class CargoAudit < Formula
   desc "Audit Cargo.lock files for crates with security vulnerabilities"
   homepage "https://rustsec.org/"
-  url "https://github.com/RustSec/cargo-audit/archive/v0.14.0.tar.gz"
-  sha256 "bd2ecab6ff03fb11496cd0e7389273991b7d14d19bbdd76847126cb28079519e"
-  license "Apache-2.0"
-  head "https://github.com/RustSec/cargo-audit.git"
+  url "https://github.com/RustSec/rustsec/archive/cargo-audit/v0.15.2.tar.gz"
+  sha256 "ed330d33f86036acd27ab8f717903aa515c306d02217aa217c95e2a5fdab1f8e"
+  license any_of: ["Apache-2.0", "MIT"]
+  head "https://github.com/RustSec/rustsec.git", branch: "main"
+
+  livecheck do
+    url :stable
+    regex(%r{^cargo-audit/v?(\d+(?:\.\d+)+)$}i)
+  end
 
   bottle do
-    sha256 cellar: :any, arm64_big_sur: "94a00879936962e670f0368b378b10ed0f463d290b0e6d86a74c5b01cf6d1bc5"
-    sha256 cellar: :any, big_sur:       "e22d5081a6b6bf512c5b1486ac6d7cab6f49fce8da27e3bdb9b9bba7d812cf3a"
-    sha256 cellar: :any, catalina:      "b5630a5dc10e0b1bd98274c91fc4cd8c2ccca002b0ed5eca2f72c7b5b65d356b"
-    sha256 cellar: :any, mojave:        "68c918a7951990e869829f6d80421aa12968da30e9d93ba1569a6a012b2290ee"
+    sha256 cellar: :any,                 arm64_big_sur: "a7954b9aff8d7d2ddac189fbd800a5f38e91e6b6259a8c951df47dc11fe97337"
+    sha256 cellar: :any,                 big_sur:       "f6337c09242e9f1db0b2952e461558c79ae9b95caa7e76e1483d9027ddf67fb8"
+    sha256 cellar: :any,                 catalina:      "8383cf15d8e5f83890e46628786b5aa293453d00255a10e963d16567cdad44bf"
+    sha256 cellar: :any,                 mojave:        "3bc087889fb025d8bd59701e0882d11fec0d4d2678a3fb94a47030d97dc0097b"
   end
 
   depends_on "rust" => :build
   depends_on "openssl@1.1"
 
-  def install
-    system "cargo", "install", *std_cargo_args
+  uses_from_macos "zlib"
 
-    # test cargo-audit
-    pkgshare.install "tests/support"
+  on_linux do
+    depends_on "pkg-config" => :build
+  end
+
+  def install
+    cd "cargo-audit" do
+      system "cargo", "install", *std_cargo_args
+      # test cargo-audit
+      pkgshare.install "tests/support"
+    end
   end
 
   test do
-    output = shell_output("#{bin}/cargo-audit audit 2>&1", 1)
+    output = shell_output("#{bin}/cargo-audit audit 2>&1", 2)
     assert_predicate HOMEBREW_CACHE/"cargo_cache/advisory-db", :exist?
-    assert_match "Couldn't load Cargo.lock: I/O error", output
+    assert_match "couldn't open Cargo.lock: No such file or directory", output
 
     cp_r "#{pkgshare}/support/base64_vuln/.", testpath
     assert_match "error: 1 vulnerability found!", shell_output("#{bin}/cargo-audit audit 2>&1", 1)

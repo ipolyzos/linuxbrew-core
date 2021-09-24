@@ -26,7 +26,6 @@ class Bmake < Formula
     args = ["--prefix=#{prefix}", "-DWITHOUT_PROG_LINK", "--install"]
     system "sh", "boot-strap", *args
 
-    chmod "u+w", man1/"bmake.1"
     man1.install "bmake.1"
   end
 

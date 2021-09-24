@@ -4,7 +4,7 @@ class Precomp < Formula
   url "https://github.com/schnaader/precomp-cpp/archive/v0.4.7.tar.gz"
   sha256 "b4064f9a18b9885e574c274f93d73d8a4e7f2bbd9e959beaa773f2e61292fb2b"
   license "Apache-2.0"
-  head "https://github.com/schnaader/precomp-cpp.git"
+  head "https://github.com/schnaader/precomp-cpp.git", branch: "master"
 
   bottle do
     sha256 cellar: :any_skip_relocation, arm64_big_sur: "527a77954282f384fd4bd01ec67750d73ee5fc0d989cee4be22ba688a461a90f"
@@ -13,7 +13,7 @@ class Precomp < Formula
     sha256 cellar: :any_skip_relocation, mojave:        "7488435759867b2bb152cdd3ea78d2358659b34ff838e2cb97b54bd3a322147b"
     sha256 cellar: :any_skip_relocation, high_sierra:   "92824cc03c547d276436e1bdf55e905d402f77eeccf61f25a720d4315e5bd4cf"
     sha256 cellar: :any_skip_relocation, sierra:        "5d852d83cf57987a521471b74e450a65473ed20e32bb14e83b5d99e969e37458"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "3783a6f19c30eef01d0946e9a3462f7f107a82ebc5e27f9448bbd6b0d6b29528"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "3783a6f19c30eef01d0946e9a3462f7f107a82ebc5e27f9448bbd6b0d6b29528" # linuxbrew-core
   end
 
   depends_on "cmake" => :build

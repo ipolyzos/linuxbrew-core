@@ -1,12 +1,14 @@
 class Scalaenv < Formula
   desc "Command-line tool to manage Scala environments"
   homepage "https://github.com/scalaenv/scalaenv"
-  url "https://github.com/scalaenv/scalaenv/archive/refs/tags/version/0.1.10.tar.gz"
-  sha256 "943700a03d1b992b2c165366c9b9aa2d614d29449c19608ff963bd36850096bb"
+  url "https://github.com/scalaenv/scalaenv/archive/refs/tags/version/0.1.14.tar.gz"
+  sha256 "82adc5edd81f1914fae321deea36123bc4d3a255e47afa857cbd8b093903530c"
   license "MIT"
-  head "https://github.com/scalaenv/scalaenv.git"
+  head "https://github.com/scalaenv/scalaenv.git", branch: "master"
 
-  bottle :unneeded
+  bottle do
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "b51747d670f28a19e57ddc56b0c55375294b7d05de46ec638bc4d5b05abd631f" # linuxbrew-core
+  end
 
   def install
     inreplace "libexec/scalaenv", "/usr/local", HOMEBREW_PREFIX

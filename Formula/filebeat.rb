@@ -2,19 +2,19 @@ class Filebeat < Formula
   desc "File harvester to ship log files to Elasticsearch or Logstash"
   homepage "https://www.elastic.co/products/beats/filebeat"
   url "https://github.com/elastic/beats.git",
-      tag:      "v7.12.0",
-      revision: "08e20483a651ea5ad60115f68ff0e53e6360573a"
+      tag:      "v7.14.2",
+      revision: "574c21d25ddb65a63665ac26b54799f81a7e9706"
   # Outside of the "x-pack" folder, source code in a given file is licensed
   # under the Apache License Version 2.0
   license "Apache-2.0"
   head "https://github.com/elastic/beats.git"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "fa194fe1b211cc45f06997777ec27c0158ac220d0166f8a424d9dcefe5810a4b"
-    sha256 cellar: :any_skip_relocation, big_sur:       "4e9b93996330664d7db6eb47cc60b3eeb888442106cb3f8d482506d01bbd43fe"
-    sha256 cellar: :any_skip_relocation, catalina:      "a1c421d2750ec1af7b1bf894e196d78c0faa989462c37f04098ea8bdd7b7d443"
-    sha256 cellar: :any_skip_relocation, mojave:        "fcf45b1eed0a0f57fc061ff77853c8e6010cd6e6275bd1063e96c928ba9045e6"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "43c61ae2e0227c4f3fbf1f1d1ea84e6b0d7e4063856893b179967dc96e9e5dd1"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "ab9e709940b90410c7db727b3d1f7a29e9d782698e14a93b46d21b01e37aa1ba"
+    sha256 cellar: :any_skip_relocation, big_sur:       "7931b5f9040800f441f36dbd5c9508d292006a724006d6bb6856e84c7ae08752"
+    sha256 cellar: :any_skip_relocation, catalina:      "2f0ba4f7be6edba674bab5b5f79077038043b21f23a3073cc1ad92b2f7765160"
+    sha256 cellar: :any_skip_relocation, mojave:        "5d7d4b299dabecbfed1c9e7a95365ad0e6f5d480200ceaecd28267dec5101dd0"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "1add61c731179a985eb6e84c727a1aa760a77762335da89bfc43fb17c71fab4d" # linuxbrew-core
   end
 
   depends_on "go" => :build
@@ -55,24 +55,8 @@ class Filebeat < Formula
     EOS
   end
 
-  plist_options manual: "filebeat"
-
-  def plist
-    <<~EOS
-      <?xml version="1.0" encoding="UTF-8"?>
-      <!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN"
-      "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-      <plist version="1.0">
-        <dict>
-          <key>Label</key>
-          <string>#{plist_name}</string>
-          <key>Program</key>
-          <string>#{opt_bin}/filebeat</string>
-          <key>RunAtLoad</key>
-          <true/>
-        </dict>
-      </plist>
-    EOS
+  service do
+    run opt_bin/"filebeat"
   end
 
   test do

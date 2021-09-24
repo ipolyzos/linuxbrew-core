@@ -4,14 +4,14 @@ class PonyStable < Formula
   url "https://github.com/ponylang/pony-stable/archive/0.2.2.tar.gz"
   sha256 "8fca5f0f600e695d648200a7492c5d8cea82581f4e4e138f0bb621911d9e4c13"
   license "BSD-2-Clause"
-  head "https://github.com/ponylang/pony-stable.git"
+  head "https://github.com/ponylang/pony-stable.git", branch: "master"
 
   bottle do
     sha256 cellar: :any_skip_relocation, big_sur:      "6989c2d99d5b71bbabcc3728f218c195c06ab03363a54a1e8493cb7715d518f5"
     sha256 cellar: :any_skip_relocation, catalina:     "1375ab1923d90e07e05071bad1effb66aef547bd6d9fd98a40afbdb65596471e"
     sha256 cellar: :any_skip_relocation, mojave:       "1375ab1923d90e07e05071bad1effb66aef547bd6d9fd98a40afbdb65596471e"
     sha256 cellar: :any_skip_relocation, high_sierra:  "caf0c823ba581ab0e669d0372c06d1cb74262f05334814a5f49370659aa030d1"
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "a9fbfdd5f7ff7790718cd2c246a1e98a014ef6cdb03251b598f2df75769b9d6b"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "a9fbfdd5f7ff7790718cd2c246a1e98a014ef6cdb03251b598f2df75769b9d6b" # linuxbrew-core
   end
 
   # "Stable is no longer being developed. It's been replaced by Corral

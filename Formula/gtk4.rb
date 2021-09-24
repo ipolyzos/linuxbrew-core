@@ -1,8 +1,8 @@
 class Gtk4 < Formula
   desc "Toolkit for creating graphical user interfaces"
   homepage "https://gtk.org/"
-  url "https://download.gnome.org/sources/gtk/4.2/gtk-4.2.0.tar.xz"
-  sha256 "e975f286e911666a79b6bcf486e6f99b0bd9d2b4cc348d19bce487a0b1c97072"
+  url "https://download.gnome.org/sources/gtk/4.4/gtk-4.4.0.tar.xz"
+  sha256 "e0a1508f441686c3a20dfec48af533b19a4b2e017c18eaee31dccdb7d292505b"
   license "LGPL-2.0-or-later"
 
   livecheck do
@@ -11,10 +11,11 @@ class Gtk4 < Formula
   end
 
   bottle do
-    sha256 arm64_big_sur: "f528ff5bbdba6ff076fa817e975c3c21ca9fb670b7deacbcf90d4f4a7fb770c4"
-    sha256 big_sur:       "1e8dfe4c2b815f9199393cb7689776e0dd6defa26bdb2c64320d4fb15aab3a40"
-    sha256 catalina:      "fea968beba337c62094f255a3a7596772ec9562fb80257c750d3e9632aca313e"
-    sha256 mojave:        "fa7c4e079377d778c457dc02b1b8e7d0e38fd1914cff006380c5e94f1168c400"
+    sha256 arm64_big_sur: "22471fc7fc08a4e66c2443650865a3edabf50bc314ee876cf2baa7db8971e41e"
+    sha256 big_sur:       "b1cf80bddf3a4189c17446bc0c11a4463a011f431b890b6ef4e0d7bb6046ca0c"
+    sha256 catalina:      "ef277cf48fef3b41c4ae365a5e40d0eaaf5aa2047cab688cebfdb8be5a621c4b"
+    sha256 mojave:        "f2fda50b0ae4009fc13ee19cb208d7b9e58ce55575070285e49b110630bcd2fd"
+    sha256 x86_64_linux:  "38a956d9dda9852605265441d17d8222670204f1fbc2df7905f137cd4c5182c4" # linuxbrew-core
   end
 
   depends_on "docbook" => :build
@@ -32,19 +33,28 @@ class Gtk4 < Formula
   depends_on "pango"
 
   uses_from_macos "libxslt" => :build # for xsltproc
+  uses_from_macos "cups"
+
+  on_linux do
+    depends_on "libxkbcommon"
+    depends_on "libxcursor"
+  end
 
   def install
     args = std_meson_args + %w[
-      -Dx11-backend=false
-      -Dmacos-backend=true
       -Dgtk_doc=false
       -Dman-pages=true
       -Dintrospection=enabled
       -Dbuild-examples=false
       -Dbuild-tests=false
+      -Dmedia-gstreamer=disabled
     ]
 
-    args << "-Dprint-cups=disabled" if MacOS.version <= :mojave
+    if OS.mac?
+      args << "-Dx11-backend=false"
+      args << "-Dmacos-backend=true"
+      args << "-Dprint-cups=disabled" if MacOS.version <= :mojave
+    end
 
     # ensure that we don't run the meson post install script
     ENV["DESTDIR"] = "/"
@@ -65,7 +75,7 @@ class Gtk4 < Formula
   def post_install
     system "#{Formula["glib"].opt_bin}/glib-compile-schemas", "#{HOMEBREW_PREFIX}/share/glib-2.0/schemas"
     system bin/"gtk4-update-icon-cache", "-f", "-t", "#{HOMEBREW_PREFIX}/share/icons/hicolor"
-    system "#{Formula["glib"].opt_bin}/gio-querymodules #{HOMEBREW_PREFIX}/lib/gtk-4.0/4.0.0/printbackends"
+    system "#{Formula["glib"].opt_bin}/gio-querymodules", "#{HOMEBREW_PREFIX}/lib/gtk-4.0/4.0.0/printbackends"
   end
 
   test do

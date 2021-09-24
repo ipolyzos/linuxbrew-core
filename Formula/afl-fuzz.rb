@@ -17,12 +17,15 @@ class AflFuzz < Formula
     sha256 catalina:     "9d9406abfd60163bea04281f6f3746a4f1a1c138c980fa28ace79869b1097052"
     sha256 mojave:       "7c539dbcb692e99baa85a2edbb11f2945d7bc820d14a454a99594ba3e5321638"
     sha256 high_sierra:  "8e64a9a77f39a8803058381cc80396a4ca7e5104c212d5ef1bd3d9513f9753ab"
-    sha256 x86_64_linux: "15f973425751a919ef9b319d22d846b43a4fc9d907ca29d0655af2f49a583adc"
+    sha256 x86_64_linux: "15f973425751a919ef9b319d22d846b43a4fc9d907ca29d0655af2f49a583adc" # linuxbrew-core
   end
 
   def install
     system "make", "PREFIX=#{prefix}", "AFL_NO_X86=1"
     system "make", "install", "PREFIX=#{prefix}", "AFL_NO_X86=1"
+
+    # Delete incompatible elf32-i386 testcase file
+    rm Dir[share/"afl/**/elf/small_exec.elf"]
   end
 
   test do
@@ -35,11 +38,12 @@ class AflFuzz < Formula
       }
     EOS
 
-    if which "clang++"
-      system bin/"afl-clang++", "-g", cpp_file, "-o", "test"
+    cmd = if OS.mac?
+      "afl-clang++"
     else
-      system bin/"afl-g++", "-g", cpp_file, "-o", "test"
+      "afl-g++"
     end
+    system bin/cmd, "-g", cpp_file, "-o", "test"
     assert_equal "Hello, world!", shell_output("./test")
   end
 end

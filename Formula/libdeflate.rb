@@ -1,8 +1,8 @@
 class Libdeflate < Formula
   desc "Heavily optimized DEFLATE/zlib/gzip compression and decompression"
   homepage "https://github.com/ebiggers/libdeflate"
-  url "https://github.com/ebiggers/libdeflate/archive/v1.7.tar.gz"
-  sha256 "a5e6a0a9ab69f40f0f59332106532ca76918977a974e7004977a9498e3f11350"
+  url "https://github.com/ebiggers/libdeflate/archive/v1.8.tar.gz"
+  sha256 "50711ad4e9d3862f8dfb11b97eb53631a86ee3ce49c0e68ec2b6d059a9662f61"
   license "MIT"
 
   bottle do
@@ -11,7 +11,7 @@ class Libdeflate < Formula
     sha256 cellar: :any, catalina:      "e270c74afc8fbd5171ba5b5e9cecd2c429e4934a6db9b0da1830b0a2a4298b8f"
     sha256 cellar: :any, mojave:        "02fb406299f342554d4c236955b6c0cf0e917afb76ed7c8bfe622b03fd6a2b55"
     sha256 cellar: :any, high_sierra:   "1c16f650b82c5e7b910b98249e635353d9beee3a3a0cd4f0c841b0d8d19e19c6"
-    sha256 cellar: :any, x86_64_linux:  "a95dd72a6636853ef9a343ffc5f0c268b871be19309b7b2f278ddff3ec70bc77"
+    sha256 cellar: :any, x86_64_linux:  "a95dd72a6636853ef9a343ffc5f0c268b871be19309b7b2f278ddff3ec70bc77" # linuxbrew-core
   end
 
   def install

@@ -12,7 +12,7 @@ class GoAT110 < Formula
     sha256 catalina:     "fa6f1fcd01302191009869886cf56208a42224ad86e201ebd98be6346f72f4a3"
     sha256 mojave:       "b00703a47e9352ee299c81d269c66209edca69605d06b2ce031b9754b8da56e6"
     sha256 high_sierra:  "395dcfc97f048bf95efedcf084206d730dba4ba59391075869b6cbae8d4ad0c1"
-    sha256 x86_64_linux: "08fa6cf0d981eae70c386a19c4928fc3cda16d3efa6e111cf6b5a460a06b3ae7"
+    sha256 x86_64_linux: "08fa6cf0d981eae70c386a19c4928fc3cda16d3efa6e111cf6b5a460a06b3ae7" # linuxbrew-core
   end
 
   keg_only :versioned_formula
@@ -48,8 +48,8 @@ class GoAT110 < Formula
   end
 
   def install
-    # Fixes: Error: Failure while executing: ../bin/ldd ../line-clang.elf: Permission denied
-    unless OS.mac?
+    if OS.linux?
+      # Fixes: Error: Failure while executing: ../bin/ldd ../line-clang.elf: Permission denied
       chmod "+x", Dir.glob("src/debug/dwarf/testdata/*.elf")
       chmod "+x", Dir.glob("src/debug/elf/testdata/*-exec")
     end

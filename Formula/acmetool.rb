@@ -57,6 +57,6 @@ class Acmetool < Formula
   end
 
   test do
-    assert_match "build unknown", shell_output("#{bin}/acmetool --version", 2)
+    assert_match version.to_s, shell_output("#{bin}/acmetool --version", 2)
   end
 end

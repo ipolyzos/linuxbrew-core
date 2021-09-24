@@ -1,17 +1,17 @@
 class Rocksdb < Formula
   desc "Embeddable, persistent key-value store for fast storage"
   homepage "https://rocksdb.org/"
-  url "https://github.com/facebook/rocksdb/archive/v6.19.3.tar.gz"
-  sha256 "5c19ffefea2bbe4c275d0c60194220865f508f371c64f42e802b4a85f065af5b"
+  url "https://github.com/facebook/rocksdb/archive/v6.22.1.tar.gz"
+  sha256 "2df8f34a44eda182e22cf84dee7a14f17f55d305ff79c06fb3cd1e5f8831e00d"
   license any_of: ["GPL-2.0-only", "Apache-2.0"]
-  head "https://github.com/facebook/rocksdb.git"
+  head "https://github.com/facebook/rocksdb.git", branch: "master"
 
   bottle do
-    sha256                               arm64_big_sur: "1d2b2374d7833a316fd79cab75c8f14c1afbb617703f79ddb4ca617e0f539944"
-    sha256                               big_sur:       "10fb1b352c8eb18a4f2390aebd9dbb51ce7358a5cd2fb2c98cf8821c767019bd"
-    sha256                               catalina:      "6f334f8c796f486a0c677b0255569ac93f10f21ad9a09e88311cc10a3446148f"
-    sha256                               mojave:        "d7e739eda161091e97de9272ccb0b5747520d7f02cee96d6480a3e47dbdad952"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "c51907f6a9f6069f44a9fe23ad83310dfa0c64fc7332ecb71f6b703824b21aac"
+    sha256 cellar: :any,                 arm64_big_sur: "45189177ab0959692173fb08988788436fe6f9a1f07114fa188f6d84e8dcf4ff"
+    sha256 cellar: :any,                 big_sur:       "762a9842251a4b426f554e952c7e692ed09b8993824cdbfe59fc5bc0a5f627e1"
+    sha256 cellar: :any,                 catalina:      "56152492c55781b815065f817e5dc1c925c1ecf8b817fe050c61311c3e0a572a"
+    sha256 cellar: :any,                 mojave:        "8de2eb0d8682d79e850d832492bf56562b75c794f9f95b7ba6867b44ab9fb79d"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "d562967989977bd82f525929e7348cb307fa7d3d5659df965c421fb90aa2ae39" # linuxbrew-core
   end
 
   depends_on "cmake" => :build
@@ -34,7 +34,7 @@ class Rocksdb < Formula
       -DWITH_SNAPPY=ON
       -DWITH_ZLIB=ON
       -DWITH_ZSTD=ON
-      -DCMAKE_EXE_LINKER_FLAGS=-Wl,-rpath,#{lib}
+      -DCMAKE_EXE_LINKER_FLAGS=-Wl,-rpath,#{rpath}
     ]
 
     # build regular rocksdb

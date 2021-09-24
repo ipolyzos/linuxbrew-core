@@ -7,7 +7,7 @@ class Subliminal < Formula
   sha256 "c6439cc733a4f37f01f8c14c096d44fd28d75d1f6f6e2d1d1003b1b82c65628b"
   license "MIT"
   revision 1
-  head "https://github.com/Diaoul/subliminal.git"
+  head "https://github.com/Diaoul/subliminal.git", branch: "master"
 
   bottle do
     sha256 cellar: :any_skip_relocation, arm64_big_sur: "9d87102a64a1865c41b5bffeae63eea3a0a256a2fb33cec0f891752bc5b2425a"
@@ -15,7 +15,7 @@ class Subliminal < Formula
     sha256 cellar: :any_skip_relocation, catalina:      "ae842ceb5c2b8488ceca4cf40efb8bf6a384945827f82359162b22f8c3ff8cc9"
     sha256 cellar: :any_skip_relocation, mojave:        "a8a0a8866b687758fe4382bf7a999a64918d2b84805ecc51bdd6d2b934e31bdc"
     sha256 cellar: :any_skip_relocation, high_sierra:   "f311103549dacb446020249bc66b64599faca35421183dc180a9cf73722e1faa"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "43a4fcfdc5649e569cf68ffea6adc72ef1151a3cf3a9a700c6bebbf783889f30"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "43a4fcfdc5649e569cf68ffea6adc72ef1151a3cf3a9a700c6bebbf783889f30" # linuxbrew-core
   end
 
   depends_on "python@3.9"

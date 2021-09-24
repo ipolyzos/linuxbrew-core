@@ -1,8 +1,8 @@
 class Nushell < Formula
   desc "Modern shell for the GitHub era"
   homepage "https://www.nushell.sh"
-  url "https://github.com/nushell/nushell/archive/0.30.0.tar.gz"
-  sha256 "a36cd3d93c69aab83c874fe0c8b653ce9fe188da9f527d3bb28492ba213e579a"
+  url "https://github.com/nushell/nushell/archive/0.37.0.tar.gz"
+  sha256 "1e8f36a4825e52b28993eec1c63d878f426ee8f091942d6bfc17e60546d5959b"
   license "MIT"
   head "https://github.com/nushell/nushell.git", branch: "main"
 
@@ -13,11 +13,11 @@ class Nushell < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "0c953b0b2680e60ba759340b3ed67c0cfc9c5d2d37537295cf1cb29d1bd51fc3"
-    sha256 cellar: :any_skip_relocation, big_sur:       "3c8b74d01c3bf5c5ebde96351049640dee37e7bd483d63943902d7425df7ad12"
-    sha256 cellar: :any_skip_relocation, catalina:      "1f270e4152e65cbf75832d22fc4edec5dd6564cbfaa6e1d1ba13e25b3cccd8e0"
-    sha256 cellar: :any_skip_relocation, mojave:        "4e0ee5c708926fe52a75d1cc636ad06fc278ca735919db749b17fcc2ae011bad"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "2b13b77a11cfd39db59d1ccec33b379b91148134992e01fe6597affb0eef05cc"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "472b5b5c40ddec42f55bbf14ce27d29e9be61d040ee43543d49dbd47d6d89228"
+    sha256 cellar: :any_skip_relocation, big_sur:       "ea6c80627c20886195fc0014dbd388cde2ec648f3da13d11793b8789a735bdf5"
+    sha256 cellar: :any_skip_relocation, catalina:      "ee37d831cf36ff8a4e9e547b068dd2b086c0e4a8113775fc5fe4ff55df013d1d"
+    sha256 cellar: :any_skip_relocation, mojave:        "f18c654e9e2348c54e449267d74d22c134aeb98bb8b69f6d0c1a3d730e2bdbbf"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "e25c6154d5b447af25c92e88cebe9431e879e55c081842000bc311869a34c06a" # linuxbrew-core
   end
 
   depends_on "rust" => :build
@@ -32,7 +32,7 @@ class Nushell < Formula
   end
 
   def install
-    system "cargo", "install", "--features", "stable", *std_cargo_args
+    system "cargo", "install", "--features", "extra", *std_cargo_args
   end
 
   test do

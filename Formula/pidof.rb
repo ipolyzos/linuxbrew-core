@@ -4,6 +4,7 @@ class Pidof < Formula
   url "http://www.nightproductions.net/downloads/pidof_source.tar.gz"
   version "0.1.4"
   sha256 "2a2cd618c7b9130e1a1d9be0210e786b85cbc9849c9b6f0cad9cbde31541e1b8"
+  license :cannot_represent
 
   livecheck do
     url :homepage

@@ -13,7 +13,7 @@ class Dwarf < Formula
     sha256 cellar: :any, mojave:        "c10f3ccbb2dc59b7c76c9dd46a71f1e41d7c7faa8fab5f4326599b3a5467c770"
     sha256 cellar: :any, high_sierra:   "92db022169f222a0ce002e6c20e6256cc5636f61c1e6fa1c44b56481c5a2422d"
     sha256 cellar: :any, sierra:        "dbc5a7043b5888284ddab1d97b57406fc6c24d71c205a54482e3ef0e442e20fd"
-    sha256 cellar: :any, x86_64_linux:  "9a2b04c0db1e8704be568606f6f8d6ed401fa34026a9d418d0058194056575a1"
+    sha256 cellar: :any, x86_64_linux:  "9a2b04c0db1e8704be568606f6f8d6ed401fa34026a9d418d0058194056575a1" # linuxbrew-core
   end
 
   depends_on "flex"
@@ -39,10 +39,11 @@ class Dwarf < Formula
       }
     EOS
     system ENV.cc, "test.c", "-o", "test"
-    if OS.mac?
+    on_macos do
       output = shell_output("#{bin}/dwarf -c 'pp $mac' test")
       assert_equal "magic: 0xfeedfacf (-17958193)", output.lines[0].chomp
-    else
+    end
+    on_linux do
       # pp may not be installed on Linux, test something else
       assert_match "main header: elf", shell_output("#{bin}/dwarf -p test")
     end

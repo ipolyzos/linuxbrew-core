@@ -4,6 +4,11 @@ class Dvanalyzer < Formula
   url "https://mediaarea.net/download/binary/dvanalyzer/1.4.2/DVAnalyzer_CLI_1.4.2_GNU_FromSource.tar.bz2"
   sha256 "d2f3fdd98574f7db648708e1e46b0e2fa5f9e6e12ca14d2dfaa77c13c165914c"
 
+  livecheck do
+    url "https://mediaarea.net/DVAnalyzer/Download/Source"
+    regex(/href=.*?dvanalyzer[._-]?(\d+(?:\.\d+)+)\.t/i)
+  end
+
   bottle do
     sha256 cellar: :any_skip_relocation, arm64_big_sur: "2c3394dede8aedd03611a44ab7f0e9c0cf65de9343eea185575234571da63b76"
     sha256 cellar: :any_skip_relocation, big_sur:       "c82268f8073ce66058329a7f3e17a8dffba0d811f82c1eb33a6a45144693bf17"
@@ -12,8 +17,10 @@ class Dvanalyzer < Formula
     sha256 cellar: :any_skip_relocation, high_sierra:   "59667b7174026e959f123ebbf8f8e30559dabb70814565f8bec8316c4b9c02b1"
     sha256 cellar: :any_skip_relocation, sierra:        "fb066074dde3b6e94ba30bf37bc85c2e17ef30a7e2b8f874b1a09f3aca2275f7"
     sha256 cellar: :any_skip_relocation, el_capitan:    "0e138c105a1f4604dbb4b7c911e83c660f2078cb24af6ba0ba12564a6e93d9c0"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "8fb153dacbee299079b32dc7f85c9d8d832e9e691a82d87719cdfe66bd6b9061"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "8fb153dacbee299079b32dc7f85c9d8d832e9e691a82d87719cdfe66bd6b9061" # linuxbrew-core
   end
+
+  uses_from_macos "zlib"
 
   def install
     cd "ZenLib/Project/GNU/Library" do

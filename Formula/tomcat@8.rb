@@ -1,16 +1,18 @@
 class TomcatAT8 < Formula
   desc "Implementation of Java Servlet and JavaServer Pages"
   homepage "https://tomcat.apache.org/"
-  url "https://www.apache.org/dyn/closer.lua?path=tomcat/tomcat-8/v8.5.65/bin/apache-tomcat-8.5.65.tar.gz"
-  mirror "https://archive.apache.org/dist/tomcat/tomcat-8/v8.5.65/bin/apache-tomcat-8.5.65.tar.gz"
-  sha256 "a88ad17797320ebb56ef62426074579e6611228eb0c6571b3de549d55c096270"
+  url "https://www.apache.org/dyn/closer.lua?path=tomcat/tomcat-8/v8.5.71/bin/apache-tomcat-8.5.71.tar.gz"
+  mirror "https://archive.apache.org/dist/tomcat/tomcat-8/v8.5.71/bin/apache-tomcat-8.5.71.tar.gz"
+  sha256 "063484948dd26f6c2ab6d9de62b10cfcbcb2ebc4feb735ce1af0784f2c7870a5"
   license "Apache-2.0"
 
   livecheck do
     url :stable
   end
 
-  bottle :unneeded
+  bottle do
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "9988e8c90ea58ec17e6205f9c7bba123d241edda2a3c9ef37ea8b9bedcfc0905" # linuxbrew-core
+  end
 
   keg_only :versioned_formula
 
@@ -22,32 +24,24 @@ class TomcatAT8 < Formula
 
     # Install files
     prefix.install %w[NOTICE LICENSE RELEASE-NOTES RUNNING.txt]
+
+    pkgetc.install Dir["conf/*"]
+    (buildpath/"conf").rmdir
+    libexec.install_symlink pkgetc => "conf"
+
     libexec.install Dir["*"]
     (bin/"catalina").write_env_script "#{libexec}/bin/catalina.sh", JAVA_HOME: Formula["openjdk"].opt_prefix
   end
 
-  plist_options manual: "catalina run"
-
-  def plist
+  def caveats
     <<~EOS
-      <?xml version="1.0" encoding="UTF-8"?>
-      <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-      <plist version="1.0">
-        <dict>
-          <key>Disabled</key>
-          <false/>
-          <key>Label</key>
-          <string>#{plist_name}</string>
-          <key>ProgramArguments</key>
-          <array>
-            <string>#{opt_bin}/catalina</string>
-            <string>run</string>
-          </array>
-          <key>KeepAlive</key>
-          <true/>
-        </dict>
-      </plist>
+      Configuration files: #{pkgetc}
     EOS
+  end
+
+  service do
+    run [opt_bin/"catalina", "run"]
+    keep_alive true
   end
 
   test do

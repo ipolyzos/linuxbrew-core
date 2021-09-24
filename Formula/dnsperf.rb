@@ -1,8 +1,8 @@
 class Dnsperf < Formula
   desc "Measure DNS performance by simulating network conditions"
   homepage "https://www.dns-oarc.net/tools/dnsperf"
-  url "https://www.dns-oarc.net/files/dnsperf/dnsperf-2.4.2.tar.gz"
-  sha256 "be1782ada2bc735b1d3538ed2fa8fb52d917eb32538c2f0612ae60c024101c31"
+  url "https://www.dns-oarc.net/files/dnsperf/dnsperf-2.7.1.tar.gz"
+  sha256 "9b4d72aab6713ecab6946ea3d4b69ec694c5749c3a115fc4a006e989c8ed4875"
   license "Apache-2.0"
   revision 1
 
@@ -12,20 +12,22 @@ class Dnsperf < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_big_sur: "8730e011c11d6122dc29b6394e581a0470e026ecd4e817f826514ebd7b6fcc82"
-    sha256 cellar: :any,                 big_sur:       "a28b5ac11a2d5163a91313749fd8ddd960ee6ca7f196b652927bbeb195989ffd"
-    sha256 cellar: :any,                 catalina:      "b84cdea5d717093c0d5221c95793c69dd338f7ade5606ad4a83f28695dc4cbbc"
-    sha256 cellar: :any,                 mojave:        "eb49eb5b1be6846b2c6bafd8a42a8e23275214ba2737ceefd640b5bbbf65e3d9"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "6143d9af1c8c1e7caa06bb950ad15b098399102306022aa1af8dab2831d00e5e"
+    sha256 cellar: :any,                 arm64_big_sur: "e6e0465ecaa51ff3f23300a213452e15b6445202d46932edb43eaafdb5f972bb"
+    sha256 cellar: :any,                 big_sur:       "66074ebb530ecf810991edfa0134a265770becd71b0aec017fa25048f0642700"
+    sha256 cellar: :any,                 catalina:      "40706d91e1cbcbd4e9ac6cfcf7e4d07f037354077a46efb3c88e35accc433825"
+    sha256 cellar: :any,                 mojave:        "585622c32de742da18110e29a74b6a13ad5a74106ba49d4c4a5fcedfa0708fb5"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "ff54261899584d2f5d6ce8c6d69b11f06768ad6e45026c0d2a8a9c88c0e6b80c" # linuxbrew-core
   end
 
   depends_on "pkg-config" => :build
-  depends_on "bind"
-  depends_on "krb5"
-  depends_on "libxml2"
+  depends_on "concurrencykit"
+  depends_on "ldns"
+  depends_on "nghttp2"
+  depends_on "openssl@1.1"
 
   def install
     system "./configure", "--prefix=#{prefix}"
+    system "make"
     system "make", "install"
   end
 

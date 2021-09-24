@@ -1,8 +1,8 @@
 class Sonarqube < Formula
   desc "Manage code quality"
   homepage "https://www.sonarqube.org/"
-  url "https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-8.8.0.42792.zip"
-  sha256 "c60bb7d7e79d24af90e0a9d778e51008ab49607854bba33ccd9df69d9dd7fbf8"
+  url "https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-9.1.0.47736.zip"
+  sha256 "b6a32700ccdf48ffd7e9bc57abef6ae271bbb05e6f036ba5f6d170013eb66e62"
   license "LGPL-3.0-or-later"
 
   livecheck do
@@ -10,46 +10,37 @@ class Sonarqube < Formula
     regex(/href=.*?sonarqube[._-]v?(\d+(?:\.\d+)+)\.zip/i)
   end
 
-  bottle :unneeded
+  bottle do
+    sha256 cellar: :any_skip_relocation, big_sur:      "2b78f4693f3381847f2c1e620760acd37e3f6607b43cd7a02dbc4ac3eee4bf96"
+    sha256 cellar: :any_skip_relocation, catalina:     "2b78f4693f3381847f2c1e620760acd37e3f6607b43cd7a02dbc4ac3eee4bf96"
+    sha256 cellar: :any_skip_relocation, mojave:       "f59b5f1ce0b91bc23485a8f8a00d9c483bd333d32fcbd630c9114be606fe5728"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "ecc7027c8e8af2293c0b03d465122e06681f4cc5208ed5c4a8c7888ba02fa5a9" # linuxbrew-core
+  end
 
+  # sonarqube ships pre-built x86_64 binaries
+  depends_on arch: :x86_64
   depends_on "openjdk@11"
 
   conflicts_with "sonarqube-lts", because: "both install the same binaries"
 
   def install
     # Delete native bin directories for other systems
-    rm_rf "bin/linux-x86-32"
-    rm_rf "bin/linux-x86-64" if OS.mac?
-    rm_rf "bin/macosx-universal-32"
-    rm_rf "bin/macosx-universal-64" unless OS.mac?
-    rm_rf Dir["bin/windows-*"]
+    remove, keep = if OS.mac?
+      ["linux", "macosx-universal"]
+    else
+      ["macosx", "linux-x86"]
+    end
+
+    rm_rf Dir["bin/{#{remove},windows}-*"]
 
     libexec.install Dir["*"]
 
-    (bin/"sonar").write_env_script libexec/"bin/#{OS.mac? ? "macosx-universal-64" : "linux-x86-64"}/sonar.sh",
+    (bin/"sonar").write_env_script libexec/"bin/#{keep}-64/sonar.sh",
       Language::Java.overridable_java_home_env("11")
   end
 
-  plist_options manual: "sonar console"
-
-  def plist
-    <<~EOS
-      <?xml version="1.0" encoding="UTF-8"?>
-      <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-      <plist version="1.0">
-      <dict>
-          <key>Label</key>
-          <string>#{plist_name}</string>
-          <key>ProgramArguments</key>
-          <array>
-          <string>#{opt_bin}/sonar</string>
-          <string>start</string>
-          </array>
-          <key>RunAtLoad</key>
-          <true/>
-      </dict>
-      </plist>
-    EOS
+  service do
+    run [opt_bin/"sonar", "start"]
   end
 
   test do

@@ -2,8 +2,8 @@ class PythonAT39 < Formula
   desc "Interpreted, interactive, object-oriented programming language"
   homepage "https://www.python.org/"
   # Keep in sync with python-tk@3.9.
-  url "https://www.python.org/ftp/python/3.9.4/Python-3.9.4.tar.xz"
-  sha256 "4b0e6644a76f8df864ae24ac500a51bbf68bd098f6a173e27d3b61cdca9aa134"
+  url "https://www.python.org/ftp/python/3.9.7/Python-3.9.7.tar.xz"
+  sha256 "f8145616e68c00041d1a6399b76387390388f8359581abc24432bb969b5e3c57"
   license "Python-2.0"
 
   livecheck do
@@ -12,25 +12,16 @@ class PythonAT39 < Formula
   end
 
   bottle do
-    sha256 arm64_big_sur: "9d38ac550179a6b6004a30eb063ce659ba5d14c2412d2ce60e2ddf010d402d93"
-    sha256 big_sur:       "77ba90d10acfc70e57781aae7b8f48799bc4d521422c74fe723cb2d6f5850c5c"
-    sha256 catalina:      "225b1f2e9bbc2d751abb0a539e9c231769370136649f7d94191114248bdf4d39"
-    sha256 mojave:        "d99937524f1a9bb07bb01ff09f280609fdbce51e0aa3604d17e87f4ebd9bc498"
-    sha256 x86_64_linux:  "b4e94a21c7a857093277049283c7c737e230135256db3c6e8e151b2f37bc8dd6"
+    sha256 arm64_big_sur: "695e7b5aee119f5e4e379dfa6701496e30d3ee199792e78b88fe3eb506256d4f"
+    sha256 big_sur:       "41d99040ba87c30b59dda54f1718aa05c584c0c3e6dc366bd63589e6dfd6cb25"
+    sha256 catalina:      "304126999e2d730bc76d13584f47326a2e8626a7f0b36c5b9119693182033da9"
+    sha256 mojave:        "0320d20a3aead6f61344f86d3ed5338192b7be24b095d0170dc06911a5b01eae"
+    sha256 x86_64_linux:  "203fe495254f00f7b7c1b02323536960773a49139365cdc9c5501fb366a05d18" # linuxbrew-core
   end
 
   # setuptools remembers the build flags python is built with and uses them to
   # build packages later. Xcode-only systems need different flags.
-  pour_bottle? do
-    on_macos do
-      reason <<~EOS
-        The bottle needs the Apple Command Line Tools to be installed.
-          You can install them, if desired, with:
-            xcode-select --install
-      EOS
-      satisfy { MacOS::CLT.installed? }
-    end
-  end
+  pour_bottle? only_if: :clt_installed
 
   depends_on "pkg-config" => :build
   depends_on "gdbm"
@@ -66,19 +57,20 @@ class PythonAT39 < Formula
   link_overwrite "Frameworks/Python.framework/Resources"
   link_overwrite "Frameworks/Python.framework/Versions/Current"
 
+  # Always update to latest release
   resource "setuptools" do
-    url "https://files.pythonhosted.org/packages/94/75/05e1d69c61c4dfaf65ad12785cd18bedc1e0129976c55914d6aea59c7da8/setuptools-54.2.0.tar.gz"
-    sha256 "aa9c24fb83a9116b8d425e53bec24c7bfdbffc313c2159f9ed036d4a6dd32d7d"
+    url "https://files.pythonhosted.org/packages/db/e2/c0ced9ccffb61432305665c22842ea120c0f649eec47ecf2a45c596707c4/setuptools-57.4.0.tar.gz"
+    sha256 "6bac238ffdf24e8806c61440e755192470352850f3419a52f26ffe0a1a64f465"
   end
 
   resource "pip" do
-    url "https://files.pythonhosted.org/packages/b7/2d/ad02de84a4c9fd3b1958dc9fb72764de1aa2605a9d7e943837be6ad82337/pip-21.0.1.tar.gz"
-    sha256 "99bbde183ec5ec037318e774b0d8ae0a64352fe53b2c7fd630be1d07e94f41e5"
+    url "https://files.pythonhosted.org/packages/52/e1/06c018197d8151383f66ebf6979d951995cf495629fc54149491f5d157d0/pip-21.2.4.tar.gz"
+    sha256 "0eb8a1516c3d138ae8689c0c1a60fde7143310832f9dc77e11d8a4bc62de193b"
   end
 
   resource "wheel" do
-    url "https://files.pythonhosted.org/packages/ed/46/e298a50dde405e1c202e316fa6a3015ff9288423661d7ea5e8f22f589071/wheel-0.36.2.tar.gz"
-    sha256 "e11eefd162658ea59a60a0f6c7d493a7190ea4b9a85e335b33489d9f17e0245e"
+    url "https://files.pythonhosted.org/packages/4e/be/8139f127b4db2f79c8b117c80af56a3078cc4824b5b94250c7f81a70e03b/wheel-0.37.0.tar.gz"
+    sha256 "e2ef7239991699e3355d54f8e968a21bb940a1dbf34a4d226741e64462516fad"
   end
 
   # Link against libmpdec.so.3, update for mpdecimal.h symbol cleanup.
@@ -112,7 +104,7 @@ class PythonAT39 < Formula
     ENV["PYTHONPATH"] = nil
 
     # Override the auto-detection in setup.py, which assumes a universal build.
-    on_macos do
+    if OS.mac?
       ENV["PYTHON_DECIMAL_WITH_MACHINE"] = Hardware::CPU.arm? ? "uint128" : "x64"
     end
 
@@ -137,15 +129,14 @@ class PythonAT39 < Formula
       --with-system-libmpdec
     ]
 
-    on_macos do
+    if OS.mac?
       args << "--enable-framework=#{frameworks}"
       args << "--with-dtrace"
 
       # Override LLVM_AR to be plain old system ar.
       # https://bugs.python.org/issue43109
       args << "LLVM_AR=/usr/bin/ar"
-    end
-    on_linux do
+    else
       args << "--enable-shared"
     end
 
@@ -157,7 +148,7 @@ class PythonAT39 < Formula
     cflags         = []
     cflags_nodist  = ["-I#{HOMEBREW_PREFIX}/include"]
     ldflags        = []
-    ldflags_nodist = ["-L#{HOMEBREW_PREFIX}/lib"]
+    ldflags_nodist = ["-L#{HOMEBREW_PREFIX}/lib", "-Wl,-rpath,#{HOMEBREW_PREFIX}/lib"]
     cppflags       = ["-I#{HOMEBREW_PREFIX}/include"]
 
     if MacOS.sdk_path_if_needed
@@ -184,6 +175,17 @@ class PythonAT39 < Formula
               "for d_ in ['#{Formula["sqlite"].opt_include}']:"
     end
 
+    if OS.linux?
+      # Python's configure adds the system ncurses include entry to CPPFLAGS
+      # when doing curses header check. The check may fail when there exists
+      # a 32-bit system ncurses (conflicts with the brewed 64-bit one).
+      # See https://github.com/Homebrew/linuxbrew-core/pull/22307#issuecomment-781896552
+      # We want our ncurses! Override system ncurses includes!
+      inreplace "configure",
+        'CPPFLAGS="$CPPFLAGS -I/usr/include/ncursesw"',
+        "CPPFLAGS=\"$CPPFLAGS -I#{Formula["ncurses"].opt_include}\""
+    end
+
     # Allow python modules to use ctypes.find_library to find homebrew's stuff
     # even if homebrew is not a /usr/local/lib. Try this with:
     # `brew install enchant && pip install pyenchant`
@@ -205,15 +207,13 @@ class PythonAT39 < Formula
     ENV.deparallelize do
       # Tell Python not to install into /Applications (default for framework builds)
       system "make", "install", "PYTHONAPPSDIR=#{prefix}"
-      on_macos do
-        system "make", "frameworkinstallextras", "PYTHONAPPSDIR=#{pkgshare}"
-      end
+      system "make", "frameworkinstallextras", "PYTHONAPPSDIR=#{pkgshare}" if OS.mac?
     end
 
     # Any .app get a " 3" attached, so it does not conflict with python 2.x.
     Dir.glob("#{prefix}/*.app") { |app| mv app, app.sub(/\.app$/, " 3.app") }
 
-    on_macos do
+    if OS.mac?
       # Prevent third-party packages from building against fragile Cellar paths
       inreplace Dir[lib_cellar/"**/_sysconfigdata__darwin_darwin.py",
                     lib_cellar/"config*/Makefile",
@@ -229,9 +229,7 @@ class PythonAT39 < Formula
       inreplace Dir[lib_cellar/"**/_sysconfigdata__darwin_darwin.py"],
                 %r{('LINKFORSHARED': .*?)'(Python.framework/Versions/3.\d+/Python)'}m,
                 "\\1'#{opt_prefix}/Frameworks/\\2'"
-    end
-
-    on_linux do
+    else
       # Prevent third-party packages from building against fragile Cellar paths
       inreplace Dir[lib_cellar/"**/_sysconfigdata_*linux_x86_64-*.py",
                     lib_cellar/"config*/Makefile",
@@ -281,8 +279,6 @@ class PythonAT39 < Formula
     inreplace lib_cellar/"ensurepip/__init__.py" do |s|
       s.gsub!(/_SETUPTOOLS_VERSION = .*/, "_SETUPTOOLS_VERSION = \"#{resource("setuptools").version}\"")
       s.gsub!(/_PIP_VERSION = .*/, "_PIP_VERSION = \"#{resource("pip").version}\"")
-      # pip21 is py3 only
-      s.gsub! "    (\"pip\", _PIP_VERSION, \"py2.py3\"),", "    (\"pip\", _PIP_VERSION, \"py3\"),"
     end
 
     # Write out sitecustomize.py

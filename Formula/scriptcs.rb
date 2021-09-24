@@ -15,11 +15,12 @@ class Scriptcs < Formula
     sha256 cellar: :any_skip_relocation, yosemite:    "21891cea519df48979320ba74660002d270fb414181e3f7087505169af15a471"
   end
 
+  depends_on arch: :x86_64 # mono is not yet supported on ARM
   depends_on "mono"
 
   def install
     script_file = "scriptcs.sh"
-    system "bash", "./build_brew.sh"
+    system "sh", "./build_brew.sh"
     libexec.install Dir["src/ScriptCs/bin/Release/*"]
     (libexec/script_file).write <<~EOS
       #!/bin/bash

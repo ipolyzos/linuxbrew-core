@@ -1,25 +1,46 @@
 class Ccache < Formula
   desc "Object-file caching compiler wrapper"
   homepage "https://ccache.dev/"
-  url "https://github.com/ccache/ccache/releases/download/v4.2.1/ccache-4.2.1.tar.xz"
-  sha256 "9d6ba1cdefdc690401f404b747d81a9a1802b17af4235815866b7620d980477e"
+  url "https://github.com/ccache/ccache/releases/download/v4.4.1/ccache-4.4.1.tar.xz"
+  sha256 "ebd6dfb5b15dfe39310e1f5834bafbe6ab526c71df8ad08a508e8a242bad8159"
   license "GPL-3.0-or-later"
-  head "https://github.com/ccache/ccache.git"
+  head "https://github.com/ccache/ccache.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any,                 arm64_big_sur: "035a9c51376fbd87424fd98b75e304ca361b3bd0dc92bdcae7b1e5dcfa22a3c0"
-    sha256 cellar: :any,                 big_sur:       "098a882c947780055053e5d961910f411026cea492a0435077b3c70a347b4ca7"
-    sha256 cellar: :any,                 catalina:      "fdcfcc5d633cbae1334d7862f92e00cfaca04bc1722299b37acd61647779325b"
-    sha256 cellar: :any,                 mojave:        "ffc07ff2a5079f66f770534bf9d0db2cbd330e8a6bd560f2e4509866be09aad9"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "729a61c37d0f51bd3689e91def6c679152342b79e7d38e4b50aaa27776c74998"
+    sha256 cellar: :any,                 arm64_big_sur: "8b080397271209e799d28ff1d9224d9dae710c93a742b0fd25410694c34495a0"
+    sha256 cellar: :any,                 big_sur:       "56c36dccabd0d36973c1ade740b4d75abe7fe8755f96c2a03add7667548bbfde"
+    sha256 cellar: :any,                 catalina:      "4ffcd0418bf19aadfee527d033a5f1e079348184d71194a40c74e09682e9865c"
+    sha256 cellar: :any,                 mojave:        "d7c3dc21b248c0d2a4f57cec9d8a9517a0b79720e2aad7303c992e6b5472bcc4"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "04c9ff1dd969cac687866bdf931a8c6b461e053ebd606d907f6084a2503cac52" # linuxbrew-core
   end
 
+  depends_on "asciidoctor" => :build
   depends_on "cmake" => :build
+  depends_on "pkg-config" => :build
+
+  depends_on "hiredis"
   depends_on "zstd"
 
+  on_linux do
+    depends_on "gcc"
+  end
+
+  fails_with gcc: "5"
+
   def install
-    system "cmake", ".", *std_cmake_args
-    system "make", "install"
+    system "cmake", "-S", ".", "-B", "build", *std_cmake_args, "-DENABLE_IPO=TRUE"
+    system "cmake", "--build", "build"
+
+    # Homebrew compiler shim actively prevents ccache usage (see caveats), which will break the test suite.
+    # We run the test suite for ccache because it provides a more in-depth functional test of the software
+    # (especially with IPO enabled), adds negligible time to the build process, and we don't actually test
+    # this formula properly in the test block since doing so would be too complicated.
+    # See https://github.com/Homebrew/homebrew-core/pull/83900#issuecomment-90624064
+    with_env(CC: DevelopmentTools.locate(DevelopmentTools.default_compiler)) do
+      system "ctest", "-j#{ENV.make_jobs}", "--test-dir", "build"
+    end
+
+    system "cmake", "--install", "build"
 
     libexec.mkpath
 
@@ -29,13 +50,13 @@ class Ccache < Formula
       cc
       gcc gcc2 gcc3 gcc-3.3 gcc-4.0
       gcc-4.2 gcc-4.3 gcc-4.4 gcc-4.5 gcc-4.6 gcc-4.7 gcc-4.8 gcc-4.9
-      gcc-5 gcc-6 gcc-7 gcc-8 gcc-9 gcc-10
+      gcc-5 gcc-6 gcc-7 gcc-8 gcc-9 gcc-10 gcc-11
       c++ c++3 c++-3.3 c++-4.0
       c++-4.2 c++-4.3 c++-4.4 c++-4.5 c++-4.6 c++-4.7 c++-4.8 c++-4.9
-      c++-5 c++-6 c++-7 c++-8 c++-9 c++-10
+      c++-5 c++-6 c++-7 c++-8 c++-9 c++-10 c++-11
       g++ g++2 g++3 g++-3.3 g++-4.0
       g++-4.2 g++-4.3 g++-4.4 g++-4.5 g++-4.6 g++-4.7 g++-4.8 g++-4.9
-      g++-5 g++-6 g++-7 g++-8 g++-9 g++-10
+      g++-5 g++-6 g++-7 g++-8 g++-9 g++-10 g++-11
     ].each do |prog|
       libexec.install_symlink bin/"ccache" => prog
     end

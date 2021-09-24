@@ -1,18 +1,18 @@
 require "language/node"
 
 class Gitmoji < Formula
-  desc "Emoji guide for your commit messages"
-  homepage "https://gitmoji.carloscuesta.me"
-  url "https://registry.npmjs.org/gitmoji-cli/-/gitmoji-cli-3.4.0.tgz"
-  sha256 "598c861a55d772cab36debbc5a003c4377d4f835ea0e87fca53c79f6475fce0a"
+  desc "Interactive command-line tool for using emoji in commit messages"
+  homepage "https://gitmoji.dev"
+  url "https://registry.npmjs.org/gitmoji-cli/-/gitmoji-cli-4.6.1.tgz"
+  sha256 "48ae4d54b76b3356535694858bfc614eba068ef4204443907d0c9b203d6d60de"
   license "MIT"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "1728e50ec13dbea620ea340de1c038ec8656deac39c9331c90114110aef12c3c"
-    sha256 cellar: :any_skip_relocation, big_sur:       "cf2d88c2b095c93bd5f500cba429a8f9185d50d057da2097e4a0c53d3b60a10e"
-    sha256 cellar: :any_skip_relocation, catalina:      "cf2d88c2b095c93bd5f500cba429a8f9185d50d057da2097e4a0c53d3b60a10e"
-    sha256 cellar: :any_skip_relocation, mojave:        "ea1c923f959f56091ad72ad38d3d3bbf9f63e85dbd444c5af647f851a962882f"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "94040751fa9b3e826fc6b05a3e1217748fe00ae2b562e4e867d6c5e1c4b02060"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "801ef556b4cc98f98740d8c59ad605650f6b87b923c8efbe2bc99b1d4faa7551"
+    sha256 cellar: :any_skip_relocation, big_sur:       "8ffd087aa3abd52c681234cccd483475c55c7873eddeb535b6f362ff4a8f7f8f"
+    sha256 cellar: :any_skip_relocation, catalina:      "8ffd087aa3abd52c681234cccd483475c55c7873eddeb535b6f362ff4a8f7f8f"
+    sha256 cellar: :any_skip_relocation, mojave:        "8ffd087aa3abd52c681234cccd483475c55c7873eddeb535b6f362ff4a8f7f8f"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "801ef556b4cc98f98740d8c59ad605650f6b87b923c8efbe2bc99b1d4faa7551" # linuxbrew-core
   end
 
   depends_on "node"

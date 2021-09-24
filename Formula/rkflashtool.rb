@@ -3,7 +3,7 @@ class Rkflashtool < Formula
   homepage "https://sourceforge.net/projects/rkflashtool/"
   url "https://downloads.sourceforge.net/project/rkflashtool/rkflashtool-6.1/rkflashtool-6.1-src.tar.bz2"
   sha256 "2bc0ec580caa790b0aee634388a9110a429baf4b93ff2c4fce3d9ab583f51339"
-  head "https://git.code.sf.net/p/rkflashtool/Git.git"
+  head "https://git.code.sf.net/p/rkflashtool/Git.git", branch: "master"
 
   bottle do
     sha256 cellar: :any, arm64_big_sur: "385d2324a9740b034fa99eabe5325cde073cf301dcfb343dee7cf44bda109cbd"
@@ -14,7 +14,7 @@ class Rkflashtool < Formula
     sha256 cellar: :any, sierra:        "cbeb2509bcd210026250c915a9909e8f056e9e2da1f599d7a611695c334f4966"
     sha256 cellar: :any, el_capitan:    "7a8b5c66395b179ce38845c36369b1a65c6eacc73fd29227809597257669af6d"
     sha256 cellar: :any, yosemite:      "cf5c51c7aa18c9304ade585c82d9083421eafde114ef6ab22736a24f45530226"
-    sha256 cellar: :any, x86_64_linux:  "37b218c0025a5a86b679e0cb051ca65069e32c09813d8f461f39a4d16f805c01"
+    sha256 cellar: :any, x86_64_linux:  "37b218c0025a5a86b679e0cb051ca65069e32c09813d8f461f39a4d16f805c01" # linuxbrew-core
   end
 
   depends_on "pkg-config" => :build

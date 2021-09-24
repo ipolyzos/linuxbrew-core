@@ -1,10 +1,10 @@
 class Gdal < Formula
   desc "Geospatial Data Abstraction Library"
   homepage "https://www.gdal.org/"
-  url "https://download.osgeo.org/gdal/3.2.2/gdal-3.2.2.tar.xz"
-  sha256 "a7e1e414e5c405af48982bf4724a3da64a05770254f2ce8affb5f58a7604ca57"
+  url "https://download.osgeo.org/gdal/3.3.2/gdal-3.3.2.tar.xz"
+  sha256 "630e34141cf398c3078d7d8f08bb44e804c65bbf09807b3610dcbfbc37115cc3"
   license "MIT"
-  revision 3
+  revision 2
 
   livecheck do
     url "https://download.osgeo.org/gdal/CURRENT/"
@@ -12,10 +12,11 @@ class Gdal < Formula
   end
 
   bottle do
-    sha256 arm64_big_sur: "b86d4ee068a0a8458202dcf37a615cc5768f6d242fe77e9f2ade49bc1bf5f0fb"
-    sha256 big_sur:       "2817e26690d3ebcf26eb676402bb87f57008530ed54a611d822e45b50fa0f1b4"
-    sha256 catalina:      "17e65669d3c233e37412c011c28a8a5d89b5f3fc8d6f7e77be3033abfb002326"
-    sha256 mojave:        "c25de11ffe9b4b4ffe0ec5d030db57a8a163867808418fae0c7584048bd589a4"
+    sha256 arm64_big_sur: "7f703621e923ba2e9d695b30ac1b37a640197b0ef9ddc41526ac4c1d73490ecc"
+    sha256 big_sur:       "cd8c20865000001d808f127737430e5be46124ff74e6b3577184a8f88d52e66f"
+    sha256 catalina:      "e5f3ea662fa3683a641994c47d380103e37ce1a7f985bf417a891bf2d92e1c26"
+    sha256 mojave:        "41ff6ce70db407eeb712b9700aa12d99a2d11c67d4d13c13e5554ac3fed80c0a"
+    sha256 x86_64_linux:  "045bb638ddf8d61b748c320cfb8ce30aa8dedba555f04d76a0d4e903415d6688" # linuxbrew-core
   end
 
   head do
@@ -24,7 +25,6 @@ class Gdal < Formula
   end
 
   depends_on "pkg-config" => :build
-
   depends_on "cfitsio"
   depends_on "epsilon"
   depends_on "expat"
@@ -45,8 +45,8 @@ class Gdal < Formula
   depends_on "numpy"
   depends_on "openjpeg"
   depends_on "pcre"
-  depends_on "poppler"
-  depends_on "proj"
+  depends_on "poppler-qt5"
+  depends_on "proj@7"
   depends_on "python@3.9"
   depends_on "sqlite" # To ensure compatibility with SpatiaLite
   depends_on "unixodbc" # macOS version is not complete enough
@@ -58,22 +58,16 @@ class Gdal < Formula
   uses_from_macos "curl"
 
   on_linux do
-    depends_on "bash-completion"
+    depends_on "util-linux"
+    depends_on "gcc"
   end
 
+  conflicts_with "avce00", because: "both install a cpl_conv.h header"
   conflicts_with "cpl", because: "both install cpl_error.h"
 
+  fails_with gcc: "5"
+
   def install
-    # Fixes: error: inlining failed in call to always_inline __m128i _mm_shuffle_epi8
-    ENV.append_to_cflags "-msse4.1" if ENV["HOMEBREW_GITHUB_ACTIONS"]
-
-    unless OS.mac?
-      # The python build needs libgdal.so, which is located in .libs
-      ENV.append "LDFLAGS", "-L#{buildpath}/.libs"
-      # The python build needs gnm headers, which are located in the gnm folder
-      ENV.append "CFLAGS", "-I#{buildpath}/gnm"
-    end
-
     args = [
       # Base configuration
       "--prefix=#{prefix}",
@@ -101,7 +95,7 @@ class Gdal < Formula
       "--with-png=#{Formula["libpng"].opt_prefix}",
       "--with-spatialite=#{Formula["libspatialite"].opt_prefix}",
       "--with-sqlite3=#{Formula["sqlite"].opt_prefix}",
-      "--with-proj=#{Formula["proj"].opt_prefix}",
+      "--with-proj=#{Formula["proj@7"].opt_prefix}",
       "--with-zstd=#{Formula["zstd"].opt_prefix}",
       "--with-liblzma=yes",
       "--with-cfitsio=#{Formula["cfitsio"].opt_prefix}",
@@ -126,6 +120,7 @@ class Gdal < Formula
       "--without-mysql",
       "--without-perl",
       "--without-python",
+
       # Unsupported backends are either proprietary or have no compatible version
       # in Homebrew. Podofo is disabled because Poppler provides the same
       # functionality and then some.
@@ -149,11 +144,16 @@ class Gdal < Formula
       "--without-sosi",
     ]
 
-    on_macos do
+    if OS.mac?
       args << "--with-curl=/usr/bin/curl-config"
-    end
-    on_linux do
+      args << "--with-opencl"
+    else
       args << "--with-curl=#{Formula["curl"].opt_bin}/curl-config"
+
+      # The python build needs libgdal.so, which is located in .libs
+      ENV.append "LDFLAGS", "-L#{buildpath}/.libs"
+      # The python build needs gnm headers, which are located in the gnm folder
+      ENV.append "CFLAGS", "-I#{buildpath}/gnm"
     end
 
     system "./configure", *args

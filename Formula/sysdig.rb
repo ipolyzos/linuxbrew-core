@@ -4,6 +4,7 @@ class Sysdig < Formula
   url "https://github.com/draios/sysdig/archive/0.27.1.tar.gz"
   sha256 "b9d05854493d245a7a7e75f77fc654508f720aab5e5e8a3a932bd8eb54e49bda"
   license "Apache-2.0"
+  revision 2
 
   livecheck do
     url :stable
@@ -11,11 +12,10 @@ class Sysdig < Formula
   end
 
   bottle do
-    sha256 big_sur:      "9a5db7570b079c111525694e6aef53bab77f7633fd30550c174fdd0d8b241ce1"
-    sha256 catalina:     "a3343b2e42ca8df82c537170b0338d965bc0c92619f760d86f30d6f898610e5f"
-    sha256 mojave:       "843c5ff29eb7787e1bfc5393f0562e6f97c121504f652f5fd806943dc971b97e"
-    sha256 high_sierra:  "f314c5445253bd052d4a7f50b3e879a81514f14c4d44b3887da26e69fbdce17f"
-    sha256 x86_64_linux: "a3202679c53b061ee5d3161895f85458177f39a3d7cc7609e9a889f10fafc363"
+    sha256 big_sur:      "5d26c152781c472694c45d59a73e9650859be3f329023e3d55ec28aedcd3257f"
+    sha256 catalina:     "a587a80a9969ef9a280834f08c21b90753cf33d716a0df608a5d8f97c5e81043"
+    sha256 mojave:       "6bb2d53d4fa74604759a32bfd9d68acf1fca9c54b28476467a026e3c1d7275a3"
+    sha256 x86_64_linux: "e6c198beddb081a32c1eb947d80c7a3d1b2a610084bfa5dfda1795bc25dfcfee" # linuxbrew-core
   end
 
   depends_on "cmake" => :build
@@ -23,12 +23,14 @@ class Sysdig < Formula
   depends_on "jsoncpp"
   depends_on "luajit"
   depends_on "tbb"
-  unless OS.mac?
-    depends_on "c-ares"
-    depends_on "curl"
+
+  uses_from_macos "curl"
+
+  on_linux do
     depends_on "elfutils"
     depends_on "grpc"
     depends_on "jq"
+    depends_on "libb64"
     depends_on "protobuf"
   end
 
@@ -39,13 +41,15 @@ class Sysdig < Formula
   end
 
   def install
+    args = std_cmake_args + %W[
+      -DSYSDIG_VERSION=#{version}
+      -DUSE_BUNDLED_DEPS=OFF
+      -DCREATE_TEST_TARGETS=OFF
+    ]
+    args << "-DBUILD_DRIVER=OFF" if OS.linux?
+
     mkdir "build" do
-      system "cmake", "..", "-DSYSDIG_VERSION=#{version}",
-                            "-DUSE_BUNDLED_DEPS=OFF",
-                            "-DCREATE_TEST_TARGETS=OFF",
-                            ("-DUSE_BUNDLED_B64=ON" unless OS.mac?),
-                            ("-DBUILD_DRIVER=OFF" unless OS.mac?),
-                            *std_cmake_args
+      system "cmake", "..", *args
       system "make"
       system "make", "install"
     end

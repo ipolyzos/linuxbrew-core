@@ -1,37 +1,46 @@
 class Apt < Formula
   desc "Advanced Package Tool"
   homepage "https://wiki.debian.org/apt"
-  url "https://deb.debian.org/debian/pool/main/a/apt/apt_1.9.3.tar.xz"
-  sha256 "f84d5028da78de8b60d80c8639d094422947c8fdc918625ed8f23cbce5e59265"
+  url "https://deb.debian.org/debian/pool/main/a/apt/apt_2.3.9.tar.xz"
+  sha256 "28597fe803a652f55f618dd7a44bd2fb2712dbd91c258dfa5981cb75356291e3"
+  license "GPL-2.0-or-later"
+
+  livecheck do
+    url "https://deb.debian.org/debian/pool/main/a/apt/"
+    regex(/href=.*?apt[._-]v?(\d+(?:\.\d+)+)\.t/i)
+  end
 
   bottle do
-    sha256 x86_64_linux: "3ee78dbad649cf2acedacbf8d049001118133d2bdcc94068875024a8b793b27b"
+    sha256 x86_64_linux: "feb28338fb5b46374ed4441df083ba213d747c94ed5cab4a52193fad19c8440d" # linuxbrew-core
   end
 
   depends_on "cmake" => :build
+  depends_on "docbook" => :build
   depends_on "docbook-xsl" => :build
   depends_on "doxygen" => :build
+  depends_on "googletest" => :build
   depends_on "libxslt" => :build
-  depends_on "perl" => :build
+  depends_on "po4a" => :build
   depends_on "w3m" => :build
+
   depends_on "berkeley-db"
   depends_on "bzip2"
-  depends_on "docbook"
   depends_on "dpkg"
-  depends_on "gcc@6"
+  depends_on "gcc"
   depends_on "gettext"
+  depends_on "gnupg"
   depends_on "gnutls"
   depends_on :linux
   depends_on "lz4"
+  depends_on "perl"
+  depends_on "xxhash"
   depends_on "zlib"
 
-  fails_with gcc: "4"
-  fails_with gcc: "5"
-
-  resource "gtest" do
-    url "https://github.com/google/googletest/archive/release-1.8.1.tar.gz"
-    sha256 "9bf1fe5182a604b4135edc1a425ae356c9ad15e9b23f9f12a02e80184c3a249c"
+  on_linux do
+    keg_only "not linked to prevent conflicts with system apt"
   end
+
+  fails_with gcc: "5"
 
   resource "SGMLS" do
     url "https://cpan.metacpan.org/authors/id/R/RA/RAAB/SGMLSpm-1.1.tar.gz"
@@ -69,8 +78,8 @@ class Apt < Formula
   end
 
   resource "Module::Build" do
-    url "https://cpan.metacpan.org/authors/id/L/LE/LEONT/Module-Build-0.4222.tar.gz"
-    sha256 "e74b45d9a74736472b74830599cec0d1123f992760f9cd97104f94bee800b160"
+    url "https://cpan.metacpan.org/authors/id/L/LE/LEONT/Module-Build-0.4231.tar.gz"
+    sha256 "7e0f4c692c1740c1ac84ea14d7ea3d8bc798b2fb26c09877229e04f430b2b717"
   end
 
   resource "Pod::Parser" do
@@ -78,86 +87,33 @@ class Apt < Formula
     sha256 "dbe0b56129975b2f83a02841e8e0ed47be80f060686c66ea37e529d97aa70ccd"
   end
 
-  resource "po4a" do
-    url "https://github.com/mquinson/po4a/releases/download/v0.56/po4a-0.56.tar.gz"
-    sha256 "d95636906bf71d9ce5131f57045b84c46ae33417346e2437a90013ee01e7d04f"
-  end
-
   def install
     # Find our docbook catalog
     ENV["XML_CATALOG_FILES"] = "#{etc}/xml/catalog"
 
-    ENV.prepend_create_path "PERL5LIB", libexec/"lib/perl5"
-    ENV.prepend_path "PERL5LIB", libexec/"lib"
-    ENV.prepend_path "PATH", bin
-
-    (buildpath/"gtest").install resource("gtest")
-
-    resource("Unicode::GCString").stage do
-      system "perl", "Makefile.PL", "INSTALL_BASE=#{libexec}"
-      system "make"
-      system "make", "install"
-    end
-
-    resource("Locale::gettext").stage do
-      system "perl", "Makefile.PL", "INSTALL_BASE=#{libexec}"
-      system "make"
-      system "make", "install"
-    end
-
-    resource("Term::ReadKey").stage do
-      system "perl", "Makefile.PL", "INSTALL_BASE=#{libexec}"
-      system "make"
-      system "make", "install"
-    end
-
-    resource("Text::WrapI18N").stage do
-      system "perl", "Makefile.PL", "INSTALL_BASE=#{libexec}"
-      system "make"
-      system "make", "install"
-    end
-
-    resource("YAML::Tiny").stage do
-      system "perl", "Makefile.PL", "INSTALL_BASE=#{libexec}"
-      system "make"
-      system "make", "install"
-    end
-
-    resource("SGMLS").stage do
-      chmod 644, "MYMETA.yml"
-      system "perl", "Makefile.PL", "INSTALL_BASE=#{libexec}"
-      system "make"
-      system "make", "install"
-    end
-
-    resource("Module::Build").stage do
-      system "perl", "Makefile.PL", "INSTALL_BASE=#{libexec}"
-      system "make"
-      system "make", "install"
-    end
-
-    resource("Pod::Parser").stage do
-      system "perl", "Makefile.PL", "INSTALL_BASE=#{libexec}"
-      system "make"
-      system "make", "install"
-    end
+    ENV.prepend_create_path "PERL5LIB", buildpath/"lib/perl5"
+    ENV.prepend_path "PERL5LIB", buildpath/"lib"
+    ENV.prepend_path "PATH", buildpath/"bin"
 
     resource("triehash").stage do
-      bin.install "triehash.pl" => "triehash"
+      (buildpath/"bin").install "triehash.pl" => "triehash"
     end
 
-    resource("po4a").stage do
-      system "perl", "Build.PL"
-      system "./Build"
-      system "./Build", "install"
+    cpan_resources = resources.map(&:name).to_set - ["triehash"]
+    cpan_resources.each do |r|
+      resource(r).stage do
+        chmod 0644, "MYMETA.yml" if r == "SGMLS"
+        system "perl", "Makefile.PL", "INSTALL_BASE=#{buildpath}"
+        system "make"
+        system "make", "install"
+      end
     end
 
     mkdir "build" do
       system "cmake", "..",
              "-DDPKG_DATADIR=#{Formula["dpkg"].opt_libexec}/share/dpkg",
              "-DDOCBOOK_XSL=#{Formula["docbook-xsl"].opt_prefix}/docbook-xsl",
-             "-DBERKELEY_DB_INCLUDE_DIRS=#{Formula["berkeley-db"].opt_include}",
-             "-DGTEST_ROOT=gtest/googletest",
+             "-DBERKELEY_INCLUDE_DIRS=#{Formula["berkeley-db"].opt_include}",
              *std_cmake_args
       system "make", "install"
     end
@@ -166,6 +122,7 @@ class Apt < Formula
   end
 
   test do
-    assert_equal "apt 1.9.3 (amd64)", shell_output("#{bin}/apt --version").chomp
+    assert_match "The package lists or status file could not be parsed or opened.",
+      shell_output("#{bin}/apt list 2>&1", 100)
   end
 end

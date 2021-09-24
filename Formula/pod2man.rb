@@ -3,7 +3,7 @@ class Pod2man < Formula
   homepage "https://www.eyrie.org/~eagle/software/podlators/"
   url "https://archives.eyrie.org/software/perl/podlators-4.14.tar.xz"
   sha256 "e504c3d9772b538d7ea31ce2c5e7a562d64a5b7f7c26277b1d7a0de1f6acfdf4"
-  revision 2
+  revision 3
 
   livecheck do
     url "https://archives.eyrie.org/software/perl/"
@@ -11,21 +11,33 @@ class Pod2man < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "c5247c23c7441d746207c85b3e2f76f83c4149fcc4ad3bdefa5e41f609820fca"
-    sha256 cellar: :any_skip_relocation, big_sur:       "c5247c23c7441d746207c85b3e2f76f83c4149fcc4ad3bdefa5e41f609820fca"
-    sha256 cellar: :any_skip_relocation, catalina:      "6a46194855951dff9cd5040fb70725947b65a1433868d6fda21fcc6262b598ae"
-    sha256 cellar: :any_skip_relocation, mojave:        "6a46194855951dff9cd5040fb70725947b65a1433868d6fda21fcc6262b598ae"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "0e7cb6c3eaef1bc68a05ae03014f17a27dd70b333647b023df33f5f1cedc9a72"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "342ed828eb46d48381a7a3273a1858cccb0818f893bf1c384508842c49864fc8"
+    sha256 cellar: :any_skip_relocation, big_sur:       "53e3c8c329177d03b2894745c6d679fa752f828daafaff0ef2bc10800b6dbcf5"
+    sha256 cellar: :any_skip_relocation, catalina:      "ca1fb674f4d5ffd23945ec684b4ba2ca48241cb5e273fbd4b4007753277e2e4a"
+    sha256 cellar: :any_skip_relocation, mojave:        "09c560e15e46d7eb4836ced38a0eea6900ddce5d5230a86578c33ed61328ce5b"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "7b3ea41aefedf23b069698af0549f3d2c7249293cfc205f60d036a53a7eade83" # linuxbrew-core
   end
 
-  keg_only :provided_by_macos
+  keg_only "perl ships with pod2man"
+
+  resource "Pod::Simple" do
+    url "https://cpan.metacpan.org/authors/id/K/KH/KHW/Pod-Simple-3.42.tar.gz"
+    sha256 "a9fceb2e0318e3786525e6bf205e3e143f0cf3622740819cab5f058e657e8ac5"
+  end
 
   def install
+    resource("Pod::Simple").stage do
+      system "perl", "Makefile.PL", "INSTALL_BASE=#{libexec}"
+      system "make"
+      system "make", "install"
+    end
+    ENV.prepend_path "PERL5LIB", libexec/"lib/perl5"
+
     system "perl", "Makefile.PL", "INSTALL_BASE=#{prefix}",
                    "INSTALLSITEMAN1DIR=#{man1}", "INSTALLSITEMAN3DIR=#{man3}"
     system "make"
     system "make", "install"
-    bin.env_script_all_files libexec/"bin", PERL5LIB: "#{lib}/perl5"
+    bin.env_script_all_files libexec/"bin", PERL5LIB: "#{lib}/perl5:#{libexec}/lib/perl5"
   end
 
   test do

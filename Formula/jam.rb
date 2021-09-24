@@ -10,8 +10,15 @@ class Jam < Formula
     sha256 cellar: :any_skip_relocation, catalina:      "0f2f2b4cac48c2ef9b11d86867c4e9d941a41a582754bfc470da25a7174dde9f"
     sha256 cellar: :any_skip_relocation, mojave:        "c19a32cbe0ffa2e7d2d826ee542a74307ca29b34ba28dc5ec6aea7ff7a9127c1"
     sha256 cellar: :any_skip_relocation, high_sierra:   "2927cebface8a3cbc00a23e7badb9e1676fda9bae282e78a1772b99aafba5014"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "65809672791ef02bb801fa26debd7020dde8f18d23f4fc4434c3d304bdae865b"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "65809672791ef02bb801fa26debd7020dde8f18d23f4fc4434c3d304bdae865b" # linuxbrew-core
   end
+
+  # The "Jam Documentation" page has a banner stating:
+  # "Perforce is no longer actively contributing to the Jam Open Source project.
+  # The last Perforce release of Jam was version 2.6 in August of 2014. We will
+  # keep the Perforce-controlled links and information posted here available
+  # until further notice."
+  deprecate! date: "2021-07-10", because: :unmaintained
 
   conflicts_with "ftjam", because: "both install a `jam` binary"
 

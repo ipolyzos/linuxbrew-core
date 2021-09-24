@@ -1,17 +1,13 @@
 class Numcpp < Formula
   desc "C++ implementation of the Python Numpy library"
   homepage "https://dpilger26.github.io/NumCpp"
-  url "https://github.com/dpilger26/NumCpp/archive/Version_2.4.1.tar.gz"
-  sha256 "e497f66bc3e827e34b9f5ba4ee90d1b4340d551f45af499d630cc3dd191c4894"
+  url "https://github.com/dpilger26/NumCpp/archive/Version_2.5.1.tar.gz"
+  sha256 "0677907a90e96a468a9ea4e702940833570c2419d9a822724ee708dddd3c422e"
   license "MIT"
-  head "https://github.com/dpilger26/NumCpp.git"
+  head "https://github.com/dpilger26/NumCpp.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "fac92d42c82fc628b8441e1ed25fc156e7f96cbc4b438b74ecd396b0a5e2cf06"
-    sha256 cellar: :any_skip_relocation, big_sur:       "07e219c25f8ddd7b80e801b1f37cb1305af54fb907ab3f0c53bf66f4a8610c4c"
-    sha256 cellar: :any_skip_relocation, catalina:      "ccbd4b3aa14f6a509aaf214162c3f1582acf374cafa9e2c8e9c4f1e3f0e11247"
-    sha256 cellar: :any_skip_relocation, mojave:        "26c19afedc51463577541ce31f7641fa545bc73d61c7a563322281b0da7206e9"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "2c1a6f7aafe34045fde4a4da9d6548ee3ab0ada66411c1660d018f826d5f098e"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "30e34c341937cf32dbf3756cd60b0e1060713fd8df15801639e00b5ae2a4913d" # linuxbrew-core
   end
 
   depends_on "cmake" => :build

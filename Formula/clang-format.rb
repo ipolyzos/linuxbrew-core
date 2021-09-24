@@ -7,12 +7,12 @@ class ClangFormat < Formula
   head "https://github.com/llvm/llvm-project.git", branch: "main"
 
   stable do
-    url "https://github.com/llvm/llvm-project/releases/download/llvmorg-12.0.0/llvm-12.0.0.src.tar.xz"
-    sha256 "49dc47c8697a1a0abd4ee51629a696d7bfe803662f2a7252a3b16fc75f3a8b50"
+    url "https://github.com/llvm/llvm-project/releases/download/llvmorg-12.0.1/llvm-12.0.1.src.tar.xz"
+    sha256 "7d9a8405f557cefc5a21bf5672af73903b64749d9bc3a50322239f56f34ffddf"
 
     resource "clang" do
-      url "https://github.com/llvm/llvm-project/releases/download/llvmorg-12.0.0/clang-12.0.0.src.tar.xz"
-      sha256 "e26e452e91d4542da3ebbf404f024d3e1cbf103f4cd110c26bf0a19621cca9ed"
+      url "https://github.com/llvm/llvm-project/releases/download/llvmorg-12.0.1/clang-12.0.1.src.tar.xz"
+      sha256 "6e912133bcf56e9cfe6a346fa7e5c52c2cde3e4e48b7a6cc6fcc7c75047da45f"
     end
   end
 
@@ -27,16 +27,19 @@ class ClangFormat < Formula
     sha256 cellar: :any_skip_relocation, big_sur:       "a919653359246062c53f2ce6a7a3fd822e71b1d65c4f75bd20a361bc7264b139"
     sha256 cellar: :any_skip_relocation, catalina:      "e18818a9555c17fffdf416deb5e16526f4b7fb07ec684d5dda22b6b8b1fd7c4e"
     sha256 cellar: :any_skip_relocation, mojave:        "2ce598eddb5655854cc4a0e88591ced06b0a2d5bab96497c0b7081f5a2b0dd74"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "383d62c5cf383052a8c1489a252d76b4931650cc4906e21cdc209813484fc4d8" # linuxbrew-core
   end
 
   depends_on "cmake" => :build
   depends_on "ninja" => :build
-  depends_on "subversion" => :build
-  depends_on :macos # See caveats
 
   uses_from_macos "libxml2"
   uses_from_macos "ncurses"
   uses_from_macos "zlib"
+
+  on_linux do
+    keg_only "it conflicts with llvm"
+  end
 
   def install
     if build.head?
@@ -58,14 +61,6 @@ class ClangFormat < Formula
     bin.install llvmpath/"build/bin/clang-format"
     bin.install llvmpath/"tools/clang/tools/clang-format/git-clang-format"
     (share/"clang").install Dir[llvmpath/"tools/clang/tools/clang-format/clang-format*"]
-  end
-
-  def caveats
-    unless OS.mac?
-      <<~EOS
-        Please use the clang-format executable provided by the llvm formulae instead.
-      EOS
-    end
   end
 
   test do

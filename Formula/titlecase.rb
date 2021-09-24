@@ -4,9 +4,7 @@ class Titlecase < Formula
   url "https://github.com/ap/titlecase/archive/v1.004.tar.gz"
   sha256 "fbaafdb66ab4ba26f1f03fa292771d146c050fff0a3a640e11314ace322c2d92"
   license "MIT"
-  head "https://github.com/ap/titlecase.git"
-
-  bottle :unneeded
+  head "https://github.com/ap/titlecase.git", branch: "master"
 
   def install
     bin.install "titlecase"

@@ -2,7 +2,7 @@ class Freeswitch < Formula
   desc "Telephony platform to route various communication protocols"
   homepage "https://freeswitch.org"
   license "MPL-1.1"
-  revision 3
+  revision 4
   head "https://github.com/signalwire/freeswitch.git"
 
   stable do
@@ -44,10 +44,10 @@ class Freeswitch < Formula
   end
 
   bottle do
-    sha256 arm64_big_sur: "119079ed092cc07ff5cdedfd8006707720817f4be61a15b450f509a977e027d9"
-    sha256 big_sur:       "19e0a370f2fe60614b445320390d5ebe50394888656504b3f1e880ff25c86ba5"
-    sha256 catalina:      "fa3a8be21c9e496242bdb03328bc00c082482e23fab48dad194b2c4fa73e5936"
-    sha256 mojave:        "a0be2b29eda5a4343b3dc7f244af901ddfa7e6f790da6a49d16ea4ac056c1cc9"
+    sha256 arm64_big_sur: "35b3037b7963136bb45b8b520869a78c25a6cf5720f4662e8f0abe48f6f126c6"
+    sha256 big_sur:       "8c0b4e5a7b39262a5e49d4cd292037a7b609fb3eb37cb7429107f36d73aa4a11"
+    sha256 catalina:      "8e5b55e233f7fa78e69debec11374f9d548abf215b4f6e4ee470a975a0caa74b"
+    sha256 mojave:        "148bdaee852aef6d3183d7be15a78b52776b0159db7e65c074065df20d62a7bd"
   end
 
   depends_on "autoconf" => :build
@@ -151,6 +151,10 @@ class Freeswitch < Formula
   end
 
   def install
+    # Fix build error "use of undeclared identifier 'NSIG'"
+    # Remove when fixed upstream: https://github.com/signalwire/freeswitch/issues/1145
+    ENV.append_to_cflags "-D_DARWIN_C_SOURCE" if OS.mac?
+
     resource("spandsp").stage do
       system "./bootstrap.sh"
       system "./configure", "--disable-debug",
@@ -206,31 +210,9 @@ class Freeswitch < Formula
     end
   end
 
-  plist_options manual: "freeswitch -nc -nonat"
-
-  def plist
-    <<~EOS
-      <?xml version="1.0" encoding="UTF-8"?>
-      <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-      <plist version="1.0">
-      <dict>
-        <key>KeepAlive</key>
-          <true/>
-        <key>Label</key>
-          <string>#{plist_name}</string>
-        <key>ProgramArguments</key>
-          <array>
-            <string>#{opt_bin}/freeswitch</string>
-            <string>-nc</string>
-            <string>-nonat</string>
-          </array>
-        <key>RunAtLoad</key>
-          <true/>
-        <key>ServiceIPC</key>
-          <true/>
-      </dict>
-      </plist>
-    EOS
+  service do
+    run [opt_bin/"freeswitch", "-nc", "-nonat"]
+    keep_alive true
   end
 
   test do

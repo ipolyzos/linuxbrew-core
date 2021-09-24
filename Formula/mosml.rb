@@ -3,7 +3,7 @@ class Mosml < Formula
   homepage "https://mosml.org/"
   url "https://github.com/kfl/mosml/archive/ver-2.10.1.tar.gz"
   sha256 "fed5393668b88d69475b070999b1fd34e902591345de7f09b236824b92e4a78f"
-  license "GPL-2.0"
+  license "GPL-2.0-or-later"
 
   bottle do
     sha256 arm64_big_sur: "0163ff06ef4997b1ab8eb1e55463475fc78f89ad4dd795d7ff4caeaca932a901"
@@ -14,7 +14,7 @@ class Mosml < Formula
     sha256 sierra:        "297c05c55f2784f3b934a2fdb3ec2f91d8b11a06453c8649c1f6562cefdc089e"
     sha256 el_capitan:    "5dae62ca2034ba70844d684111cec58561895eac39db3177d439747512206002"
     sha256 yosemite:      "3a0289ba1b1a56cf3c2a598ccbee9b1739c7c35628a173dd00bd2f20fead6703"
-    sha256 x86_64_linux:  "7610a6dbe2f84b3aef14f555f2aa28ef93bb95a5f676b7c1ce34bd670b951e61"
+    sha256 x86_64_linux:  "7610a6dbe2f84b3aef14f555f2aa28ef93bb95a5f676b7c1ce34bd670b951e61" # linuxbrew-core
   end
 
   depends_on "gmp"
@@ -27,6 +27,11 @@ class Mosml < Formula
   end
 
   test do
-    system "#{bin}/mosml", "-P full"
+    require "pty"
+
+    _, w, = PTY.spawn bin/"mosml"
+    w.write "quit();\n"
+
+    assert_equal "I don't know what to do with file \"foo\", ignored", shell_output("#{bin}/mosmlc foo 2>&1").strip
   end
 end

@@ -1,11 +1,10 @@
 class Go < Formula
   desc "Open source programming language to build simple/reliable/efficient software"
   homepage "https://golang.org"
-  url "https://golang.org/dl/go1.16.3.src.tar.gz"
-  mirror "https://fossies.org/linux/misc/go1.16.3.src.tar.gz"
-  sha256 "b298d29de9236ca47a023e382313bcc2d2eed31dfa706b60a04103ce83a71a25"
+  url "https://golang.org/dl/go1.17.1.src.tar.gz"
+  mirror "https://fossies.org/linux/misc/go1.17.1.src.tar.gz"
+  sha256 "49dc08339770acd5613312db8c141eaf61779995577b89d93b541ef83067e5b1"
   license "BSD-3-Clause"
-  revision 1 unless OS.mac?
   head "https://go.googlesource.com/go.git"
 
   livecheck do
@@ -14,11 +13,11 @@ class Go < Formula
   end
 
   bottle do
-    sha256 arm64_big_sur: "e7c1efdd09e951eb46d01a3200b01e7fa55ce285b75470051be7fef34f4233ce"
-    sha256 big_sur:       "ea37f33fd27369612a3e4e6db6adc46db0e8bdf6fac1332bf51bafaa66d43969"
-    sha256 catalina:      "69c28f5e60612801c66e51e93d32068f822b245ab83246cb6cb374572eb59e15"
-    sha256 mojave:        "bf1e90ed1680b8ee1acb49f2f99426c8a8ac3e49efd63c7f3b41e57e7214dd19"
-    sha256 x86_64_linux:  "5897db2f754dd7889b7ed262db7fc2b5c1d43e4148d66f1c5fbedb16c4e4fa55"
+    sha256 arm64_big_sur: "d0108e9df0041587d852d63e5811e4b0a4ae498309cf7f9dd95463ddaa581d48"
+    sha256 big_sur:       "d1db2f29f84397225afccd674eef9b6c9e5a591a9372aab195b5c463d8ad6421"
+    sha256 catalina:      "15f1890939c34f3eeb841c09c6b74c23c43450337d50a3f0963493a3a861b7f9"
+    sha256 mojave:        "0299a79c3c05259256f5b4f10e532a3b2057423a93024f87ac99a174ec2e9d9f"
+    sha256 x86_64_linux:  "65e57b46322ebb9957754293cc66012579d93a7795b286bd2f267758f8006d7b" # linuxbrew-core
   end
 
   # Don't update this unless this version cannot bootstrap the new version.
@@ -53,7 +52,6 @@ class Go < Formula
 
     (buildpath/"pkg/obj").rmtree
     rm_rf "gobootstrap" # Bootstrap not required beyond compile.
-
     libexec.install Dir["*"]
     bin.install_symlink Dir[libexec/"bin/go*"]
 
@@ -61,7 +59,9 @@ class Go < Formula
 
     # Remove useless files.
     # Breaks patchelf because folder contains weird debug/test files
-    rm_rf Dir[libexec/"src/debug/elf/testdata"]
+    (libexec/"src/debug/elf/testdata").rmtree
+    # Binaries built for an incompatible architecture
+    (libexec/"src/runtime/pprof/testdata").rmtree
   end
 
   test do

@@ -1,17 +1,17 @@
 class Inetutils < Formula
   desc "GNU utilities for networking"
   homepage "https://www.gnu.org/software/inetutils/"
-  url "https://ftp.gnu.org/gnu/inetutils/inetutils-2.0.tar.xz"
-  mirror "https://ftpmirror.gnu.org/inetutils/inetutils-2.0.tar.xz"
-  sha256 "e573d566e55393940099862e7f8994164a0ed12f5a86c3345380842bdc124722"
+  url "https://ftp.gnu.org/gnu/inetutils/inetutils-2.2.tar.xz"
+  mirror "https://ftpmirror.gnu.org/inetutils/inetutils-2.2.tar.xz"
+  sha256 "d547f69172df73afef691a0f7886280fd781acea28def4ff4b4b212086a89d80"
   license "GPL-3.0-or-later"
 
   bottle do
-    sha256 cellar: :any, arm64_big_sur: "82b61f26f0dc565334619a3ca34994cfea99088e25db94bd15706037a2c49b61"
-    sha256 cellar: :any, big_sur:       "31f0fdd6e2bdc5ed3e25d46aa8c47c2e0d6c9fe13011fe4c388388eead919676"
-    sha256 cellar: :any, catalina:      "8fd3005c6e2914ee9d3d2f513bfa903827a94a74a232f1553d9a113aba1eddc2"
-    sha256 cellar: :any, mojave:        "85a50b1e624497625bea4c836be1005dfd60c11814778e09153acf256a9e3992"
-    sha256               x86_64_linux:  "06a921eedb9bd9d64fd90e30ed86c38e8066d408cfce9be20c2464fe3da84c58"
+    sha256 arm64_big_sur: "40b658c6c497bff3c916956203f971517a3c1d0f6bf46f0d675ec25c888fffae"
+    sha256 big_sur:       "4f4ded12f0164096243102d086f95d54ed6def282b758d3b69a88133b3fc2f3d"
+    sha256 catalina:      "274d56c19d93ffb4c32f3a896872cf78222a28bee436ae363c35455d279f4ed7"
+    sha256 mojave:        "077af2b47b07e9c4d2f3f574561ba6d6c90e879e93a4be0b2454a9e13b7842ea"
+    sha256 x86_64_linux:  "d2ef16a78009201d1b6a594cc44bc8fc44c6a730b91c96e23588f1c71de6d234" # linuxbrew-core
   end
 
   depends_on "libidn"
@@ -34,13 +34,11 @@ class Inetutils < Formula
       --with-idn
     ]
 
-    on_macos do
-      args << "--program-prefix=g"
-    end
+    args << "--program-prefix=g" if OS.mac?
     system "./configure", *args
-    system "make", "install"
+    system "make", "SUIDMODE=", "install"
 
-    on_macos do
+    if OS.mac?
       # Binaries not shadowing macOS utils symlinked without 'g' prefix
       noshadow.each do |cmd|
         bin.install_symlink "g#{cmd}" => cmd

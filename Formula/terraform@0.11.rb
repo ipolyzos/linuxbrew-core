@@ -1,24 +1,28 @@
 class TerraformAT011 < Formula
   desc "Tool to build, change, and version infrastructure"
   homepage "https://www.terraform.io/"
-  url "https://github.com/hashicorp/terraform/archive/v0.11.14.tar.gz"
-  sha256 "50b75c94c4d3bfe44cfc12c740126747b6b34c014602777154356caa85a783f4"
+  url "https://github.com/hashicorp/terraform/archive/v0.11.15.tar.gz"
+  sha256 "e0f8c5549d45d133f86570c7e5083af3eb1ce64aa0eeeaa5b7c5fa5221cfdd4a"
   license "MPL-2.0"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "c04e927708a3c11be644b96295d2f2cdd5ea0452398e54ea5240fb7b4900d10e"
-    sha256 cellar: :any_skip_relocation, big_sur:       "6fe2975cab4a9a85cf75db6739bfd376db4df944f85078f73fba22da291bfb91"
-    sha256 cellar: :any_skip_relocation, catalina:      "e6db9ebe826e856ff9bb10ffcb8885ce9bf1535ced8c3b477ae48d64c0c99de2"
-    sha256 cellar: :any_skip_relocation, mojave:        "4460e332118c477f7389093d533e63752469973487275f1d656a80974d723888"
-    sha256 cellar: :any_skip_relocation, high_sierra:   "a7b28af5ba3c9f06614eef3ca71653fbfacc3ff62abbaa75f4c187f996584af8"
-    sha256 cellar: :any_skip_relocation, sierra:        "eb5d3500ed06ce55c984e79a317050b4483b25774bf6a77147dfdb2c3746fa25"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "4925cac7c3c82ba0f9d80eee656f95db88d2f814b4a742db21bceafb784530c9"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "a9adc546789d09e4b62696954cf28e85dc9e78043950e80a45f77cccbb88a1a6"
+    sha256 cellar: :any_skip_relocation, big_sur:       "66f418d06a3fe1d3ad02e6d77815992940fd712f1d8f6e9dcbefd82fec49b75a"
+    sha256 cellar: :any_skip_relocation, catalina:      "af2485736328e4ef93a6fbf79d7e6dd4e1c9a01597abd22ee20218d1fe4cc762"
+    sha256 cellar: :any_skip_relocation, mojave:        "1b3e7e7126b9410185ed5eae937bb0f814f8eb062d9c09d7e72d91b96d51b228"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "de976a61407f9416e2c43f83fe8f294efa0d518c965aaa0d1f57813ad4fa4070" # linuxbrew-core
   end
 
   keg_only :versioned_formula
 
-  depends_on "go" => :build
+  deprecate! date: "2021-04-14", because: :unsupported
+
+  depends_on "go@1.16" => :build
   depends_on "gox" => :build
+
+  on_linux do
+    depends_on "zip" => :build
+  end
 
   def install
     ENV["GOPATH"] = buildpath
@@ -32,9 +36,10 @@ class TerraformAT011 < Formula
       ENV.delete "AWS_ACCESS_KEY"
       ENV.delete "AWS_SECRET_KEY"
 
-      os = "darwin"
-      on_linux do
-        os = "linux"
+      os = if OS.mac?
+        "darwin"
+      else
+        "linux"
       end
       ENV["XC_OS"] = os
       ENV["XC_ARCH"] = "amd64"

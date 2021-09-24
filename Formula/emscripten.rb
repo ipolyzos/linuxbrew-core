@@ -3,8 +3,8 @@ require "language/node"
 class Emscripten < Formula
   desc "LLVM bytecode to JavaScript compiler"
   homepage "https://emscripten.org/"
-  url "https://github.com/emscripten-core/emscripten/archive/2.0.17.tar.gz"
-  sha256 "f9a7e8868c16f850755ace69e971f278a44433c0eec9e74496ee22a3bcd9c64e"
+  url "https://github.com/emscripten-core/emscripten/archive/2.0.30.tar.gz"
+  sha256 "06efb55a039c6512e95192c3924bdfa4d249fdde9a91a0029e46dda6a36cb4e1"
   license all_of: [
     "Apache-2.0", # binaryen
     "Apache-2.0" => { with: "LLVM-exception" }, # llvm
@@ -18,10 +18,11 @@ class Emscripten < Formula
   end
 
   bottle do
-    sha256 cellar: :any, arm64_big_sur: "d590d9cdacc2fafd7deb7eefbe80aef4e834ff6f563b2a2df259bad40511fbb9"
-    sha256 cellar: :any, big_sur:       "e614332099243448777653683f04baa268e9a140c8d04f21c646e12e27420b15"
-    sha256 cellar: :any, catalina:      "287d8edf6e0603f924dfa92ea9f74fdd0265106de615de7e6e97f97d40c41d90"
-    sha256 cellar: :any, mojave:        "bd55d847a64420c96ed42c5b45fdbdcd13ed451db2a2a584bb73cb146756a173"
+    sha256 cellar: :any,                 arm64_big_sur: "baded7e41a057c18182d7fd33eb8ad9f3ee26d945f16e834e9a5fe6395bb52fb"
+    sha256 cellar: :any,                 big_sur:       "5814c4a30b5c5b44658fe25affdd447d2e8020a4092656fa56f5337dcf8d8881"
+    sha256 cellar: :any,                 catalina:      "59a8d43ae21dd4942eb65fc77658568acef5a50960371355e85c2f39a2503deb"
+    sha256 cellar: :any,                 mojave:        "c29d57a7745b55a45ca6098637d4cc8961171fed89b9f0970f23c047807c327b"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "72e54f9cfdf27399c80255e215d9daf460f55c3e0c1b938f6a191112a849f859" # linuxbrew-core
   end
 
   depends_on "cmake" => :build
@@ -29,22 +30,35 @@ class Emscripten < Formula
   depends_on "python@3.9"
   depends_on "yuicompressor"
 
+  # OpenJDK is needed as a dependency on Linux and ARM64 for google-closure-compiler,
+  # an emscripten dependency, because the native GraalVM image will not work.
+  on_macos do
+    depends_on "openjdk" if Hardware::CPU.arm?
+  end
+
+  on_linux do
+    depends_on "gcc"
+    depends_on "openjdk"
+  end
+
+  fails_with gcc: "5"
+
   # Use emscripten's recommended binaryen revision to avoid build failures.
   # See llvm resource below for instructions on how to update this.
   resource "binaryen" do
     url "https://github.com/WebAssembly/binaryen.git",
-        revision: "67094a4a9b013a9705bcbf49ec7e0e8ab744389c"
+        revision: "5b90e0332253ee879d16fbc29d391ad75734ecf5"
   end
 
   # emscripten needs argument '-fignore-exceptions', which is only available in llvm >= 12
   # To find the correct llvm revision, find a corresponding commit at:
-  # https://github.com/emscripten-core/emsdk/blob/master/emscripten-releases-tags.txt
+  # https://github.com/emscripten-core/emsdk/blob/main/emscripten-releases-tags.txt
   # Then take this commit and go to:
   # https://chromium.googlesource.com/emscripten-releases/+/<commit>/DEPS
   # Then use the listed llvm_project_revision for the resource below.
   resource "llvm" do
     url "https://github.com/llvm/llvm-project.git",
-        revision: "3b677b81cec7b3c5132aee8fccc30252d87deb69"
+        revision: "095bbc3a5a75f2e576b6efeadae34aaca693084e"
   end
 
   def install
@@ -121,11 +135,22 @@ class Emscripten < Formula
     cd libexec do
       system "npm", "install", *Language::Node.local_npm_install_args
       rm_f "node_modules/ws/builderror.log" # Avoid references to Homebrew shims
+      # Delete native GraalVM image in incompatible platforms.
+      if OS.linux?
+        rm_rf "node_modules/google-closure-compiler-linux"
+      elsif Hardware::CPU.arm?
+        rm_rf "node_modules/google-closure-compiler-osx"
+      end
     end
+
+    # Add JAVA_HOME to env_script on ARM64 macOS and Linux, so that google-closure-compiler
+    # can find OpenJDK
+    emscript_env = { PYTHON: Formula["python@3.9"].opt_bin/"python3" }
+    emscript_env.merge! Language::Java.overridable_java_home_env if OS.linux? || Hardware::CPU.arm?
 
     %w[em++ em-config emar emcc emcmake emconfigure emlink.py emmake
        emranlib emrun emscons].each do |emscript|
-      (bin/emscript).write_env_script libexec/emscript, PYTHON: Formula["python@3.9"].opt_bin/"python3"
+      (bin/emscript).write_env_script libexec/emscript, emscript_env
     end
   end
 

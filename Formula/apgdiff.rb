@@ -10,7 +10,7 @@ class Apgdiff < Formula
     depends_on "ant" => :build
   end
 
-  bottle :unneeded
+  depends_on "openjdk"
 
   def install
     jar = "apgdiff-#{version}.jar"

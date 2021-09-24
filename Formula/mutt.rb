@@ -10,16 +10,16 @@
 class Mutt < Formula
   desc "Mongrel of mail user agents (part elm, pine, mush, mh, etc.)"
   homepage "http://www.mutt.org/"
-  url "https://bitbucket.org/mutt/mutt/downloads/mutt-2.0.6.tar.gz"
-  sha256 "81e31c45895fd624747f19106aa2697d2aa135049ff2e9e9db0a6ed876bcb598"
+  url "https://bitbucket.org/mutt/mutt/downloads/mutt-2.1.3.tar.gz"
+  sha256 "ef759cc94b921b099a3ee88085d384fd3564c97f511e907bc83cf9812dd5e47c"
   license "GPL-2.0-or-later"
 
   bottle do
-    sha256 arm64_big_sur: "4a7f2f0f6eac2d4327a114186b859fc58a81ed6aa5486e55f71e6145827cc56c"
-    sha256 big_sur:       "c0cbac96c69bd1eaa48ea2866c43a826adacac9ed0a15f6b344468bdf8cedf65"
-    sha256 catalina:      "983b671ee13f8ece96d2cef1bfab9ad6ed186188ed52ff8e8bbfb58152b85b07"
-    sha256 mojave:        "4349f6feee9e57b8c0c06d42e6def4244f130ff2a350b871600f0edc6ffe269e"
-    sha256 x86_64_linux:  "ceb2e10e206b9b6ff79ff04720b6ea36bce7eaf616058ffca7981a4a65dbd195"
+    sha256 arm64_big_sur: "c70db2e71d8bf54e10c7513002143fca8adbb76e007fa58c7181ee98f89fe930"
+    sha256 big_sur:       "9ddba3353c0f8e3622d0aa71246a0a4fb044675ec3ed8d80b0ee3ddd2347484d"
+    sha256 catalina:      "cd3dcd087d082cc773b91e9d0fe0212911ff58e151ae94cbd0d8af15a8e90f5b"
+    sha256 mojave:        "0dca11043abfbb86f140a6ffea0cce0a72c7daf3f0463d5d4b28efa1ce1c9ecd"
+    sha256 x86_64_linux:  "7d997a85f2de7bd36fb70b37e98814dcbe479abc44d29fd67ad69df600019c34" # linuxbrew-core
   end
 
   head do
@@ -37,12 +37,12 @@ class Mutt < Formula
   depends_on "tokyo-cabinet"
 
   uses_from_macos "bzip2"
+  uses_from_macos "cyrus-sasl"
   uses_from_macos "krb5"
   uses_from_macos "ncurses"
   uses_from_macos "zlib"
 
-  conflicts_with "tin",
-    because: "both install mmdf.5 and mbox.5 man pages"
+  conflicts_with "tin", because: "both install mmdf.5 and mbox.5 man pages"
 
   def install
     user_in_mail_group = Etc.getgrnam("mail").mem.include?(ENV["USER"])
@@ -59,7 +59,7 @@ class Mutt < Formula
       --enable-sidebar
       --enable-smtp
       --with-gss
-      #{OS.mac? ? "--with-sasl" : "--with-sasl2"}
+      --with-sasl
       --with-ssl=#{Formula["openssl@1.1"].opt_prefix}
       --with-tokyocabinet
       --enable-gpgme

@@ -1,27 +1,27 @@
 class Libsoup < Formula
   desc "HTTP client/server library for GNOME"
   homepage "https://wiki.gnome.org/Projects/libsoup"
-  url "https://download.gnome.org/sources/libsoup/2.72/libsoup-2.72.0.tar.xz"
-  sha256 "170c3f8446b0f65f8e4b93603349172b1085fb8917c181d10962f02bb85f5387"
+  url "https://download.gnome.org/sources/libsoup/2.74/libsoup-2.74.0.tar.xz"
+  sha256 "33b1d4e0d639456c675c227877e94a8078d731233e2d57689c11abcef7d3c48e"
   license "LGPL-2.0-or-later"
+  revision 1
 
   bottle do
-    sha256                               arm64_big_sur: "4ba31ecd333f8be6a5cb4eed23715fce9b478d79345bf51b88e172a2db0fb496"
-    sha256                               big_sur:       "b135c1b3cf8a49f15afdb9d7c354b9175de2561c20a3e4ef8b91a8234f81fbe3"
-    sha256                               catalina:      "b7f09cfabd4ef0210d181e54e74f2cff33518df0c81bc9e27764454e54cb6243"
-    sha256                               mojave:        "14a5f08043cacb9f68a9f5d48e0175397c81184621fbcbec871aa764241509a6"
-    sha256                               high_sierra:   "78a481740fc494934fdbafbd25f8c7141f57cd61d1ff713682fe3a5a4b91b840"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "932baa74d3ce7b747db49b73b714a0e3191b9d89dc6f589c741c7ecb088ef494"
+    sha256 arm64_big_sur: "18fb8d1e8cec64c10c52a3ded030d3fe4654b731f8b02b20dd8ffec3341d2f6e"
+    sha256 big_sur:       "8700bd873ac856454488b0d939097325223d1057ca26115b3963f3c134007dc5"
+    sha256 catalina:      "eb35014ddd40741eb402417c27e4c6f19d2e542068bc92cc21c5e109406f444e"
+    sha256 mojave:        "4820560eb5d36deb401ee874ba94fa5be831c32534d725ec9519b06f29366b7e"
+    sha256 x86_64_linux:  "25ea8679e3d63aacf2ea6c1760635b130397997c60333ee691ba9c7565cc0933" # linuxbrew-core
   end
 
   depends_on "gobject-introspection" => :build
   depends_on "meson" => :build
   depends_on "ninja" => :build
   depends_on "pkg-config" => :build
+  depends_on "vala" => :build
   depends_on "glib-networking"
   depends_on "gnutls"
   depends_on "libpsl"
-  depends_on "vala"
 
   uses_from_macos "krb5"
   uses_from_macos "libxml2"

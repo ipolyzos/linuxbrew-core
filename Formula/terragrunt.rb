@@ -1,23 +1,25 @@
 class Terragrunt < Formula
   desc "Thin wrapper for Terraform e.g. for locking state"
   homepage "https://terragrunt.gruntwork.io/"
-  url "https://github.com/gruntwork-io/terragrunt/archive/v0.28.24.tar.gz"
-  sha256 "4d50d457ceedcf4c03b2cabf118f911b81ac7923fe9a1a8cacc02a1bfe107613"
+  url "https://github.com/gruntwork-io/terragrunt/archive/v0.32.3.tar.gz"
+  sha256 "ccd223562f849f3d81829e33d4fd2fc89df20b3dfe9aaa9fb3d5ff63ee21dd89"
   license "MIT"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "bd9bb4e64091e7c3c5be27c1dffaa21168b48ebddae37e6d265cf807f237dbf5"
-    sha256 cellar: :any_skip_relocation, big_sur:       "57b2047ef3bbe18d0fc07b57334c2d9ac258a1e2b5fdf052b0f3527e8808ffa5"
-    sha256 cellar: :any_skip_relocation, catalina:      "8cd17741cd2928b7671d5ce1e67e708f517fada4faf6b1cf3ad14fcc24e7b29a"
-    sha256 cellar: :any_skip_relocation, mojave:        "5ec2435dfa385d12a47f94560ea9e4af35e25dbfe0da931d2427d007108a1174"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "7cceef8e66ccc8c8397734c900149e98d2e5995e2b3764965c5bc952b89c8c66"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "29cf8123fbb8e1b5ffde6371c3b30e9583f2b6a67362626c9c8788e77641da6e"
+    sha256 cellar: :any_skip_relocation, big_sur:       "4bfa8430f334c44d8ec076bc62117de81c2bea90e49a64d51d634208d6000359"
+    sha256 cellar: :any_skip_relocation, catalina:      "fbde752d5234eb30e7fc20d226ecc92b7f8b05d89bac09d11965dee339e727fa"
+    sha256 cellar: :any_skip_relocation, mojave:        "2786af87c340f0a404530b1eb0d80e73e71618af4b316ef01572b0d02c9504e7"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "aed92b9dcce718d1f66e5c8870d72efb85064a754420922547ce54a0b41e9220" # linuxbrew-core
   end
 
   depends_on "go" => :build
   depends_on "terraform"
 
+  conflicts_with "tgenv", because: "tgenv symlinks terragrunt binaries"
+
   def install
-    system "go", "build", "-ldflags", "-s -w -X main.VERSION=v#{version}", *std_go_args
+    system "go", "build", *std_go_args(ldflags: "-s -w -X main.VERSION=v#{version}")
   end
 
   test do

@@ -5,7 +5,7 @@ class Abcde < Formula
   sha256 "046cd0bba78dd4bbdcbcf82fe625865c60df35a005482de13a6699c5a3b83124"
   license "GPL-2.0-or-later"
   revision 1
-  head "https://git.einval.com/git/abcde.git"
+  head "https://git.einval.com/git/abcde.git", branch: "master"
 
   bottle do
     sha256 cellar: :any, arm64_big_sur: "4240ff000419b4ca9c0d275d70fccb10255ea17718906768892ba3a2d7ecb444"
@@ -13,7 +13,7 @@ class Abcde < Formula
     sha256 cellar: :any, catalina:      "fa00c7fc4b6b4ab794439f619ba00961358a4e5684a0ae2412fbd78ba2497df1"
     sha256 cellar: :any, mojave:        "c2ef29d1b906767727d858047ddab9516f14c70073b30174a6222b1300446432"
     sha256 cellar: :any, high_sierra:   "2a81af2921befb14f0a96e66ebc3884bd33f8bab156f7dc27e2816a956d033cb"
-    sha256 cellar: :any, x86_64_linux:  "adfac2e87756e765daf44f8baf588b571d964fb87c73b14136023c18eb5c569c"
+    sha256 cellar: :any, x86_64_linux:  "adfac2e87756e765daf44f8baf588b571d964fb87c73b14136023c18eb5c569c" # linuxbrew-core
   end
 
   depends_on "pkg-config" => :build

@@ -1,21 +1,41 @@
 class Sqlmap < Formula
-  desc "Penetration testing for SQL injection and database servers"
-  homepage "http://sqlmap.org"
-  url "https://github.com/sqlmapproject/sqlmap/archive/1.5.4.tar.gz"
-  sha256 "5b86671338102e6f48761b2edd6b7b9db8280cdb788ca531df612ea7654d6743"
-  license "GPL-2.0-or-later"
-  head "https://github.com/sqlmapproject/sqlmap.git"
+  include Language::Python::Shebang
 
-  bottle :unneeded
+  desc "Penetration testing for SQL injection and database servers"
+  homepage "https://sqlmap.org"
+  url "https://github.com/sqlmapproject/sqlmap/archive/1.5.9.tar.gz"
+  sha256 "3e8516e268ffc6983ff522f7d5a73327e2ad0156c256d713ba046a4b7df3ef94"
+  license "GPL-2.0-or-later"
+  head "https://github.com/sqlmapproject/sqlmap.git", branch: "master"
+
+  bottle do
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "8520f1f0c04fda852d13d362803aacdf620cb774ca93b0216eb0e02a9487d9d3"
+    sha256 cellar: :any_skip_relocation, big_sur:       "85333509941be1b99beaa308b62fd05cd1ff156ed626f4137983f6409f890fce"
+    sha256 cellar: :any_skip_relocation, catalina:      "85333509941be1b99beaa308b62fd05cd1ff156ed626f4137983f6409f890fce"
+    sha256 cellar: :any_skip_relocation, mojave:        "85333509941be1b99beaa308b62fd05cd1ff156ed626f4137983f6409f890fce"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "166bb40f916355b31d46eaabb449ad018667e01c8ca41ca23184dc96d02855bd" # linuxbrew-core
+  end
+
+  depends_on "python@3.9"
+
+  uses_from_macos "sqlite" => :test
 
   def install
     libexec.install Dir["*"]
 
-    bin.install_symlink libexec/"sqlmap.py"
-    bin.install_symlink bin/"sqlmap.py" => "sqlmap"
+    files = [
+      libexec/"lib/core/dicts.py",
+      libexec/"lib/core/settings.py",
+      libexec/"lib/request/basic.py",
+      libexec/"thirdparty/magic/magic.py",
+    ]
+    inreplace files, "/usr/local", HOMEBREW_PREFIX
 
-    bin.install_symlink libexec/"sqlmapapi.py"
-    bin.install_symlink bin/"sqlmapapi.py" => "sqlmapapi"
+    %w[sqlmap sqlmapapi].each do |cmd|
+      rewrite_shebang detected_python_shebang, libexec/"#{cmd}.py"
+      bin.install_symlink libexec/"#{cmd}.py"
+      bin.install_symlink bin/"#{cmd}.py" => cmd
+    end
   end
 
   test do

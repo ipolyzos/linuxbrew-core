@@ -1,10 +1,9 @@
 class Ghostscript < Formula
   desc "Interpreter for PostScript and PDF"
   homepage "https://www.ghostscript.com/"
-  url "https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs9533/ghostpdl-9.53.3.tar.gz"
-  sha256 "96d04e4e464bddb062c1774ea895c4f1c1c94e6c4b62f5d32218ebd44dd65ba1"
+  url "https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs9540/ghostpdl-9.54.0.tar.gz"
+  sha256 "63e54cddcdf48ea296b6315353f86b8a622d4e46959b10d536297e006b85687b"
   license "AGPL-3.0-or-later"
-  revision 1
 
   # We check the tags from the `head` repository because the GitHub tags are
   # formatted ambiguously, like `gs9533` (corresponding to version 9.53.3).
@@ -14,16 +13,13 @@ class Ghostscript < Formula
   end
 
   bottle do
-    sha256 arm64_big_sur: "e1a01add6b5692ebfd462591db21dd029d081529fbe4df0c22af94945cea75cc"
-    sha256 big_sur:       "41a0d8e27c5760e29514fc659147c1d79bc57bc5a119b2ea267200889ce3b930"
-    sha256 catalina:      "cf523782d68ba11a936318c387118390277eb2edc3baeee21c7875cfea9857ad"
-    sha256 mojave:        "c0186d93036a506e70d6632c5c0e48b4f61613fb670f266509cde735e261710e"
-    sha256 x86_64_linux:  "721a5c701c7e9bb3a3b11cb3afd9cb19434f99b9625247b3066b2ea668a9cc34"
+    rebuild 1
+    sha256 x86_64_linux: "ef7d088cc989e381042288b50c73273c4fec91b4eb362436ab0bf35ab064c6ed" # linuxbrew-core
   end
 
   head do
     # Can't use shallow clone. Doing so = fatal errors.
-    url "https://git.ghostscript.com/ghostpdl.git", shallow: false
+    url "https://git.ghostscript.com/ghostpdl.git"
 
     depends_on "autoconf" => :build
     depends_on "automake" => :build
@@ -31,16 +27,28 @@ class Ghostscript < Formula
   end
 
   depends_on "pkg-config" => :build
+  depends_on "fontconfig"
+  depends_on "freetype"
+  depends_on "jbig2dec"
+  depends_on "jpeg"
+  depends_on "libidn"
+  depends_on "libpng"
   depends_on "libtiff"
+  depends_on "little-cms2"
+  depends_on "openjpeg"
+
+  uses_from_macos "expat"
+  uses_from_macos "zlib"
 
   on_macos do
     patch :DATA # Uncomment macOS-specific make vars
   end
 
   on_linux do
-    depends_on "fontconfig"
-    depends_on "libidn"
+    depends_on "gcc"
   end
+
+  fails_with gcc: "5"
 
   # https://sourceforge.net/projects/gs-fonts/
   resource "fonts" do
@@ -48,26 +56,32 @@ class Ghostscript < Formula
     sha256 "0eb6f356119f2e49b2563210852e17f57f9dcc5755f350a69a46a0d641a0c401"
   end
 
-  # Fix build on ARM Big Sur, updating config.{guess,sub}
-  # https://bugs.ghostscript.com/show_bug.cgi?id=703095
-  patch do
-    url "https://raw.githubusercontent.com/Homebrew/formula-patches/98c39e09/ghostscript/config.patch"
-    sha256 "155cf2ee5a498d441c3194ba3d75cb7812beaa3f507a72017174a884bf742862"
-  end
-
   def install
-    on_linux do
-      # Fixes: ./soobj/dxmainc.o: file not recognized: File truncated
-      ENV.deparallelize
-    end
+    # Fix vendored tesseract build error: 'cstring' file not found
+    # Remove when possible to link to system tesseract
+    ENV.append_to_cflags "-stdlib=libc++" if ENV.compiler == :clang
+
+    # Fix VERSION file incorrectly included as C++20 <version> header
+    # Remove when possible to link to system tesseract
+    rm "tesseract/VERSION"
+
+    # Delete local vendored sources so build uses system dependencies
+    rm_rf "expat"
+    rm_rf "freetype"
+    rm_rf "jbig2dec"
+    rm_rf "jpeg"
+    rm_rf "lcms2mt"
+    rm_rf "libpng"
+    rm_rf "openjpeg"
+    rm_rf "tiff"
+    rm_rf "zlib"
 
     args = %W[
       --prefix=#{prefix}
-      --disable-cups
       --disable-compile-inits
+      --disable-cups
       --disable-gtk
-      --disable-fontconfig
-      --without-libidn
+      --with-system-libtiff
       --without-x
     ]
 
@@ -79,7 +93,7 @@ class Ghostscript < Formula
 
     # Install binaries and libraries
     system "make", "install"
-    system "make", "install-so"
+    ENV.deparallelize { system "make", "install-so" }
 
     (pkgshare/"fonts").install resource("fonts")
     (man/"de").rmtree

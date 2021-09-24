@@ -11,10 +11,13 @@ class Hidapi < Formula
     sha256 cellar: :any, big_sur:       "98f2859ea147e9c92e4925f0887062c8b6f5177eb98a1012b95d3b788cb58ea5"
     sha256 cellar: :any, catalina:      "9287809ecfeaeb3c89b1f9bf8babb31a8971b41c4a9795922ab774bfcc66559d"
     sha256 cellar: :any, mojave:        "e9c2bec30d5d1e9e0f9f91c43510071ba17234cd968b33f161c56cbee23a4d8d"
-    sha256 cellar: :any, x86_64_linux:  "76255d24660fc5a7d70c363b7bfd5c3896a166276dbd6620e61d13105baf54b9"
+    sha256 cellar: :any, x86_64_linux:  "76255d24660fc5a7d70c363b7bfd5c3896a166276dbd6620e61d13105baf54b9" # linuxbrew-core
   end
 
-  depends_on "autoconf" => :build
+  # autoconf 2.70 fails with: configure.ac:16: error: AC_CONFIG_MACRO_DIR can only be used once
+  # See https://github.com/libusb/hidapi/issues/264#issuecomment-830914402
+  # Move to "autoconf" when updating to the next release
+  depends_on "autoconf@2.69" => :build
   depends_on "automake" => :build
   depends_on "libtool" => :build
   depends_on "pkg-config" => :build
@@ -28,7 +31,8 @@ class Hidapi < Formula
     system "./bootstrap"
     system "./configure", "--prefix=#{prefix}"
     system "make", "install"
-    # hidtest/.libs/hidtest does not exist for Linux, do not install it
+
+    # hidtest/.libs/hidtest does not exist for Linux, install it for macOS only
     bin.install "hidtest/.libs/hidtest" if OS.mac?
   end
 
@@ -41,7 +45,14 @@ class Hidapi < Formula
       }
     EOS
 
-    flags = ["-I#{include}/hidapi", "-L#{lib}", OS.mac? ? "-lhidapi" : "-lhidapi-hidraw"] + ENV.cflags.to_s.split
+    flags = ["-I#{include}/hidapi", "-L#{lib}"]
+    on_macos do
+      flags << "-lhidapi"
+    end
+    on_linux do
+      flags << "-lhidapi-hidraw"
+    end
+    flags += ENV.cflags.to_s.split
     system ENV.cc, "-o", "test", "test.c", *flags
     system "./test"
   end

@@ -65,19 +65,18 @@ class Libnice < Formula
       -I#{glib.opt_lib}/glib-2.0/include
       -I#{include}/nice
       -D_REENTRANT
-      test.c
       -L#{gettext.opt_lib}
       -L#{glib.opt_lib}
       -L#{lib}
-      -lnice
       -lgio-2.0
       -lglib-2.0
       -lgobject-2.0
+      -lnice
     ]
     on_macos do
       flags << "-lintl"
     end
-    system ENV.cc, *flags, "test.c", "-o", "test"
+    system ENV.cc, "test.c", "-o", "test", *flags
     system "./test"
   end
 end

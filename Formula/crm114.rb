@@ -4,6 +4,11 @@ class Crm114 < Formula
   url "https://crm114.sourceforge.io/tarballs/crm114-20100106-BlameMichelson.src.tar.gz"
   sha256 "fb626472eca43ac2bc03526d49151c5f76b46b92327ab9ee9c9455210b938c2b"
 
+  livecheck do
+    url "https://crm114.sourceforge.io/wiki/doku.php?id=download"
+    regex(%r{href=.*?/crm114[._-]v?(\d+(?:\.\d+)*)[._-]([a-z]+)?\.src\.t}i)
+  end
+
   bottle do
     sha256 cellar: :any, arm64_big_sur: "24d3e83ee6c91b1fbed3b83aefbd17c2a93119b12d6cf7a9cea10090e52af6a8"
     sha256 cellar: :any, big_sur:       "c00ea54f01bfa748d4a48123c7140fd4e8abb200b8c42ca0ab016272f72eeb8c"
@@ -13,7 +18,7 @@ class Crm114 < Formula
     sha256 cellar: :any, sierra:        "5e22ac9266e49f8281f3afbd613b3f16eb76113fc1f1e2256206513ab6220d42"
     sha256 cellar: :any, el_capitan:    "d48449acfcd105d07e11c0ac7c47fdb21b88d3346c0b51377b9e44b8c8726073"
     sha256 cellar: :any, yosemite:      "151316bd14f7cfce5cea3b765cf4e7801e31c63b72dd786fb38989d8b9380eb3"
-    sha256 cellar: :any, x86_64_linux:  "43888e087fce5f4ab5cc950624eb59a645abdc54619c175c8fcf93dd02a27fcf"
+    sha256 cellar: :any, x86_64_linux:  "43888e087fce5f4ab5cc950624eb59a645abdc54619c175c8fcf93dd02a27fcf" # linuxbrew-core
   end
 
   depends_on "tre"

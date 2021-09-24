@@ -1,8 +1,8 @@
 # Contributing to Linuxbrew
 
-[Linuxbrew](https://github.com/Homebrew/linuxbrew-core) is a fork of [Homebrew](https://github.com/Homebrew/homebrew-core). Homebrew is merged into Linuxbrew roughly once per day. To contribute a new formula or a new version of an existing formula, please submit your pull request to Homebrew rather than to Linuxbrew. Patches to fix issues that you have reproduced on both Linuxbrew and Homebrew should be sent to Homebrew. Please send your pull request to Linuxbrew if you are in doubt.
+[Linuxbrew](https://github.com/Homebrew/linuxbrew-core) is a fork of [Homebrew](https://github.com/Homebrew/homebrew-core). Homebrew is merged into Linuxbrew roughly once per day.
 
-Patches to fix issues particular to Linux should not affect the behaviour of the formula on Mac. Use `if OS.mac?` and `if OS.linux?` as necessary to preserve the existing behaviour on Mac.
+Linuxbrew is being merged into Homebrew, so we are no longer accepting pull requests in this repository. Please open your pull requests at Homebrew instead.
 
 # Contributing to Homebrew
 
@@ -38,8 +38,8 @@ Once you've addressed any potential feedback and a member of the Homebrew org ha
 ### To contribute a fix to the `foo` formula
 
 If you are already well versed in the use of `git`, then you can find the local
-copy of the `homebrew-core` repository in this directory
-(`$(brew --prefix)/Homebrew/Library/Taps/homebrew/homebrew-core/`), modify the formula there
+copy of the `homebrew-core` repository in this directory:
+`$(brew --repository homebrew/core)`. Modify the formula there using `brew edit foo`
 leaving the section `bottle do ... end` unchanged, and prepare a pull request
 as you usually do.  Before submitting your pull request, be sure to test it
 with these commands:

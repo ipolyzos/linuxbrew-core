@@ -3,7 +3,12 @@ class Libdshconfig < Formula
   homepage "https://www.netfort.gr.jp/~dancer/software/dsh.html.en"
   url "https://www.netfort.gr.jp/~dancer/software/downloads/libdshconfig-0.20.13.tar.gz"
   sha256 "6f372686c5d8d721820995d2b60d2fda33fdb17cdddee9fce34795e7e98c5384"
-  license "GPL-2.0"
+  license "GPL-2.0-or-later"
+
+  livecheck do
+    url "https://www.netfort.gr.jp/~dancer/software/downloads/"
+    regex(/href=.*?libdshconfig[._-]v?(\d+(?:\.\d+)+)\.t/i)
+  end
 
   bottle do
     rebuild 1
@@ -15,7 +20,7 @@ class Libdshconfig < Formula
     sha256 cellar: :any, sierra:        "82fc9db7c3ad20bdcd5681be1075ae4853b6f19caeb41624dac33d53470b2523"
     sha256 cellar: :any, el_capitan:    "a26ea1d1cefed24fd890bbc65f9a11d171cdbcb1c00936562255e2adfe29205f"
     sha256 cellar: :any, yosemite:      "7f4e5e77fc14d6920bd212e9c812c7dad51ad1dbe1542f1c0e4999928db9ad3f"
-    sha256 cellar: :any, x86_64_linux:  "12664f8d34d9a2f5bcb33dc17b82d35a02a10d0b8ab5c6a201a288dbc59e96d7"
+    sha256 cellar: :any, x86_64_linux:  "12664f8d34d9a2f5bcb33dc17b82d35a02a10d0b8ab5c6a201a288dbc59e96d7" # linuxbrew-core
   end
 
   def install

@@ -4,7 +4,7 @@ class Bchunk < Formula
   url "http://he.fi/bchunk/bchunk-1.2.2.tar.gz"
   sha256 "e7d99b5b60ff0b94c540379f6396a670210400124544fb1af985dd3551eabd89"
   license "GPL-2.0"
-  head "https://github.com/hessu/bchunk.git"
+  head "https://github.com/hessu/bchunk.git", branch: "master"
 
   bottle do
     sha256 cellar: :any_skip_relocation, arm64_big_sur: "94279b4e400c05770ec6c5cce6fe7ef50a062835508add3e981942944bb3eecc"
@@ -14,7 +14,7 @@ class Bchunk < Formula
     sha256 cellar: :any_skip_relocation, high_sierra:   "d6183607b5b987345ee3380263819f1d5e12f2f3cc9f6fd55accfbf92c26d5ef"
     sha256 cellar: :any_skip_relocation, sierra:        "95ef5fddc2234902187dde834690fb5957bd99ce11403e3d0f8881a705bb8f27"
     sha256 cellar: :any_skip_relocation, el_capitan:    "665af973709071e982939f37ba39c79c6e41f7f18277d65670475ba9d8315f94"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "d704539396152281a0fc791189fb40a9045fe93db151709f5c09d03b351c1b0f"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "d704539396152281a0fc791189fb40a9045fe93db151709f5c09d03b351c1b0f" # linuxbrew-core
   end
 
   def install

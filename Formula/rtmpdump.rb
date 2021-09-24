@@ -6,7 +6,7 @@ class Rtmpdump < Formula
   sha256 "5c032f5c8cc2937eb55a81a94effdfed3b0a0304b6376147b86f951e225e3ab5"
   license all_of: ["GPL-2.0-or-later", "LGPL-2.1-or-later"]
   revision 1
-  head "https://git.ffmpeg.org/rtmpdump.git", shallow: false
+  head "https://git.ffmpeg.org/rtmpdump.git"
 
   livecheck do
     url "https://cdn-aws.deb.debian.org/debian/pool/main/r/rtmpdump/"
@@ -20,7 +20,7 @@ class Rtmpdump < Formula
     sha256 cellar: :any, mojave:        "97cf25d61d474c2115f6448940f924324d630b60776396398662b1368b4544da"
     sha256 cellar: :any, high_sierra:   "7e95dc18fc03a6c1f19385e1507448f23e2e570c9b3ad60bd3fbc05c65295fb8"
     sha256 cellar: :any, sierra:        "2118d007922d98ae71169be417106f594636e6ff979611b9e51dd2cf09c002b7"
-    sha256 cellar: :any, x86_64_linux:  "422733ec0ea4c3884b781346333c9292c3042da1a36ae589f2ef680cb66458bd"
+    sha256 cellar: :any, x86_64_linux:  "422733ec0ea4c3884b781346333c9292c3042da1a36ae589f2ef680cb66458bd" # linuxbrew-core
   end
 
   depends_on "openssl@1.1"
@@ -39,10 +39,10 @@ class Rtmpdump < Formula
   def install
     ENV.deparallelize
 
-    os = "darwin"
-
-    on_linux do
-      os = "posix"
+    os = if OS.mac?
+      "darwin"
+    else
+      "posix"
     end
 
     system "make", "CC=#{ENV.cc}",

@@ -1,8 +1,8 @@
 class Fetchmail < Formula
   desc "Client for fetching mail from POP, IMAP, ETRN or ODMR-capable servers"
   homepage "https://www.fetchmail.info/"
-  url "https://downloads.sourceforge.net/project/fetchmail/branch_6.4/fetchmail-6.4.18.tar.xz"
-  sha256 "302dc9bcdc6927dedf375d2baaead2347557faa70d98b1da83f2409fa6fb259f"
+  url "https://downloads.sourceforge.net/project/fetchmail/branch_6.4/fetchmail-6.4.22.tar.xz"
+  sha256 "cc6818bd59435602169fa292d6d163d56b21c7f53112829470a3aceabe612c84"
   license all_of: [
     "LGPL-2.1-or-later",
     "ISC",
@@ -17,11 +17,11 @@ class Fetchmail < Formula
   end
 
   bottle do
-    sha256 cellar: :any, arm64_big_sur: "a5b54bb2ed9604db58d4700f10fa5262b2229a1e94d61d9ee17c83e2b846fe16"
-    sha256 cellar: :any, big_sur:       "72e602538312c10a90fd93802c277c3daeb09d47fd3bf4f38fd5147261ea34a5"
-    sha256 cellar: :any, catalina:      "3e08bfd4efe2465349d622121fc7ac9d9e220f55fd5033b490e0a549bd62d86c"
-    sha256 cellar: :any, mojave:        "da04bc6368c92a41930a719137ce9dbd5dd7156eeb17c50e17f66391a9456514"
-    sha256               x86_64_linux:  "bfc354be67ae9ddeb8b89e75717a1d6126d61668976faf4e2cd26e831b194c21"
+    sha256 cellar: :any, arm64_big_sur: "34af2028cfce9981b15e8b421f2aab1d3ff37e26d7a8ae35a4b5da4a83496447"
+    sha256 cellar: :any, big_sur:       "b2eb430e9c0b89a09282e49f733acf024e00da80e7899f3732b5710cee0f38d8"
+    sha256 cellar: :any, catalina:      "7c6643a842e07c933835f9dce0e79b777aa4b6c65f546b06bab8aa0604a56128"
+    sha256 cellar: :any, mojave:        "42d4e7ac151260d638a0b688acbc1bb8ec83a6379ded29a8ecc04f1cea250528"
+    sha256               x86_64_linux:  "19abe963e79a93c7a422681b01dc49a39bca05676cc97c94be5028562d1708ab" # linuxbrew-core
   end
 
   depends_on "openssl@1.1"

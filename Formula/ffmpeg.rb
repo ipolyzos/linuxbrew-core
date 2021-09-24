@@ -6,6 +6,7 @@ class Ffmpeg < Formula
   # None of these parts are used by default, you have to explicitly pass `--enable-gpl`
   # to configure to activate them. In this case, FFmpeg's license changes to GPL v2+.
   license "GPL-2.0-or-later"
+  revision 2
   head "https://github.com/FFmpeg/FFmpeg.git"
 
   livecheck do
@@ -14,11 +15,11 @@ class Ffmpeg < Formula
   end
 
   bottle do
-    sha256 arm64_big_sur: "e335852b99ebccad912bbfa8837f288b3c896b33676c4f076aef7f5eb2923860"
-    sha256 big_sur:       "83e43e94ed5475d49fb8c65fba89e073586218811ffe5c0b54b141e03af06f2a"
-    sha256 catalina:      "82ce4be0cbb00c8ba99b79855e97d6c6bf90089cb7aa016cdac54abae26bf083"
-    sha256 mojave:        "e3fd3f329bedbea63529e74eba7a14b12dfd74fdb242471d8946f91d591b26ac"
-    sha256 x86_64_linux:  "26b62672c71e9b4184ff48b35a176652f64dc1e56ea1358fdb9b0a48e6908566"
+    sha256 arm64_big_sur: "d603441a90e72b165e70ef1787b2045c6e969f077dcadd1529d04162fbd18ab3"
+    sha256 big_sur:       "9da28933b9f1abc3b1cf92382d1a8ea051c98f9dd0f4ef47e8d37d2aa9a4769a"
+    sha256 catalina:      "3fcc129951906c60f6e2130131fde64e449bc562a605f64be74fc950cac930ea"
+    sha256 mojave:        "8becf08fae7806a6365b489c3dcde8f6f0ddb49a64e96386c2c190a15604a486"
+    sha256 x86_64_linux:  "9920cc438d94d562c93f642e2a61995becdf5f4fdba55c357781653abb4a7a85" # linuxbrew-core
   end
 
   depends_on "nasm" => :build
@@ -69,7 +70,6 @@ class Ffmpeg < Formula
       --enable-shared
       --enable-pthreads
       --enable-version3
-      --enable-avresample
       --cc=#{ENV.cc}
       --host-cflags=#{ENV.cflags}
       --host-ldflags=#{ENV.ldflags}
@@ -111,10 +111,12 @@ class Ffmpeg < Formula
       --disable-indev=jack
     ]
 
-    on_macos do
-      # Needs corefoundation, coremedia, corevideo
-      args << "--enable-videotoolbox"
-    end
+    # libavresample has been deprecated and removed but some non-updated formulae are still linked to it
+    # Remove in the next release
+    args << "--enable-avresample" unless build.head?
+
+    # Needs corefoundation, coremedia, corevideo
+    args << "--enable-videotoolbox" if OS.mac?
 
     system "./configure", *args
     system "make", "install"

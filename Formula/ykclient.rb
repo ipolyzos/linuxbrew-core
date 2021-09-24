@@ -17,10 +17,10 @@ class Ykclient < Formula
   end
 
   bottle do
-    sha256 cellar: :any, arm64_big_sur: "39c01c0420ae7a6f3af3a97f9e413b3137730f251d4784bb5ab7f878793c34c1"
-    sha256 cellar: :any, big_sur:       "9763765c3a3eb3d2fac970755b9c0ed1c48c8d74d7dd767dd824c8b0b3cfffd7"
-    sha256 cellar: :any, catalina:      "1a0d524e983bd1b22c012a00d60c4529b776640386e978fb3f6046b52e17eed7"
-    sha256 cellar: :any, mojave:        "6e1365c8a6d412ae2a65c65b741ab666340bbb384b730989e2833fe96e0b8e92"
+    sha256 cellar: :any,                 arm64_big_sur: "39c01c0420ae7a6f3af3a97f9e413b3137730f251d4784bb5ab7f878793c34c1"
+    sha256 cellar: :any,                 big_sur:       "9763765c3a3eb3d2fac970755b9c0ed1c48c8d74d7dd767dd824c8b0b3cfffd7"
+    sha256 cellar: :any,                 catalina:      "1a0d524e983bd1b22c012a00d60c4529b776640386e978fb3f6046b52e17eed7"
+    sha256 cellar: :any,                 mojave:        "6e1365c8a6d412ae2a65c65b741ab666340bbb384b730989e2833fe96e0b8e92"
   end
 
   head do
@@ -31,8 +31,16 @@ class Ykclient < Formula
     depends_on "libtool" => :build
   end
 
+  # "This project is deprecated and is no longer being maintained. For more
+  # information and guidance on how to implement Yubico OTP support in
+  # applications, see
+  # https://status.yubico.com/2021/04/15/one-api-yubico-com-one-http-get/."
+  deprecate! date: "2021-05-24", because: :repo_archived
+
   depends_on "help2man" => :build
   depends_on "pkg-config" => :build
+
+  uses_from_macos "curl"
 
   def install
     system "autoreconf", "-iv" if build.head?

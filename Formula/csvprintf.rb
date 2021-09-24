@@ -15,8 +15,11 @@ class Csvprintf < Formula
   depends_on "autoconf" => :build
   depends_on "automake" => :build
 
+  uses_from_macos "libxslt"
+
   def install
-    ENV.append "LDFLAGS", "-liconv"
+    ENV.append "LDFLAGS", "-liconv" if OS.mac?
+
     system "./autogen.sh"
     system "./configure", "--disable-debug", "--disable-dependency-tracking",
                           "--prefix=#{prefix}"

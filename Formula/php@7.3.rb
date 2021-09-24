@@ -2,17 +2,21 @@ class PhpAT73 < Formula
   desc "General-purpose scripting language"
   homepage "https://www.php.net/"
   # Should only be updated if the new version is announced on the homepage, https://www.php.net/
-  url "https://www.php.net/distributions/php-7.3.27.tar.xz"
-  mirror "https://fossies.org/linux/www/php-7.3.27.tar.xz"
-  sha256 "65f616e2d5b6faacedf62830fa047951b0136d5da34ae59e6744cbaf5dca148d"
+  url "https://www.php.net/distributions/php-7.3.30.tar.xz"
+  mirror "https://fossies.org/linux/www/php-7.3.30.tar.xz"
+  sha256 "0ebfd656df0f3b1ea37ff2887f8f2d1a71cd160fb0292547c0ee0a99e58ffd1b"
   license "PHP-3.01"
-  revision 1
+
+  livecheck do
+    url "https://www.php.net/downloads"
+    regex(/href=.*?php[._-]v?(#{Regexp.escape(version.major_minor)}(?:\.\d+)*)\.t/i)
+  end
 
   bottle do
-    sha256 big_sur:      "c8e738ccfa2335cdf50e29d87edb2741e48919c2b501201d87e3452b4e14592c"
-    sha256 catalina:     "2b5bd52eaeb65bfddfba55af52fbe549f2b22413092d62718afc8d256bca3e82"
-    sha256 mojave:       "b8d5befa3abc05ae167870f7343d9e89ee31b7230393a2c64de1fe47ae92c997"
-    sha256 x86_64_linux: "7b5ee179467580c5d3445c276186e767a5527e503538e2cd1dd22ac4fd8430b5"
+    sha256 big_sur:      "bad975da7f0a3ceb32f127ab52b75e7ec7d2d652ee2068270533de92aca87571"
+    sha256 catalina:     "f331da566fa7488fcfb77f848e831271c6167141e34fd3267f25f55fd4cb5286"
+    sha256 mojave:       "57892c2b4d244a3eae269241915527a813942496a0b6c746fd33416ae555a0b5"
+    sha256 x86_64_linux: "9d904bdc25ee9a888bea8d55afe728523300a1e44c40e01ac14fe313ab38e2ed" # linuxbrew-core
   end
 
   keg_only :versioned_formula
@@ -59,9 +63,9 @@ class PhpAT73 < Formula
   end
 
   def install
-    on_macos do
+    if OS.mac? && (MacOS.version == :el_capitan || MacOS.version == :sierra)
       # Ensure that libxml2 will be detected correctly in older MacOS
-      ENV["SDKROOT"] = MacOS.sdk_path if MacOS.version == :el_capitan || MacOS.version == :sierra
+      ENV["SDKROOT"] = MacOS.sdk_path
     end
 
     # buildconf required due to system library linking bug patch
@@ -105,10 +109,8 @@ class PhpAT73 < Formula
 
     # Each extension that is built on Mojave needs a direct reference to the
     # sdk path or it won't find the headers
-    headers_path = ""
-    on_macos do
-      headers_path = "=#{MacOS.sdk_path_if_needed}/usr"
-    end
+
+    headers_path = "=#{MacOS.sdk_path_if_needed}/usr" if OS.mac?
 
     args = %W[
       --prefix=#{prefix}
@@ -177,7 +179,7 @@ class PhpAT73 < Formula
       --with-xmlrpc
     ]
 
-    on_macos do
+    if OS.mac?
       args << "--enable-dtrace"
       args << "--with-ldap-sasl#{headers_path}"
       args << "--with-zlib#{headers_path}"
@@ -187,7 +189,7 @@ class PhpAT73 < Formula
       args << "--with-libxml-dir#{headers_path}"
       args << "--with-xsl#{headers_path}"
     end
-    on_linux do
+    if OS.linux?
       args << "--disable-dtrace"
       args << "--with-zlib=#{Formula["zlib"].opt_prefix}"
       args << "--with-bz2=#{Formula["bzip2"].opt_prefix}"
@@ -321,32 +323,11 @@ class PhpAT73 < Formula
     EOS
   end
 
-  plist_options manual: "php-fpm"
-
-  def plist
-    <<~EOS
-      <?xml version="1.0" encoding="UTF-8"?>
-      <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-      <plist version="1.0">
-        <dict>
-          <key>KeepAlive</key>
-          <true/>
-          <key>Label</key>
-          <string>#{plist_name}</string>
-          <key>ProgramArguments</key>
-          <array>
-            <string>#{opt_sbin}/php-fpm</string>
-            <string>--nodaemonize</string>
-          </array>
-          <key>RunAtLoad</key>
-          <true/>
-          <key>WorkingDirectory</key>
-          <string>#{var}</string>
-          <key>StandardErrorPath</key>
-          <string>#{var}/log/php-fpm.log</string>
-        </dict>
-      </plist>
-    EOS
+  service do
+    run [opt_sbin/"php-fpm", "--nodaemonize"]
+    keep_alive true
+    working_dir var
+    error_log_path var/"log/php-fpm.log"
   end
 
   test do
@@ -363,7 +344,7 @@ class PhpAT73 < Formula
     system "#{bin}/phpdbg", "-V"
     system "#{bin}/php-cgi", "-m"
     # Prevent SNMP extension to be added
-    assert_no_match(/^snmp$/, shell_output("#{bin}/php -m"),
+    refute_match(/^snmp$/, shell_output("#{bin}/php -m"),
       "SNMP extension doesn't work reliably with Homebrew on High Sierra")
     begin
       port = free_port

@@ -8,11 +8,16 @@ class BalenaCli < Formula
   sha256 "af78b891de5492e567d731dee62369b3d1247c262acf94d2bf4e2379790a947e"
   license "Apache-2.0"
 
+  livecheck do
+    url "https://registry.npmjs.org/balena-cli/latest"
+    regex(/["']version["']:\s*?["']([^"']+)["']/i)
+  end
+
   bottle do
     sha256 catalina:     "1d68785ff12ddc57c8a6e93a0b83d3613e29ccf0ae8331dc8197a06bd1f47336"
     sha256 mojave:       "c2e8432c28bb7875f42d7815befa98001dbc72a65cffc121fb8dd6bf2d75290e"
     sha256 high_sierra:  "0e670f3cc482565ddc1a166316407fab2fd008f12128a06f7f73c3bcf07a641d"
-    sha256 x86_64_linux: "18cfe2d40377c40846dd8400756ebc64d6ab8065b36a8530fc82e44af9b8631e"
+    sha256 x86_64_linux: "18cfe2d40377c40846dd8400756ebc64d6ab8065b36a8530fc82e44af9b8631e" # linuxbrew-core
   end
 
   depends_on "node"

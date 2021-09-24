@@ -10,17 +10,19 @@ class Pgformatter < Formula
     sha256 cellar: :any_skip_relocation, big_sur:       "83a175025f66104c66f735201a15852b8b7e210d8dc5185b004822f0032fdd9e"
     sha256 cellar: :any_skip_relocation, catalina:      "81895f455d9c400ed7de8e8cb2ebc1fa55147be0fe6cd4e9faae3f61a44b8040"
     sha256 cellar: :any_skip_relocation, mojave:        "330e956df52c371e9d403e3eb5b9b46a0a5e415d1ceea6156fd2e2036aa046e4"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "7b406b8eddc383f4ccf4692c20651b3d1d0196634f05a36dd16895994ae9f215"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "7b406b8eddc383f4ccf4692c20651b3d1d0196634f05a36dd16895994ae9f215" # linuxbrew-core
   end
 
   def install
     system "perl", "Makefile.PL", "DESTDIR=."
     system "make", "install"
 
-    unless OS.mac?
+    if OS.linux?
+      # Move man pages to share directory so they will be linked correctly on Linux
       mkdir "usr/local/share"
       mv "usr/local/man", "usr/local/share"
     end
+
     prefix.install (buildpath/"usr/local").children
     (libexec/"lib").install "blib/lib/pgFormatter"
     libexec.install bin/"pg_format"

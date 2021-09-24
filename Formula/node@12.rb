@@ -1,8 +1,8 @@
 class NodeAT12 < Formula
   desc "Platform built on V8 to build network applications"
   homepage "https://nodejs.org/"
-  url "https://nodejs.org/dist/v12.22.1/node-v12.22.1.tar.gz"
-  sha256 "6023f1f8f03f9780c75e6eca9d372b8411a83757c0389c51baee1c7242afd702"
+  url "https://nodejs.org/dist/v12.22.6/node-v12.22.6.tar.gz"
+  sha256 "02763dcf6532a997143b03c1f7d23552a3bd19ddcad1fd2425956db7596cbc9c"
   license "MIT"
 
   livecheck do
@@ -11,11 +11,11 @@ class NodeAT12 < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_big_sur: "ee1540eab129377735aa8167a817bc1f44513f16fb8c5dad69276746f3fb26ac"
-    sha256 cellar: :any,                 big_sur:       "4b972ecc758912f12f06188af1829278fb402e4058f95df1e821eeccb4ab50ce"
-    sha256 cellar: :any,                 catalina:      "fa5694085437cae2f7f5e371c6b51aa62eaf390c73f5c653f041276ecf6895b6"
-    sha256 cellar: :any,                 mojave:        "79951e9b820db505f83b37da276c99686e0d2023746849f112df792287ddfb8f"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "50645e2830f2173be5e01bc79504d34e5034babfc7ad3d3975ee44e33a33167d"
+    sha256 cellar: :any,                 arm64_big_sur: "d3010f414ec59c92041a1035bfeea9dd08cd6cc472b1fd1394f4447902eb63c6"
+    sha256 cellar: :any,                 big_sur:       "caf8395437c1c70c12285eac366ef5e1f03db9c0b5640242156591c45ddfeffb"
+    sha256 cellar: :any,                 catalina:      "b86fe87aa75996f8739e87ffe6d021ba5f9d04868dc664e353eb02c7c43a7b92"
+    sha256 cellar: :any,                 mojave:        "00b0f21bbb02df305c4536022f0ded5564eb9b783946516b9d961428ebd7b5aa"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "c9c832c4269614e928143e3ab003ec2970553719eaa5bb7c2bc5b01e177aa9ee" # linuxbrew-core
   end
 
   keg_only :versioned_formula
@@ -24,12 +24,26 @@ class NodeAT12 < Formula
   depends_on "python@3.9" => :build
   depends_on "icu4c"
 
+  on_macos do
+    depends_on "macos-term-size"
+  end
+
   def install
     # make sure subprocesses spawned by make are using our Python 3
     ENV["PYTHON"] = Formula["python@3.9"].opt_bin/"python3"
 
     system "python3", "configure.py", "--prefix=#{prefix}", "--with-intl=system-icu"
     system "make", "install"
+
+    term_size_vendor_dir = lib/"node_modules/npm/node_modules/term-size/vendor"
+    term_size_vendor_dir.rmtree # remove pre-built binaries
+
+    if OS.mac?
+      macos_dir = term_size_vendor_dir/"macos"
+      macos_dir.mkpath
+      # Replace the vendored pre-built term-size with one we build ourselves
+      ln_sf (Formula["macos-term-size"].opt_bin/"term-size").relative_path_from(macos_dir), macos_dir
+    end
   end
 
   def post_install
@@ -55,10 +69,8 @@ class NodeAT12 < Formula
     assert_predicate bin/"npm", :exist?, "npm must exist"
     assert_predicate bin/"npm", :executable?, "npm must be executable"
     npm_args = ["-ddd", "--cache=#{HOMEBREW_CACHE}/npm_cache", "--build-from-source"]
-    system "#{bin}/npm", *npm_args, "install", ("--unsafe-perm" if Process.uid.zero?), "npm@latest"
-    unless head?
-      system "#{bin}/npm", *npm_args, "install", ("--unsafe-perm" if Process.uid.zero?), "bufferutil"
-    end
+    system "#{bin}/npm", *npm_args, "install", "npm@latest"
+    system "#{bin}/npm", *npm_args, "install", "bufferutil"
     assert_predicate bin/"npx", :exist?, "npx must exist"
     assert_predicate bin/"npx", :executable?, "npx must be executable"
     assert_match "< hello >", shell_output("#{bin}/npx cowsay hello")

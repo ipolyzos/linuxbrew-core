@@ -1,22 +1,24 @@
 class Tctl < Formula
   desc "Temporal CLI (tctl)"
   homepage "https://temporal.io/"
-  url "https://github.com/temporalio/temporal/archive/v1.8.2.tar.gz"
-  sha256 "e5e2e21ac3c2ef6bedecd998a419e05cf59bc9133443f0a4a567a6654b05cbd8"
+  url "https://github.com/temporalio/temporal/archive/v1.12.1.tar.gz"
+  sha256 "6a7ebadb051e4e3b7bec0014242c7ed5973642521c5b34937039b55a0310ddba"
   license "MIT"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "037b87f990c2080334887878b86e7fcaa379b83d83e4115cd620b51a5aea1aab"
-    sha256 cellar: :any_skip_relocation, big_sur:       "8f6094f4ed927978d6ef4f4bd05ff76cee3a7bf7a9edec7d9f23599d70905f5a"
-    sha256 cellar: :any_skip_relocation, catalina:      "8a768a1a4e2e4c89da4bbbb3009b301f86955134664891d6815dd55f67bb3db5"
-    sha256 cellar: :any_skip_relocation, mojave:        "8eb5c3816dafc62241cfca20aa766492f95d9ac41360f22cae39a295c7fe926b"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "d5f98869e433c0e3025caf21af07c3b36e82a3db05b7f842d77a19abab53ea83"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "972090fbc59fb85d57eca32124964f26f39d0d3d775dfcbb0341ddb77f6c3bba"
+    sha256 cellar: :any_skip_relocation, big_sur:       "3da365b072b853b2fafdcbc7084cb51bda45b61f8837cd37df7f5b2f777b61b0"
+    sha256 cellar: :any_skip_relocation, catalina:      "720bbf5a11c6b1cb7f18bb5aafaa3bef63b5f21097bb18527d53ffc1ac5abf49"
+    sha256 cellar: :any_skip_relocation, mojave:        "8cd8cbe74a806c4e61b4a80b43d66614101496302caa022131c2c37d00733c87"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "74ff72142de4312636c393fb443e01f765ecf39c1cdc8a08927a24dad1bbac39" # linuxbrew-core
   end
 
   depends_on "go" => :build
 
   def install
-    system "go", "build", *std_go_args, "-ldflags", "-s -w", "./cmd/tools/cli/main.go"
+    system "go", "build", *std_go_args(ldflags: "-s -w"), "./cmd/tools/cli/main.go"
+    system "go", "build", *std_go_args(ldflags: "-s -w"), "-o", bin/"tctl-authorization-plugin",
+      "./cmd/tools/cli/plugins/authorization/main.go"
   end
 
   test do

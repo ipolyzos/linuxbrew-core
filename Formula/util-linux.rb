@@ -1,8 +1,8 @@
 class UtilLinux < Formula
   desc "Collection of Linux utilities"
   homepage "https://github.com/karelzak/util-linux"
-  url "https://mirrors.edge.kernel.org/pub/linux/utils/util-linux/v2.36/util-linux-2.36.2.tar.xz"
-  sha256 "f7516ba9d8689343594356f0e5e1a5f0da34adfbc89023437735872bb5024c5f"
+  url "https://mirrors.edge.kernel.org/pub/linux/utils/util-linux/v2.37/util-linux-2.37.2.tar.xz"
+  sha256 "6a0764c1aae7fb607ef8a6dd2c0f6c47d5e5fd27aa08820abaad9ec14e28e9d9"
   license all_of: [
     "BSD-3-Clause",
     "BSD-4-Clause-UC",
@@ -14,54 +14,48 @@ class UtilLinux < Formula
   ]
 
   bottle do
-    sha256 arm64_big_sur: "ee66c2ac1dd664f78c065d015cd244dac3dff3e268b5633824a84dab03dbfd6f"
-    sha256 big_sur:       "7561a596823ebb61811d7bf34129d0cac9164e54aa3ae70f79865a4f454ac6b3"
-    sha256 catalina:      "7f27e259d7013acfe4d22e75c148735de6a7f4b301238be8376ca3a43f20ff73"
-    sha256 mojave:        "de7bfed47b70d497e2406b7813b966aad7a0436e6fd129d4e12f5df5757e3ef9"
-    sha256 x86_64_linux:  "6d6c7762034555ede98d771f7aa4d57c49f142d82605a1971f75e00a21ade1d3"
+    sha256 arm64_big_sur: "90bec5536897574eca7b519a5d944c4c6e1fe588104d6bc954db8f373b99f581"
+    sha256 big_sur:       "012d57e289d5bc013a02881b99b4adc8b2ca5f2e626af1b6b566178379e2f997"
+    sha256 catalina:      "fd752e4bc070b011a3f0575699a9021af8348a04a6883ffd66474a96fbc80b32"
+    sha256 mojave:        "1d6640f49d628a5092a89f6b6f07d80cc3cb32745074107cf9f127d3bde78cc6"
+    sha256 x86_64_linux:  "26b27d81024cecdb0a6bff5ff9d5636d3a2288b2de29372d76939a47ec294fdf" # linuxbrew-core
   end
 
   keg_only :shadowed_by_macos, "macOS provides the uuid.h header"
 
+  depends_on "asciidoctor" => :build
   depends_on "gettext"
 
   uses_from_macos "ncurses"
   uses_from_macos "zlib"
 
-  on_macos do
-    depends_on "autoconf" => :build
-    depends_on "automake" => :build
-    depends_on "libtool" => :build
-    depends_on "pkg-config" => :build
-
-    # Fix build for MacOS
-    # Remove in >2.36.2
-    # Also remove autoconf/automake/libtool/pkg-config dependencies and autogen.sh call
-    patch do
-      url "https://github.com/karelzak/util-linux/commit/71ba2792ab3f96b5f5d5d3b0a68d35ecfd0f93a2.patch?full_index=1"
-      sha256 "bc5188d3f41a7f248ba622f51c8ab8fed0e05355cbe20a5d3b02bbc274e2c7b4"
-    end
+  on_linux do
+    conflicts_with "bash-completion", because: "both install `mount`, `rfkill`, and `rtcwake` completions"
+    conflicts_with "rename", because: "both install `rename` binaries"
   end
 
-  def install
-    on_macos do
-      system "./autogen.sh"
-    end
+  # Change mkswap.c include order to avoid "c.h" including macOS system <uuid.h> via <grp.h>.
+  # The missing definitions in uuid.h cause error: use of undeclared identifier 'UUID_STR_LEN'.
+  # Issue ref: https://github.com/karelzak/util-linux/issues/1432
+  patch :DATA
 
-    args = [
-      "--disable-dependency-tracking",
-      "--disable-silent-rules",
-      "--prefix=#{prefix}",
+  def install
+    args = std_configure_args + %w[
+      --disable-silent-rules
     ]
 
-    on_macos do
+    if OS.mac?
       args << "--disable-ipcs" # does not build on macOS
       args << "--disable-ipcrm" # does not build on macOS
       args << "--disable-wall" # already comes with macOS
       args << "--disable-libmount" # does not build on macOS
       args << "--enable-libuuid" # conflicts with ossp-uuid
-    end
-    on_linux do
+
+      # To build `hardlink`, we need to prevent configure from detecting macOS system
+      # <sys/xattr.h>, which doesn't have all expected functions like `lgetxattr`.
+      # Issue ref: https://github.com/karelzak/util-linux/issues/1432
+      inreplace "configure", %r{^\tsys/xattr.h \\\n}, ""
+    else
       args << "--disable-use-tty-group" # Fix chgrp: changing group of 'wall': Operation not permitted
       args << "--disable-kill" # Conflicts with coreutils.
       args << "--disable-cal" # Conflicts with bsdmainutils
@@ -129,3 +123,31 @@ class UtilLinux < Formula
     assert_equal ["d#{perms}", owner, group, "usr"], out
   end
 end
+
+__END__
+diff --git a/disk-utils/mkswap.c b/disk-utils/mkswap.c
+index c45a3a317..0040198c8 100644
+--- a/disk-utils/mkswap.c
++++ b/disk-utils/mkswap.c
+@@ -30,6 +30,10 @@
+ # include <linux/fiemap.h>
+ #endif
+ 
++#ifdef HAVE_LIBUUID
++# include <uuid.h>
++#endif
++
+ #include "linux_version.h"
+ #include "swapheader.h"
+ #include "strutils.h"
+@@ -42,10 +46,6 @@
+ #include "closestream.h"
+ #include "ismounted.h"
+ 
+-#ifdef HAVE_LIBUUID
+-# include <uuid.h>
+-#endif
+-
+ #ifdef HAVE_LIBBLKID
+ # include <blkid.h>
+ #endif

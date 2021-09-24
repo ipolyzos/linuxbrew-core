@@ -5,9 +5,9 @@ class ZabbixCli < Formula
   homepage "https://github.com/unioslo/zabbix-cli/"
   url "https://github.com/unioslo/zabbix-cli/archive/2.2.1.tar.gz"
   sha256 "884ecd2a4a4c7f68a080bb7e0936dd208c813284ec3ed60b948ce90a1be7c828"
-  license "GPL-3.0"
-  revision OS.mac? ? 1 : 2
-  head "https://github.com/unioslo/zabbix-cli.git"
+  license "GPL-3.0-or-later"
+  revision OS.mac? ? 1 : 3
+  head "https://github.com/unioslo/zabbix-cli.git", branch: "master"
 
   livecheck do
     url :stable
@@ -20,7 +20,7 @@ class ZabbixCli < Formula
     sha256 cellar: :any_skip_relocation, catalina:      "279c0d15eb9b0d3318511c235652627498179b6b37664b47e65e47dd37848586"
     sha256 cellar: :any_skip_relocation, mojave:        "2021e4b3ca3cc30b290c7a999dd36fd9cd0d9a61bb0498f35537ee52907ad838"
     sha256 cellar: :any_skip_relocation, high_sierra:   "834aaba4a28b53861bd3bf58155131dd50d1b2ea6ccf33177d366365c707fb74"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "703a0c1423c7d82d81293e229c25d7fef52fc6f43c8869111e790ff75cbd0190"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "9b846db61e7692b8481ffde646b5190a36faa7683a14c8a825566d621f4d4b2f" # linuxbrew-core
   end
 
   depends_on "python@3.9"
@@ -60,7 +60,8 @@ class ZabbixCli < Formula
   end
 
   def install
-    # script tries to install config directly to /usr/local/bin
+    # script tries to install config into /usr/local/bin (macOS) or /usr/share (Linux)
+    inreplace %w[setup.py etc/zabbix-cli.conf zabbix_cli/config.py], %r{(["' ])/usr/share/}, "\\1#{share}/"
     inreplace "setup.py", "/usr/local/bin", share
 
     virtualenv_install_with_resources

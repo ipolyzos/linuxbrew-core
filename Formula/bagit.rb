@@ -7,7 +7,7 @@ class Bagit < Formula
   sha256 "37df1330d2e8640c8dee8ab6d0073ac701f0614d25f5252f9e05263409cee60c"
   license "CC0-1.0"
   version_scheme 1
-  head "https://github.com/LibraryOfCongress/bagit-python.git"
+  head "https://github.com/LibraryOfCongress/bagit-python.git", branch: "master"
 
   livecheck do
     url :stable
@@ -19,7 +19,7 @@ class Bagit < Formula
     sha256 cellar: :any_skip_relocation, big_sur:       "62094bf88731c7b94940aa4e4653ca22cc041b25330e3423001eacaa88ab6ee9"
     sha256 cellar: :any_skip_relocation, catalina:      "8cb401bf3f5d03dd8ec84f47fb9bbebff28a0a5be96f1aeb4ee95530ec2b29b2"
     sha256 cellar: :any_skip_relocation, mojave:        "4fefca46d83bb674b3969080548a4b8028db0d3aa7225d83cb4d13bc4602e6ed"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "d32252138e4ebd8c46c5b4662ac6ff77c469adddb5dc80f7e01baea793f02692"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "d32252138e4ebd8c46c5b4662ac6ff77c469adddb5dc80f7e01baea793f02692" # linuxbrew-core
   end
 
   depends_on "python@3.9"

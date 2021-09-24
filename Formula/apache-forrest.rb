@@ -1,7 +1,7 @@
 class ApacheForrest < Formula
   desc "Publishing framework providing multiple output formats"
   homepage "https://forrest.apache.org/"
-  url "https://www.apache.org/dyn/closer.lua?path=forrest/apache-forrest-0.9-sources.tar.gz"
+  url "https://web.archive.org/web/20130606174723/archive.apache.org/dist/forrest/apache-forrest-0.9-sources.tar.gz"
   mirror "https://archive.apache.org/dist/forrest/apache-forrest-0.9-sources.tar.gz"
   sha256 "c6ac758db2eb0d4d91bd1733bbbc2dec4fdb33603895c464bcb47a34490fb64d"
   license "Apache-2.0"
@@ -14,7 +14,7 @@ class ApacheForrest < Formula
     sha256 cellar: :any_skip_relocation, catalina:      "53aed268e732c00ae5d57d4b98287c59f12c124f5a1b925d02aefacdc6dc5132"
     sha256 cellar: :any_skip_relocation, mojave:        "53aed268e732c00ae5d57d4b98287c59f12c124f5a1b925d02aefacdc6dc5132"
     sha256 cellar: :any_skip_relocation, high_sierra:   "53aed268e732c00ae5d57d4b98287c59f12c124f5a1b925d02aefacdc6dc5132"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "f256d7ab9229ee3d56602947b73d30c37502a7c464991700efbd635354e71fb2"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "f256d7ab9229ee3d56602947b73d30c37502a7c464991700efbd635354e71fb2" # linuxbrew-core
   end
 
   deprecate! date: "2020-02-01", because: :unmaintained
@@ -22,7 +22,8 @@ class ApacheForrest < Formula
   depends_on "openjdk"
 
   resource "deps" do
-    url "https://www.apache.org/dyn/closer.lua?path=forrest/apache-forrest-0.9-dependencies.tar.gz"
+    url "https://web.archive.org/web/20161221052851/archive.apache.org/dist/forrest/apache-forrest-0.9-dependencies.tar.gz"
+    mirror "https://archive.apache.org/dist/forrest/apache-forrest-0.9-dependencies.tar.gz"
     sha256 "33146b4e64933691d3b779421b35da08062a704618518d561281d3b43917ccf1"
   end
 

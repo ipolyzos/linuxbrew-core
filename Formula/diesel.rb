@@ -1,17 +1,17 @@
 class Diesel < Formula
   desc "Command-line tool for Rust ORM Diesel"
   homepage "https://diesel.rs"
-  url "https://github.com/diesel-rs/diesel/archive/v1.4.6.tar.gz"
-  sha256 "6fe4e49b57c33774c36d2dfd18d60bdbde98a4d1cfd7c31904c16f5756f56f27"
+  url "https://github.com/diesel-rs/diesel/archive/v1.4.8.tar.gz"
+  sha256 "229b40ba777c2728430112c6e89d591a62198851890b2d0a5cab3472effba240"
   license "Apache-2.0"
   head "https://github.com/diesel-rs/diesel.git"
 
   bottle do
-    sha256 cellar: :any,                 arm64_big_sur: "591196c09f6b466667293f73bdce43feb651e03d37b68f2760b10a0210029b43"
-    sha256 cellar: :any,                 big_sur:       "f33decdb3dbff3f44ab88cf933437deed70bfaaa52b934e7badec2f64073524a"
-    sha256 cellar: :any,                 catalina:      "68886f00182c23bcb8e76e861e194292328fa185ef60ce5ba567c9c029061845"
-    sha256 cellar: :any,                 mojave:        "3b680f376125f6e96f556e8ead859e1d5d0d081ea1dd5bbf3c61fd79e3976f1b"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "fa4f7322fbca8ba4babecaaeab3de01b796fc64eec24f3bc0bbc0416d238a9d0"
+    sha256 cellar: :any,                 arm64_big_sur: "946e0f91a7b7875896da35c0f083364f86dfc64a963404e4d7472696930239ca"
+    sha256 cellar: :any,                 big_sur:       "6e53b553c0e0db9747c2dcb8e473e3ce5bb703fabe0be39e9246fa6245691cff"
+    sha256 cellar: :any,                 catalina:      "a4d7074376cedc36497448056e42bd91e8afc5ac3b6fc754f2ec210fb96f950d"
+    sha256 cellar: :any,                 mojave:        "8d0339a55ef1391da4d3a88627f46055b9fd4f08b1cc911e20de2a7eeb7f2681"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "941100585f776296e8fa8190f211bcc7fd093c6f95b61f833b76b7604171913b" # linuxbrew-core
   end
 
   depends_on "rust" => [:build, :test]
@@ -29,13 +29,12 @@ class Diesel < Formula
       system "cargo", "install", *std_cargo_args
     end
 
-    system "#{bin}/diesel completions bash > diesel.bash"
-    system "#{bin}/diesel completions zsh > _diesel"
-    system "#{bin}/diesel completions fish > diesel.fish"
-
-    bash_completion.install "diesel.bash"
-    zsh_completion.install "_diesel"
-    fish_completion.install "diesel.fish"
+    bash_output = Utils.safe_popen_read(bin/"diesel", "completions", "bash")
+    (bash_completion/"diesel").write bash_output
+    zsh_output = Utils.safe_popen_read(bin/"diesel", "completions", "zsh")
+    (zsh_completion/"_diesel").write zsh_output
+    fish_output = Utils.safe_popen_read(bin/"diesel", "completions", "fish")
+    (fish_completion/"diesel.fish").write fish_output
   end
 
   test do

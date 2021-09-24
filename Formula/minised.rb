@@ -5,6 +5,11 @@ class Minised < Formula
   sha256 "ada36a55b71d1f2eb61f2f3b95f112708ce51e69f601bf5ea5d7acb7c21b3481"
   license "BSD-3-Clause"
 
+  livecheck do
+    url :homepage
+    regex(/href=.*?minised[._-]v?(\d+(?:\.\d+)+)\.t/i)
+  end
+
   bottle do
     rebuild 1
     sha256 cellar: :any_skip_relocation, arm64_big_sur: "9b2fc7359f26228e633280c4c4629564e707f0c9c66f3cc76afd8faee0ec915a"
@@ -15,7 +20,7 @@ class Minised < Formula
     sha256 cellar: :any_skip_relocation, sierra:        "c0a44653ebb7cf8f795fbb96d126abf1f80d5b2bb38a2d8d998dee1b7997e019"
     sha256 cellar: :any_skip_relocation, el_capitan:    "4f33f6d39c9190899cf04857f70481ffd57996daf5001cad661ae0ea7f002a88"
     sha256 cellar: :any_skip_relocation, yosemite:      "d169d87a77fe06c1190065e502e84fc3f3b3714cdc98a1235c78033a41e6a292"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "4f10daa3133cd31430b2d5b82e6efeff11e5907fccd21a0823b75414a6eeeef5"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "4f10daa3133cd31430b2d5b82e6efeff11e5907fccd21a0823b75414a6eeeef5" # linuxbrew-core
   end
 
   def install

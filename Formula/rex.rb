@@ -8,17 +8,10 @@ class Rex < Formula
     sha256 cellar: :any_skip_relocation, catalina:     "de0ca43e439023982668c5563f41340a82d3ae8c45159b457749c1ab0f15d3c5"
     sha256 cellar: :any_skip_relocation, mojave:       "24da3a602c3b434d0069244f546ed33f14e8bd3bbee1f7a99b91ca97a48b0c37"
     sha256 cellar: :any_skip_relocation, high_sierra:  "dc0b2bb90327f2fc716eb95655366fd7a3ac36d7880f25a69777c9976260d508"
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "7d3341ecc6e08e242c0f92f5af2c7112ddda0368a614de20b8c63620f8f24c7a"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "7d3341ecc6e08e242c0f92f5af2c7112ddda0368a614de20b8c63620f8f24c7a" # linuxbrew-core
   end
 
   uses_from_macos "perl"
-
-  on_macos do
-    resource "LWP::UserAgent" do
-      url "https://cpan.metacpan.org/authors/id/O/OA/OALDERS/libwww-perl-6.43.tar.gz"
-      sha256 "e9849d7ee6fd0e89cc999e63d7612c951afd6aeea6bc721b767870d9df4ac40d"
-    end
-  end
 
   resource "Module::Build" do
     # AWS::Signature4 requires Module::Build v0.4205 and above, while standard
@@ -117,6 +110,11 @@ class Rex < Formula
     sha256 "59bda02e8f4474c73913723c608b539e2452e16c54ed7f0150c01aad06e0a126"
   end
 
+  resource "LWP::UserAgent" do
+    url "https://cpan.metacpan.org/authors/id/O/OA/OALDERS/libwww-perl-6.43.tar.gz"
+    sha256 "e9849d7ee6fd0e89cc999e63d7612c951afd6aeea6bc721b767870d9df4ac40d"
+  end
+
   resource "LWP::MediaTypes" do
     url "https://cpan.metacpan.org/authors/id/O/OA/OALDERS/LWP-MediaTypes-6.04.tar.gz"
     sha256 "8f1bca12dab16a1c2a7c03a49c5e58cce41a6fec9519f0aadfba8dad997919d9"
@@ -197,13 +195,6 @@ class Rex < Formula
     sha256 "daa905f363c6a748deb7c408473870563fcac79b9e3e95b26e130a4a8dc3c611"
   end
 
-  unless OS.mac?
-    resource "LWP::UserAgent" do
-      url "https://cpan.metacpan.org/authors/id/O/OA/OALDERS/libwww-perl-6.43.tar.gz"
-      sha256 "e9849d7ee6fd0e89cc999e63d7612c951afd6aeea6bc721b767870d9df4ac40d"
-    end
-  end
-
   def install
     ENV.prepend_create_path "PERL5LIB", libexec/"lib/perl5"
     ENV.prepend_path "PERL5LIB", libexec/"lib"
@@ -242,10 +233,11 @@ class Rex < Formula
       system "./Build", "PERL5LIB=#{ENV["PERL5LIB"]}"
       system "./Build", "install"
     elsif File.exist? "Makefile.PL"
-      if OS.mac?
-        system "perl", "Makefile.PL", "INSTALL_BASE=#{libexec}",
-                     "INC=-I#{MacOS.sdk_path}/System/Library/Perl/5.18/darwin-thread-multi-2level/CORE"
-      else
+      on_macos do
+        path = "#{MacOS.sdk_path}/System/Library/Perl/#{MacOS.preferred_perl_version}/darwin-thread-multi-2level/CORE"
+        system "perl", "Makefile.PL", "INSTALL_BASE=#{libexec}", "INC=-I#{path}"
+      end
+      on_linux do
         system "perl", "Makefile.PL", "INSTALL_BASE=#{libexec}"
       end
       system "make", "PERL5LIB=#{ENV["PERL5LIB"]}"

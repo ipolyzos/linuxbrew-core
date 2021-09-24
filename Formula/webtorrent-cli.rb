@@ -3,16 +3,16 @@ require "language/node"
 class WebtorrentCli < Formula
   desc "Command-line streaming torrent client"
   homepage "https://webtorrent.io/"
-  url "https://registry.npmjs.org/webtorrent-cli/-/webtorrent-cli-3.2.1.tgz"
-  sha256 "0e2222d593069c1d10c20e7954426c7b70a5c7c2d38a2ae8310c232a03e730c6"
+  url "https://registry.npmjs.org/webtorrent-cli/-/webtorrent-cli-4.0.0.tgz"
+  sha256 "d45e495d0318a9d483f6ef57f020bff52740396939c6ef25954fad4a10f91045"
   license "MIT"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "1917b69a1707715ba84f5996a6aeb0657396fa519e9f4779a7c9d0286f258dc3"
-    sha256 cellar: :any_skip_relocation, big_sur:       "3dd729e08d336c0beabb3a61334fdf730727abb79c1ee36d9459d7237fc27ce1"
-    sha256 cellar: :any_skip_relocation, catalina:      "224cc9e37aff1c57337f28354eb9a0e56271740d1a1c7b58da4b00a432bc0dfe"
-    sha256 cellar: :any_skip_relocation, mojave:        "c2d991caef7824c847786f66bfc7127caa0db131dd114b472858921110355d0c"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "cd5a2b51e4e89e849164d91063e4fff81f8db6e01b71efd0637adc088b34c329"
+    sha256                               arm64_big_sur: "e1b22e1d943e803b3d1734ac720aaca1f40ded5b97fbdcf25fb5a8c7b86c5c95"
+    sha256                               big_sur:       "04d0d4a06c629085f960572037c04c92aef907220027f15788b20cb69edf6ab4"
+    sha256                               catalina:      "a3b4e49ed8535a869e42a7e228c5617b7b2a62a24d3d76cdf9f7b6039df9a266"
+    sha256                               mojave:        "cafaf0592ce6c23f452c63c94e615bb3c5db68977cf9ded91f4e4be79508c5b4"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "1b6bc381e93683b7e0dfdb7780ac31ce5c9d5ff28a565fcd63b8031ce95697b6" # linuxbrew-core
   end
 
   depends_on "node"
@@ -20,6 +20,19 @@ class WebtorrentCli < Formula
   def install
     system "npm", "install", *Language::Node.std_npm_install_args(libexec)
     bin.install_symlink Dir["#{libexec}/bin/*"]
+
+    # Remove incompatible pre-built binaries
+    modules_dir = libexec/"lib/node_modules"/name/"node_modules"
+    modules_dir.glob("*/prebuilds/{win32-,linux-arm}*").map(&:rmtree)
+
+    arch_to_remove = if OS.linux?
+      "*"
+    elsif Hardware::CPU.intel?
+      "arm64"
+    else
+      "x64"
+    end
+    modules_dir.glob("*/prebuilds/darwin-#{arch_to_remove}").map(&:rmtree)
   end
 
   test do

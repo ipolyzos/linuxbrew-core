@@ -18,7 +18,7 @@ class Ssldump < Formula
     sha256 cellar: :any, big_sur:       "27b04d713522d2937232b457ee32a2293cc9c633acee5efc147ae3fa84741da2"
     sha256 cellar: :any, catalina:      "4f05ecf010a75b92ce19c9889759484f7f4e337e2659516be3c87fe02d99c9ed"
     sha256 cellar: :any, mojave:        "3c9186ee97ff509fd83a0e81acc06e621d50701bcf94e15ce61e4edbbb1b9796"
-    sha256 cellar: :any, x86_64_linux:  "39150c4b0c9fdec20c11ab78e56422e5211581cdfa0318f0d3f6bb291c737253"
+    sha256 cellar: :any, x86_64_linux:  "39150c4b0c9fdec20c11ab78e56422e5211581cdfa0318f0d3f6bb291c737253" # linuxbrew-core
   end
 
   depends_on "autoconf" => :build
@@ -29,7 +29,6 @@ class Ssldump < Formula
   # reorder include files
   # https://sourceforge.net/p/ssldump/bugs/40/
   # increase pcap sample size from an arbitrary 5000 the max TLS packet size 18432
-  # pcap-bpf.h instead of net/bpf.h
   patch :DATA
 
   def install

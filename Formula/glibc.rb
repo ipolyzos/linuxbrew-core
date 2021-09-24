@@ -90,12 +90,12 @@ class Glibc < Formula
   end
 
   bottle do
-    sha256 x86_64_linux: "654794e9e18c2401f1101a3fcf0a85eda448b4b969e9a99782a3f4f4659feda4"
+    sha256 x86_64_linux: "654794e9e18c2401f1101a3fcf0a85eda448b4b969e9a99782a3f4f4659feda4" # linuxbrew-core
   end
 
   depends_on "binutils" => :build
   depends_on GawkRequirement => :build
-  depends_on "linux-headers" => :build
+  depends_on "linux-headers@4.4" => :build
   depends_on MakeRequirement => :build
   depends_on SedRequirement => :build
   depends_on BrewedGlibcNotOlderRequirement
@@ -128,7 +128,6 @@ class Glibc < Formula
         "--prefix=#{prefix}",
         "--enable-obsolete-rpc",
         "--without-selinux",
-        "--without-selinux",
         "--with-binutils=#{Formula["binutils"].bin}",
         "--with-headers=#{Formula["linux-headers"].include}",
       ]
@@ -137,12 +136,12 @@ class Glibc < Formula
       system "make", "install"
       prefix.install_symlink "lib" => "lib64"
     end
-
-    # Install ld.so symlink.
-    ln_sf lib/"ld-linux-x86-64.so.2", HOMEBREW_PREFIX/"lib/ld.so"
   end
 
   def post_install
+    # Install ld.so symlink.
+    ln_sf lib/"ld-linux-x86-64.so.2", HOMEBREW_PREFIX/"lib/ld.so"
+
     # Compile locale definition files
     mkdir_p lib/"locale"
 

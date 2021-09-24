@@ -6,19 +6,23 @@ class PhpAT72 < Formula
   mirror "https://fossies.org/linux/www/php-7.2.34.tar.xz"
   sha256 "409e11bc6a2c18707dfc44bc61c820ddfd81e17481470f3405ee7822d8379903"
   license "PHP-3.01"
-  revision 2
+  revision 4
 
   bottle do
     rebuild 1
-    sha256 arm64_big_sur: "68fa27133add9196aab8c9e883c31802fa970d12a25a503e451d4efea5c9e654"
-    sha256 big_sur:       "22806c50d8d176e762ff37b80686fd19ffee2cf6cf55f319c209b571f6261bbf"
-    sha256 catalina:      "95c2f84e72605a59160940bade71ff839c9690dd614a8d0c858eb660ab85bd6c"
-    sha256 mojave:        "a4db5f63b5f98288007e4b98af9b58edfae59a2de32b1958cc32a29b7fc7dc07"
-    sha256 x86_64_linux:  "efba8492441940df6b1c31cad859adb796f9a69179de88d625ddb67f0bf8614f"
+    sha256 arm64_big_sur: "a92e64bf8bc2a93c2565376ec604ae02a6361f2144903f1931e6bc1dfd612035"
+    sha256 big_sur:       "0ebb08d4162c250cf7d954b3819942c13db229735f2de8106a158b67b56fa120"
+    sha256 catalina:      "dfaa144647884e7dcba907ac88132ed4af1fc146176e687267ca602f0af26ba6"
+    sha256 mojave:        "46a9ee4a740cdded555ff8d528ce319958f44d9239b7bb89d36953312e318bfd"
+    sha256 x86_64_linux:  "1ef12d41cf1a4b4bc8daa4644af7475916235ddd4f45a9d56604eb788a9d7f6e" # linuxbrew-core
   end
 
   keg_only :versioned_formula
 
+  # Unsupported as of 2020-11-30: https://www.php.net/eol.php
+  # The date below is intentionally a year after the EOL date. This gives the
+  # formula a year before being disabled and it will be reported as deprecated
+  # in the interim time.
   disable! date: "2021-11-30", because: :deprecated_upstream
 
   depends_on "httpd" => [:build, :test]
@@ -54,9 +58,11 @@ class PhpAT72 < Formula
   uses_from_macos "libxslt"
   uses_from_macos "zlib"
 
-  # PHP build system incorrectly links system libraries
-  # see https://github.com/php/php-src/pull/3472
-  patch :DATA if OS.mac?
+  on_macos do
+    # PHP build system incorrectly links system libraries
+    # see https://github.com/php/php-src/pull/3472
+    patch :DATA
+  end
 
   def install
     # Ensure that libxml2 will be detected correctly in older MacOS
@@ -111,11 +117,7 @@ class PhpAT72 < Formula
 
     # Each extension that is built on Mojave needs a direct reference to the
     # sdk path or it won't find the headers
-    headers_path = if OS.mac?
-      "=#{MacOS.sdk_path_if_needed}/usr"
-    else
-      ""
-    end
+    headers_path = "=#{MacOS.sdk_path_if_needed}/usr" if OS.mac?
 
     args = %W[
       --prefix=#{prefix}
@@ -187,16 +189,18 @@ class PhpAT72 < Formula
 
     if OS.mac?
       args << "--enable-dtrace"
-      args << "--with-zlib#{headers_path}"
       args << "--with-bz2#{headers_path}"
-      args << "--with-ndbm#{headers_path}"
       args << "--with-libedit#{headers_path}"
       args << "--with-libxml-dir#{headers_path}"
+      args << "--with-ndbm#{headers_path}"
       args << "--with-xsl#{headers_path}"
-    else
+      args << "--with-zlib#{headers_path}"
+    end
+
+    if OS.linux?
       args << "--disable-dtrace"
       args << "--with-zlib=#{Formula["zlib"].opt_prefix}"
-      args << "--with-bz2=#{Formula["bzip2"].opt_prefix}"
+      args << "--with-bzip2=#{Formula["bzip2"].opt_prefix}"
       args << "--with-libedit=#{Formula["libedit"].opt_prefix}"
       args << "--with-libxml-dir=#{Formula["libxml2"].opt_prefix}"
       args << "--with-xsl=#{Formula["libxslt"].opt_prefix}"
@@ -322,32 +326,11 @@ class PhpAT72 < Formula
     EOS
   end
 
-  plist_options manual: "php-fpm"
-
-  def plist
-    <<~EOS
-      <?xml version="1.0" encoding="UTF-8"?>
-      <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-      <plist version="1.0">
-        <dict>
-          <key>KeepAlive</key>
-          <true/>
-          <key>Label</key>
-          <string>#{plist_name}</string>
-          <key>ProgramArguments</key>
-          <array>
-            <string>#{opt_sbin}/php-fpm</string>
-            <string>--nodaemonize</string>
-          </array>
-          <key>RunAtLoad</key>
-          <true/>
-          <key>WorkingDirectory</key>
-          <string>#{var}</string>
-          <key>StandardErrorPath</key>
-          <string>#{var}/log/php-fpm.log</string>
-        </dict>
-      </plist>
-    EOS
+  service do
+    run [opt_sbin/"php-fpm", "--nodaemonize"]
+    keep_alive true
+    working_dir var
+    error_log_path var/"log/php-fpm.log"
   end
 
   test do
@@ -355,7 +338,7 @@ class PhpAT72 < Formula
       "Zend OPCache extension not loaded")
     # Test related to libxml2 and
     # https://github.com/Homebrew/homebrew-core/issues/28398
-    if OS.mac?
+    on_macos do
       assert_includes MachO::Tools.dylibs("#{bin}/php"),
         "#{Formula["libpq"].opt_lib}/libpq.5.dylib"
     end
@@ -363,7 +346,7 @@ class PhpAT72 < Formula
     system "#{bin}/phpdbg", "-V"
     system "#{bin}/php-cgi", "-m"
     # Prevent SNMP extension to be added
-    assert_no_match(/^snmp$/, shell_output("#{bin}/php -m"),
+    refute_match(/^snmp$/, shell_output("#{bin}/php -m"),
       "SNMP extension doesn't work reliably with Homebrew on High Sierra")
     begin
       port = free_port

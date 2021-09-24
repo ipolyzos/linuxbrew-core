@@ -1,12 +1,14 @@
 class TmuxinatorCompletion < Formula
   desc "Shell completion for Tmuxinator"
   homepage "https://github.com/tmuxinator/tmuxinator"
-  url "https://github.com/tmuxinator/tmuxinator/archive/v2.0.3.tar.gz"
-  sha256 "7ef03f8b23306944170b5951e7db280d1a1c3f1484fc292056f28185224634ab"
+  url "https://github.com/tmuxinator/tmuxinator/archive/v3.0.1.tar.gz"
+  sha256 "1d79dd13beaaf2ed24c8a76410c1a41bedc7785498e199534fa3928bbf8aab01"
   license "MIT"
-  head "https://github.com/tmuxinator/tmuxinator.git"
+  head "https://github.com/tmuxinator/tmuxinator.git", branch: "master"
 
-  bottle :unneeded
+  livecheck do
+    formula "tmuxinator"
+  end
 
   conflicts_with "tmuxinator", because: "the tmuxinator formula includes completion"
 

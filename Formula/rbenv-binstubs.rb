@@ -5,9 +5,7 @@ class RbenvBinstubs < Formula
   sha256 "305000b8ba5b829df1a98fc834b7868b9e817815c661f429b0e28c1f613f4d0c"
   license "MIT"
   revision 1
-  head "https://github.com/ianheggie/rbenv-binstubs.git"
-
-  bottle :unneeded
+  head "https://github.com/ianheggie/rbenv-binstubs.git", branch: "master"
 
   depends_on "rbenv"
 

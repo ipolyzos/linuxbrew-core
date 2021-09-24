@@ -18,7 +18,7 @@ class Gtkx < Formula
     sha256 big_sur:       "8ead5b96878ad431ac3e23dc3bd20bb4eac509c63c231e594986a0fa331e157f"
     sha256 catalina:      "3900f64476d7988670b5d0c855f072fba0af2b1bb323acf4f126f70c95a38616"
     sha256 mojave:        "10d1f2a81a115b9cf1e8c76fbd6cdc58f5b4593eb7f9e15cbe0127e14221dd06"
-    sha256 x86_64_linux:  "7a6506474b1d9921a0dd5b548d6efc3ae58f2f40c283eb3c023af6adbe156a0b"
+    sha256 x86_64_linux:  "7a6506474b1d9921a0dd5b548d6efc3ae58f2f40c283eb3c023af6adbe156a0b" # linuxbrew-core
   end
 
   head do
@@ -37,7 +37,7 @@ class Gtkx < Formula
   depends_on "hicolor-icon-theme"
   depends_on "pango"
 
-  unless OS.mac?
+  on_linux do
     depends_on "cairo"
     depends_on "libxinerama"
     depends_on "libxcomposite"
@@ -49,13 +49,23 @@ class Gtkx < Formula
 
   # Patch to allow Eiffel Studio to run in Cocoa / non-X11 mode, as well as Freeciv's freeciv-gtk2 client
   # See:
+  # - https://gitlab.gnome.org/GNOME/gtk/-/issues/580
+  # referenced from
   # - https://bugzilla.gnome.org/show_bug.cgi?id=757187
   # referenced from
   # - https://bugzilla.gnome.org/show_bug.cgi?id=557780
   # - Homebrew/homebrew-games#278
   patch do
-    url "https://bug757187.bugzilla-attachments.gnome.org/attachment.cgi?id=331173"
+    url "https://gitlab.gnome.org/GNOME/gtk/uploads/2a194d81de8e8346a81816870264b3bf/gdkimage.patch"
     sha256 "ce5adf1a019ac7ed2a999efb65cfadeae50f5de8663638c7f765f8764aa7d931"
+  end
+
+  def backend
+    backend = "quartz"
+    on_linux do
+      backend = "x11"
+    end
+    backend
   end
 
   def install
@@ -65,11 +75,8 @@ class Gtkx < Formula
             "--enable-static",
             "--disable-glibtest",
             "--enable-introspection=yes",
-            "--with-gdktarget=#{OS.mac? ? "quartz" : "x11"}",
+            "--with-gdktarget=#{backend}",
             "--disable-visibility"]
-
-    # temporarily disable cups until linuxbrew/homebrew-core#495 is merged
-    args << "--disable-cups" unless OS.mac?
 
     if build.head?
       inreplace "autogen.sh", "libtoolize", "glibtoolize"
@@ -102,9 +109,7 @@ class Gtkx < Formula
     libpng = Formula["libpng"]
     pango = Formula["pango"]
     pixman = Formula["pixman"]
-    backend = OS.mac? ? "quartz" : "x11"
-    flags = (ENV.cflags || "").split + (ENV.cppflags || "").split + (ENV.ldflags || "").split
-    flags += %W[
+    flags = %W[
       -I#{atk.opt_include}/atk-1.0
       -I#{cairo.opt_include}/cairo
       -I#{fontconfig.opt_include}

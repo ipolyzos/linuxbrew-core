@@ -1,8 +1,8 @@
 class PgpoolIi < Formula
   desc "PostgreSQL connection pool server"
   homepage "https://www.pgpool.net/mediawiki/index.php/Main_Page"
-  url "https://www.pgpool.net/mediawiki/images/pgpool-II-4.2.2.tar.gz"
-  sha256 "99f264fc953d2a9d1b454f62d0991ef3a0004825ebcc95f9fd9bb7cbe1783ba1"
+  url "https://www.pgpool.net/mediawiki/images/pgpool-II-4.2.5.tar.gz"
+  sha256 "d745cf38659596cfd1bc2167012bcb091f87588477bb89803cdbac88e26e0e7d"
 
   livecheck do
     url "https://www.pgpool.net/mediawiki/index.php/Downloads"
@@ -10,11 +10,11 @@ class PgpoolIi < Formula
   end
 
   bottle do
-    sha256 arm64_big_sur: "2547d738d4d5ef11a881a175e5ae7cb70ff4d99f52c8f71fe03cb198608d96a0"
-    sha256 big_sur:       "79b4f7f5bdc76ca9aeedea952b13bf49b63c7258fa18e7e2551fb62969060140"
-    sha256 catalina:      "da66c1f679aa1eabf98246210c3428cfc956c61ebf0ca14652efb3fe7d3e6df8"
-    sha256 mojave:        "41f43474dbf1daac87ad3b0d71b050884687909a01fd7fb252d6aed6efa40794"
-    sha256 x86_64_linux:  "40c1aa0306c0c26c0b0c63baafdc98c165244e1b9a1612867a3b1a345ebc6286"
+    sha256 arm64_big_sur: "5828372d6ca3200174cff7f8ffdd248de570f0d378c60db47ecd35c4a46ecab5"
+    sha256 big_sur:       "59740c49588ae2a35b2b15d9f88a7654435d70c05ccf14792054eb9bdd1a2b56"
+    sha256 catalina:      "cce39ff3a542fe53fcb46a1a224f65a1b7f791d3a3ba0d85e452cbccba56931b"
+    sha256 mojave:        "907f52bf7604e8dc88866f65d12814bf33cd853ebdb4a6d013921e3e499f9ecf"
+    sha256 x86_64_linux:  "27cff1b485ad2f62e617b8bf14647f3ea2b43447911a91aa0d97b80668a6a5c1" # linuxbrew-core
   end
 
   depends_on "postgresql"

@@ -4,7 +4,7 @@ class Simg2img < Formula
   url "https://github.com/anestisb/android-simg2img/archive/1.1.4.tar.gz"
   sha256 "cbd32490c1e29d9025601b81089b5aec1707cb62020dfcecd8747af4fde6fecd"
   license "Apache-2.0"
-  head "https://github.com/anestisb/android-simg2img.git"
+  head "https://github.com/anestisb/android-simg2img.git", branch: "master"
 
   bottle do
     sha256 cellar: :any_skip_relocation, arm64_big_sur: "cd4891712dae2fd35115f8ee32ba703bc3094ff365e52c8fe6a2b0d4694ee1ae"
@@ -13,6 +13,8 @@ class Simg2img < Formula
     sha256 cellar: :any_skip_relocation, mojave:        "eb4046906b4bc9b2508ed5a7bbd0c9cfd2bab387c9891dbbf396c64374fdef6d"
     sha256 cellar: :any_skip_relocation, high_sierra:   "677aa2ecb11b6c0df59eb44cd75b7bc66d7f99607a4a5e0b5f9137d42428efc5"
   end
+
+  uses_from_macos "zlib"
 
   def install
     system "make", "PREFIX=#{prefix}", "install"

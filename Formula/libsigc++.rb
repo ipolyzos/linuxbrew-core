@@ -1,20 +1,20 @@
 class Libsigcxx < Formula
   desc "Callback framework for C++"
   homepage "https://libsigcplusplus.github.io/libsigcplusplus/"
-  url "https://download.gnome.org/sources/libsigc++/3.0/libsigc++-3.0.6.tar.xz"
-  sha256 "b70edcf4611651c54a426e109b17196e1fa17da090592a5000e2d134c03ac5ce"
+  url "https://download.gnome.org/sources/libsigc++/3.0/libsigc++-3.0.7.tar.xz"
+  sha256 "bfbe91c0d094ea6bbc6cbd3909b7d98c6561eea8b6d9c0c25add906a6e83d733"
   license "LGPL-3.0-or-later"
 
   bottle do
     rebuild 1
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "a5b79b43ac38795ae18d82d6762cf36039988c4cec8ff56afc2005d2034084c3"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "52e42467d2ac9797c6b22b6ea9eedf1fb77502e4358882573075cce89338b600" # linuxbrew-core
   end
 
   depends_on "meson" => :build
   depends_on "ninja" => :build
-  depends_on macos: :high_sierra if OS.mac? # needs C++17
+  depends_on macos: :high_sierra # needs C++17
 
-  unless OS.mac?
+  on_linux do
     depends_on "m4" => :build
     depends_on "gcc"
   end
@@ -28,8 +28,8 @@ class Libsigcxx < Formula
       system "ninja", "install"
     end
   end
+
   test do
-    ENV["CXX"] = Formula["gcc"].opt_bin/"c++-10" unless OS.mac?
     (testpath/"test.cpp").write <<~EOS
       #include <iostream>
       #include <string>
@@ -48,6 +48,7 @@ class Libsigcxx < Formula
         return 0;
       }
     EOS
+
     system ENV.cxx, "-std=c++17", "test.cpp",
                    "-L#{lib}", "-lsigc-3.0", "-I#{include}/sigc++-3.0", "-I#{lib}/sigc++-3.0/include", "-o", "test"
     assert_match "hello world", shell_output("./test")

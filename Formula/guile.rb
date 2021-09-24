@@ -1,21 +1,22 @@
 class Guile < Formula
   desc "GNU Ubiquitous Intelligent Language for Extensions"
   homepage "https://www.gnu.org/software/guile/"
-  url "https://ftp.gnu.org/gnu/guile/guile-3.0.5.tar.xz"
-  mirror "https://ftpmirror.gnu.org/guile/guile-3.0.5.tar.xz"
-  sha256 "2d76fb023d2366126a5fac04704f9bd843846b80cccba6da5d752318b03350f1"
+  url "https://ftp.gnu.org/gnu/guile/guile-3.0.7.tar.xz"
+  mirror "https://ftpmirror.gnu.org/guile/guile-3.0.7.tar.xz"
+  sha256 "f57d86c70620271bfceb7a9be0c81744a033f08adc7ceba832c9917ab3e691b7"
   license "LGPL-3.0-or-later"
+  revision 1
 
   bottle do
-    sha256 arm64_big_sur: "ce524aaa55b2a6200e4ba4a05b3d40e726eef82750767bbdebf2243c9c766ee9"
-    sha256 big_sur:       "ce8a02da2f7a50ee2df21ace1dac3b8335855907ec31224cea3ea5f89d82c463"
-    sha256 catalina:      "18a97a127b757c021f8f3b7257306cac30efd055d1bde8cee88874d62b72d8b0"
-    sha256 mojave:        "1775232d131525bf77530ab194a4688e1a14804669267ef22b6d78ab3e088b70"
-    sha256 x86_64_linux:  "314c114dd1b879e0a146f7c4f0ecdcb585e4e8c4575a2dead9a066b4eea2d953"
+    sha256 arm64_big_sur: "cd068c29c7c5626c750568d2c44f6325925e41c74e8349905c27908d59f87ad9"
+    sha256 big_sur:       "81c12f959793d8fc323af769255cf3b683e5b8140f66e0d660e72191d204c2cc"
+    sha256 catalina:      "b54134f18def07d9c6b5462e3117e418a7a7b9691849bda8bbdceb06aa170f6d"
+    sha256 mojave:        "199f6ce9864c96277a8580b85fac348e4c67adde6aff8ea601ec5795480bfd03"
+    sha256 x86_64_linux:  "07df9d428b713ccd81cec5f03974a36750511ac6d5d97928887faa08c9923e8d" # linuxbrew-core
   end
 
   head do
-    url "https://git.savannah.gnu.org/git/guile.git"
+    url "https://git.savannah.gnu.org/git/guile.git", branch: "main"
 
     depends_on "autoconf" => :build
     depends_on "automake" => :build
@@ -33,6 +34,14 @@ class Guile < Formula
   depends_on "readline"
 
   uses_from_macos "gperf"
+
+  # This patch fixes an issue where Guile >= 3.0.6 doesn't properly load dynamic
+  # libraries on macOS.
+  # To be removed after Guile 3.0.8 is released.
+  patch do
+    url "https://git.savannah.gnu.org/cgit/guile.git/patch/?id=1f100a4f20c3a6e57922fb26fce212997e2a03cb"
+    sha256 "a5adf2586b30381cf24524c7fc0364115f7cb1f568d2b69a9f3fb49ad8355b55"
+  end
 
   def install
     # Avoid superenv shim

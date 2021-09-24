@@ -2,17 +2,22 @@ class PhpAT74 < Formula
   desc "General-purpose scripting language"
   homepage "https://www.php.net/"
   # Should only be updated if the new version is announced on the homepage, https://www.php.net/
-  url "https://www.php.net/distributions/php-7.4.16.tar.xz"
-  mirror "https://fossies.org/linux/www/php-7.4.16.tar.xz"
-  sha256 "1c16cefaf88ded4c92eed6a8a41eb682bb2ef42429deb55f1c4ba159053fb98b"
+  url "https://www.php.net/distributions/php-7.4.23.tar.xz"
+  mirror "https://fossies.org/linux/www/php-7.4.23.tar.xz"
+  sha256 "cea52313fcffe56343bcd3c66dbb23cd5507dc559cc2e3547cf8f5452e88a05d"
   license "PHP-3.01"
 
+  livecheck do
+    url "https://www.php.net/downloads"
+    regex(/href=.*?php[._-]v?(#{Regexp.escape(version.major_minor)}(?:\.\d+)*)\.t/i)
+  end
+
   bottle do
-    sha256 arm64_big_sur: "3d8f32719809271463e0fa2a6df17cf0f7366fad12a872a9f85e74e29a71470d"
-    sha256 big_sur:       "9fe2442ca2be2fd0b4af1876dc83176fe9b575dbf66528fa9fdbbd57bfeb38d3"
-    sha256 catalina:      "96b0767f4d6c2c4757d1d2fa47d42009be1664d0d2df3c38bbbc0132790eb97c"
-    sha256 mojave:        "e17c40aa2b61bf892245cdb6db158be9bd151cef06d86c44b75bb9159b597662"
-    sha256 x86_64_linux:  "f3f647ed2a715ef7fbff407ea867fb2942ae9a3749491acf329ed3fb2acee974"
+    sha256 arm64_big_sur: "ca2ea40d051e0db2366413d1faa3b9b2ec1b103af6ee3f4ef1b28b6bec04e0a5"
+    sha256 big_sur:       "2278b45f5bbe7dcdb2d0dbfc216acac29f2cb264fee8ecbb5d50ce350d374ce9"
+    sha256 catalina:      "f1568997391ec7f91268c849bb6da1b00b8a5304a3ec851584a0cff60b8865b4"
+    sha256 mojave:        "4d54d3a78ae11281ac678e004e022eef1affbcff5d2093eba49c0e8bd41f775e"
+    sha256 x86_64_linux:  "a66d1c60c24fb56e7a1201cec1ffa2cebd7bf30caeb6afc65cad554d2db4a78d" # linuxbrew-core
   end
 
   keg_only :versioned_formula
@@ -60,9 +65,9 @@ class PhpAT74 < Formula
   end
 
   def install
-    on_macos do
+    if OS.mac? && (MacOS.version == :el_capitan || MacOS.version == :sierra)
       # Ensure that libxml2 will be detected correctly in older MacOS
-      ENV["SDKROOT"] = MacOS.sdk_path if MacOS.version == :el_capitan || MacOS.version == :sierra
+      ENV["SDKROOT"] = MacOS.sdk_path
     end
 
     # buildconf required due to system library linking bug patch
@@ -103,11 +108,10 @@ class PhpAT74 < Formula
 
     # system pkg-config missing
     ENV["KERBEROS_CFLAGS"] = " "
-    on_macos do
+    if OS.mac?
       ENV["SASL_CFLAGS"] = "-I#{MacOS.sdk_path_if_needed}/usr/include/sasl"
       ENV["SASL_LIBS"] = "-lsasl2"
-    end
-    on_linux do
+    else
       ENV["SQLITE_CFLAGS"] = "-I#{Formula["sqlite"].opt_include}"
       ENV["SQLITE_LIBS"] = "-lsqlite3"
       ENV["BZIP_DIR"] = Formula["bzip2"].opt_prefix
@@ -115,10 +119,7 @@ class PhpAT74 < Formula
 
     # Each extension that is built on Mojave needs a direct reference to the
     # sdk path or it won't find the headers
-    headers_path = ""
-    on_macos do
-      headers_path = "=#{MacOS.sdk_path_if_needed}/usr"
-    end
+    headers_path = "=#{MacOS.sdk_path_if_needed}/usr" if OS.mac?
 
     args = %W[
       --prefix=#{prefix}
@@ -188,12 +189,11 @@ class PhpAT74 < Formula
       --with-zlib
     ]
 
-    on_macos do
+    if OS.mac?
       args << "--enable-dtrace"
       args << "--with-ldap-sasl"
       args << "--with-os-sdkpath=#{MacOS.sdk_path_if_needed}"
-    end
-    on_linux do
+    else
       args << "--disable-dtrace"
       args << "--without-ldap-sasl"
       args << "--without-ndbm"
@@ -317,32 +317,11 @@ class PhpAT74 < Formula
     EOS
   end
 
-  plist_options manual: "php-fpm"
-
-  def plist
-    <<~EOS
-      <?xml version="1.0" encoding="UTF-8"?>
-      <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-      <plist version="1.0">
-        <dict>
-          <key>KeepAlive</key>
-          <true/>
-          <key>Label</key>
-          <string>#{plist_name}</string>
-          <key>ProgramArguments</key>
-          <array>
-            <string>#{opt_sbin}/php-fpm</string>
-            <string>--nodaemonize</string>
-          </array>
-          <key>RunAtLoad</key>
-          <true/>
-          <key>WorkingDirectory</key>
-          <string>#{var}</string>
-          <key>StandardErrorPath</key>
-          <string>#{var}/log/php-fpm.log</string>
-        </dict>
-      </plist>
-    EOS
+  service do
+    run [opt_sbin/"php-fpm", "--nodaemonize"]
+    keep_alive true
+    working_dir var
+    error_log_path var/"log/php-fpm.log"
   end
 
   test do
@@ -359,7 +338,7 @@ class PhpAT74 < Formula
     system "#{bin}/phpdbg", "-V"
     system "#{bin}/php-cgi", "-m"
     # Prevent SNMP extension to be added
-    assert_no_match(/^snmp$/, shell_output("#{bin}/php -m"),
+    refute_match(/^snmp$/, shell_output("#{bin}/php -m"),
       "SNMP extension doesn't work reliably with Homebrew on High Sierra")
     begin
       port = free_port

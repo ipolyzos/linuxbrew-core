@@ -6,7 +6,9 @@ class BootClj < Formula
   license "EPL-1.0"
   revision 2
 
-  bottle :unneeded
+  bottle do
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "1ff2ccd4a0e9b1f97acc2e070cd1c13f3a31ee7c2a557126f7fb64b63df2cf6a" # linuxbrew-core
+  end
 
   depends_on "openjdk"
 

@@ -1,13 +1,13 @@
 class Fox < Formula
   desc "Toolkit for developing Graphical User Interfaces easily"
-  homepage "http://www.fox-toolkit.org/"
+  homepage "http://fox-toolkit.org/"
   url "http://fox-toolkit.org/ftp/fox-1.6.56.tar.gz"
   sha256 "c517e5fcac0e6b78ca003cc167db4f79d89e230e5085334253e1d3f544586cb2"
   license "LGPL-2.1-or-later"
   revision 2
 
   livecheck do
-    url "http://www.fox-toolkit.org/news.html"
+    url "http://fox-toolkit.org/news.html"
     regex(/FOX STABLE v?(\d+(?:\.\d+)+)/i)
   end
 
@@ -17,7 +17,7 @@ class Fox < Formula
     sha256 cellar: :any,                 catalina:      "e9f946383a4fc88a230622abd2c38386053f20c35eb632bf62ea8e06e43be7ab"
     sha256 cellar: :any,                 mojave:        "7017807cda0f8aa8e43338d4556ec842db95626984f7a9eaef4b926a9dff7310"
     sha256 cellar: :any,                 high_sierra:   "3705392848b062aa09d8be70c0f99b0331eeeceaea685389d684644e86f7fe22"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "67e44a7ed22b2015338809a0b640215734a4d4100ebe4c24404cc553a6b39a03"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "67e44a7ed22b2015338809a0b640215734a4d4100ebe4c24404cc553a6b39a03" # linuxbrew-core
   end
 
   depends_on "fontconfig"

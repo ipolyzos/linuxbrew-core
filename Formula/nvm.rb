@@ -4,9 +4,11 @@ class Nvm < Formula
   url "https://github.com/creationix/nvm/archive/v0.38.0.tar.gz"
   sha256 "35bb7bc74bf9efacde270ee5f52ef3c41fd585c5f8ddd57ca6e8e07e4f29fc74"
   license "MIT"
-  head "https://github.com/nvm-sh/nvm.git"
+  head "https://github.com/nvm-sh/nvm.git", branch: "master"
 
-  bottle :unneeded
+  bottle do
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "38e81aabe1efb9a2eca50a1e12699f2245dbd0b8bed8bde7f0146c1c804103e1" # linuxbrew-core
+  end
 
   def install
     prefix.install "nvm.sh", "nvm-exec"
@@ -40,8 +42,8 @@ class Nvm < Formula
 
   test do
     output = pipe_output("NODE_VERSION=homebrewtest #{prefix}/nvm-exec 2>&1")
-    assert_no_match(/No such file or directory/, output)
-    assert_no_match(/nvm: command not found/, output)
+    refute_match(/No such file or directory/, output)
+    refute_match(/nvm: command not found/, output)
     assert_match "N/A: version \"homebrewtest -> N/A\" is not yet installed", output
   end
 end

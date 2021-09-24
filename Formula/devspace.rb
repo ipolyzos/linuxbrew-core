@@ -1,11 +1,11 @@
 class Devspace < Formula
   desc "CLI helps develop/deploy/debug apps with Docker and k8s"
-  homepage "https://devspace.cloud/docs"
-  url "https://github.com/devspace-cloud/devspace.git",
-      tag:      "v5.11.0",
-      revision: "37f0042f2204233072c6d063219f8362509387b7"
+  homepage "https://devspace.sh/"
+  url "https://github.com/loft-sh/devspace.git",
+      tag:      "v5.15.0",
+      revision: "cb571e2987658f3d1d1c755e22ab418259b3a2fe"
   license "Apache-2.0"
-  head "https://github.com/devspace-cloud/devspace.git"
+  head "https://github.com/loft-sh/devspace.git"
 
   livecheck do
     url :stable
@@ -13,15 +13,21 @@ class Devspace < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "f631eb54d40a0a8f71b6dc98a2a26ea33afbf40965fa9df16739062bdb824fd3"
-    sha256 cellar: :any_skip_relocation, big_sur:       "bf509c030685fc0397e396ef4055cf75158e03d10bb7ad2ca19c16eee8497831"
-    sha256 cellar: :any_skip_relocation, catalina:      "c7bcc78e93c89813968210aec0562f68f640550e4d4a8d9e08f5616d74b3785a"
-    sha256 cellar: :any_skip_relocation, mojave:        "b5faae72e1818074f74c07d9944ff7e5f9125ca04acd21d247e7bd1902e6488e"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "312f03dcb2d77aa1e57807a145b696ee763d6afb437cf2f9859de9f466acbcc8"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "1805cf86e2e135fd79ffe5f784f51b6e29107cf61934f8139b6f15f41808114c"
+    sha256 cellar: :any_skip_relocation, big_sur:       "49739ccf043ed4ced63b48a5cb5f9d39df1ea9bd0277d46b2a90f4f4b5792df5"
+    sha256 cellar: :any_skip_relocation, catalina:      "684a12c86935bfcfc932abdcc61b613ef255b2fd84666ff11bceccb18a13cfed"
+    sha256 cellar: :any_skip_relocation, mojave:        "5e4d30e74bc2d46e3b1a5d698dbb0ce5eec30d8bf54c1289c7eaf14f91b9f336"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "3eac00706fd4d55d196aab96960b3b01720a83424fec10e51753904e4a7dca84" # linuxbrew-core
   end
 
   depends_on "go" => :build
   depends_on "kubernetes-cli"
+
+  # remove in next release
+  patch do
+    url "https://github.com/loft-sh/devspace/commit/51ce9934a921c648b34ee550b83f0e6a45f5d936.patch?full_index=1"
+    sha256 "ad0dd665a178099e7457ed71aac9b0dfa998c490233f26b7adb690cfce55b8de"
+  end
 
   def install
     ldflags = %W[

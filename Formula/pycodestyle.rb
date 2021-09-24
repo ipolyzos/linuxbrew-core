@@ -4,9 +4,7 @@ class Pycodestyle < Formula
   url "https://github.com/PyCQA/pycodestyle/archive/2.7.0.tar.gz"
   sha256 "5651c4b981bb0620e6ffb6a94dd6a68ec7fdcbd88c3219e5a976424692700f56"
   license "MIT"
-  head "https://github.com/PyCQA/pycodestyle.git"
-
-  bottle :unneeded
+  head "https://github.com/PyCQA/pycodestyle.git", branch: "master"
 
   def install
     bin.install "pycodestyle.py" => "pycodestyle"

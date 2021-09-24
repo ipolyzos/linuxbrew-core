@@ -1,24 +1,20 @@
 class Parallel < Formula
   desc "Shell command parallelization utility"
   homepage "https://savannah.gnu.org/projects/parallel/"
-  url "https://ftp.gnu.org/gnu/parallel/parallel-20210322.tar.bz2"
-  mirror "https://ftpmirror.gnu.org/parallel/parallel-20210322.tar.bz2"
-  sha256 "98f71b445a23a18bb4e9bce4f374b93e6a6d9decdf892be8d22459f224b85694"
+  url "https://ftp.gnu.org/gnu/parallel/parallel-20210822.tar.bz2"
+  mirror "https://ftpmirror.gnu.org/parallel/parallel-20210822.tar.bz2"
+  sha256 "781659ed2726ef8eafda7e7da898b2488b0c6d3f9251786d218a5c81b1e83822"
   license "GPL-3.0-or-later"
   version_scheme 1
-  head "https://git.savannah.gnu.org/git/parallel.git"
+  head "https://git.savannah.gnu.org/git/parallel.git", branch: "master"
 
   livecheck do
     url :homepage
-    regex(/GNU Parallel v?(\d{6,8}).*? released \[stable\]/i)
+    regex(/GNU Parallel v?(\d{6,8}).*? released/i)
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "70e9f1209b6a70c2832f5e4a90e5eed0a20ca08509612d8d5b4dc52cbd156ef7"
-    sha256 cellar: :any_skip_relocation, big_sur:       "5fbd9a31cd90ab4f822040f0a93498b1717e8adf720862ab818f728dd3f55af9"
-    sha256 cellar: :any_skip_relocation, catalina:      "0f9dbc42951f85bfd4945729347b455e4eccc4bf581182bdaf6412478e27dae4"
-    sha256 cellar: :any_skip_relocation, mojave:        "63f756a786d1cdecb8493abc9da40c9cc07c7e4c16830f971c8031f2bc1f0c37"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "5b1943a8d9e7bd73732e8dcbbeedd8155725fadb3d7a1c34cb11252821a82e7f"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "ef01631e7667c807e9119ffcd632fb4188e53d3479518a42fe493ced96991f0a" # linuxbrew-core
   end
 
   conflicts_with "moreutils", because: "both install a `parallel` executable"
@@ -26,6 +22,15 @@ class Parallel < Formula
   def install
     system "./configure", "--prefix=#{prefix}"
     system "make", "install"
+
+    inreplace_files = [
+      bin/"parallel",
+      doc/"parallel.texi",
+      doc/"parallel_design.texi",
+      man1/"parallel.1",
+      man7/"parallel_design.7",
+    ]
+    inreplace inreplace_files, "/usr/local", HOMEBREW_PREFIX
   end
 
   test do

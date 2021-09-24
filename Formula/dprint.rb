@@ -1,25 +1,23 @@
 class Dprint < Formula
   desc "Pluggable and configurable code formatting platform written in Rust"
   homepage "https://dprint.dev/"
-  url "https://github.com/dprint/dprint/archive/0.13.0.tar.gz"
-  sha256 "54dbd60ef27cc93db6a13f93ab639d6e3581da0d478a109b59fd48d2280b5041"
+  url "https://github.com/dprint/dprint/archive/0.17.1.tar.gz"
+  sha256 "3d4a6693421660c3e7072ef7824a5df34ca79ee386e824621b1df6e3b0e2c895"
   license "MIT"
   head "https://github.com/dprint/dprint.git"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "04ba96af2bb01f286e5a5cde7c422e9388658ab29529ddf8d3dd3f261a6118cb"
-    sha256 cellar: :any_skip_relocation, big_sur:       "33452d1c0253206eda85aa47daafb8ac8b704763492fe9413b73df49fd857f62"
-    sha256 cellar: :any_skip_relocation, catalina:      "cc1b40574893b04ecee7f6f8147b0ceb7df96fe426c91eb894660fbb33b7bd73"
-    sha256 cellar: :any_skip_relocation, mojave:        "9f81a1a3e5fa078e60e65e60201eded2298db1e01acdac278ae2cbbb3810d1d4"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "254e3fe66344197ebc075210273b2e293a2534e171b93a00efa584efa07a57c3"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "baf1b6055ebf848b637d05bf3eb03ce8d58e055163cc0a29f9520a00335dde63"
+    sha256 cellar: :any_skip_relocation, big_sur:       "1ce5b34603026a40982f0d364abcbca02e72db69151e5bbbcc57053b5d54714a"
+    sha256 cellar: :any_skip_relocation, catalina:      "2910dc20aec62d2b2f1cccd300d13276aa41b687991338af88a1ba9834a7fac6"
+    sha256 cellar: :any_skip_relocation, mojave:        "3f448cdcca828a8763d85a8529522c5c6de294ad4fdf52a65f0cb10d7b82bc85"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "0e40a4f8fcf85c9cd50dfd16f3be5c4efdf2e5f152c0ab080ae5aacbe3be6f1c" # linuxbrew-core
   end
 
   depends_on "rust" => :build
 
   def install
-    # replace `--path` arg with `./crates/dprint`
-    args = std_cargo_args.map { |s| s == "." ? "./crates/dprint" : s }
-    system "cargo", "install", *args
+    system "cargo", "install", *std_cargo_args(path: "crates/dprint")
   end
 
   test do

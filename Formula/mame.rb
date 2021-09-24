@@ -2,11 +2,11 @@ class Mame < Formula
   desc "Multiple Arcade Machine Emulator"
   homepage "https://mamedev.org/"
   # NOTE: Please keep these values in sync with rom-tools.rb when updating.
-  url "https://github.com/mamedev/mame/archive/mame0230.tar.gz"
-  version "0.230"
-  sha256 "39ea744a9a49acf10990dfc95094663201b8219255c439da4028c57490ab3488"
+  url "https://github.com/mamedev/mame/archive/mame0235.tar.gz"
+  version "0.235"
+  sha256 "9aee1ae3775123955ab6c5fde026a016ca981515f143d848bda1595cae10750f"
   license "GPL-2.0-or-later"
-  head "https://github.com/mamedev/mame.git"
+  head "https://github.com/mamedev/mame.git", branch: "master"
 
   # MAME tags (and filenames) are formatted like `mame0226`, so livecheck will
   # report the version like `0226`. We work around this by matching the link
@@ -19,10 +19,10 @@ class Mame < Formula
   end
 
   bottle do
-    sha256 cellar: :any, arm64_big_sur: "778568106622e2078fc21d34ec8b61a221482e1f87dbe7c09a62651465aa832d"
-    sha256 cellar: :any, big_sur:       "f57504dd5cdae4b7d449e395704d10d1dbf5253086421cb4f45be38336a953ba"
-    sha256 cellar: :any, catalina:      "e224a22ba4b9139ed478505b057b7bbeb1a94aa4daa947bed48967f13a2f0882"
-    sha256 cellar: :any, mojave:        "e295457b0c4db3f2b2d7313265878d9d4f7006da500390d8dc2746928f848ebc"
+    sha256 cellar: :any,                 arm64_big_sur: "896cab14e97b752d18c6082d87565e595c5e110d4a7f4ca875552888c99bd4dc"
+    sha256 cellar: :any,                 big_sur:       "2934f3d04a81214149a66ec7a04040da359e9c2d6115d64e2f9baa60d816fdba"
+    sha256 cellar: :any,                 catalina:      "701a72300a78013e8cc2274a7721a73fd5f2189e5b39338d250b4026470938e5"
+    sha256 cellar: :any,                 mojave:        "d98a49ea457d15bb2a540888a27c3b7e45d099040f9a7adb9a9c93c791cd3f8b"
   end
 
   depends_on "glm" => :build
@@ -43,6 +43,16 @@ class Mame < Formula
 
   uses_from_macos "expat"
   uses_from_macos "zlib"
+
+  on_linux do
+    depends_on "gcc" # for C++17
+    depends_on "pulseaudio"
+    depends_on "qt@5"
+    depends_on "sdl2_ttf"
+  end
+
+  fails_with gcc: "5"
+  fails_with gcc: "6"
 
   def install
     # Cut sdl2-config's invalid option.

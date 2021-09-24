@@ -20,7 +20,7 @@ class Lv < Formula
     sha256 catalina:      "74f154bdfaabb2819bfab9969a88addff7e0b08cca3aafe3ea13805fa588e68d"
     sha256 mojave:        "491aa872d9c617f7d323aa368498f25728d25bbdf1e60fde272e62b149831c99"
     sha256 high_sierra:   "90a79ade2abcd36772eb50db1c93298a67766d626a5316a3eeb1638312fbd377"
-    sha256 x86_64_linux:  "5aa1bbb834caa980cc77fb6d2b27ab0ffefacb644351e0ff572d9a4f0e78b168"
+    sha256 x86_64_linux:  "5aa1bbb834caa980cc77fb6d2b27ab0ffefacb644351e0ff572d9a4f0e78b168" # linuxbrew-core
   end
 
   uses_from_macos "ncurses"
@@ -33,7 +33,7 @@ class Lv < Formula
   patch :DATA
 
   def install
-    on_macos do
+    if OS.mac?
       # zcat doesn't handle gzip'd data on OSX.
       # Reported upstream to nrt@ff.iij4u.or.jp
       inreplace "src/stream.c", 'gz_filter = "zcat"', 'gz_filter = "gzcat"'
@@ -59,13 +59,13 @@ __END__
 --- a/src/escape.c
 +++ b/src/escape.c
 @@ -62,6 +62,10 @@
- break;
+ 	break;
      } while( 'm' != ch );
-
+ 
 +    if( 'K' == ch ){
 +        return TRUE;
 +    }
 +
      SIDX = index;
-
+ 
      if( 'm' != ch ){

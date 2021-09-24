@@ -2,17 +2,17 @@ class Auditbeat < Formula
   desc "Lightweight Shipper for Audit Data"
   homepage "https://www.elastic.co/products/beats/auditbeat"
   url "https://github.com/elastic/beats.git",
-      tag:      "v7.12.0",
-      revision: "08e20483a651ea5ad60115f68ff0e53e6360573a"
+      tag:      "v7.14.2",
+      revision: "574c21d25ddb65a63665ac26b54799f81a7e9706"
   license "Apache-2.0"
-  head "https://github.com/elastic/beats.git"
+  head "https://github.com/elastic/beats.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "d5c9eec5cadb918feb7060b787de3d710002a987f6380ccf547c2c873f0228af"
-    sha256 cellar: :any_skip_relocation, big_sur:       "87e8ff8d3196c611ad6f35ed46127f4cd323f3a588ff5aedc5652aff85caf4a6"
-    sha256 cellar: :any_skip_relocation, catalina:      "95aebf2b0d0d6c4333167b24f1e7d1c8b14afc719a4ed6f9fb35f74589c1afb1"
-    sha256 cellar: :any_skip_relocation, mojave:        "2f9c1efbd1935b5c05b4853e7233d82de2379476f53960a1d814518aeccf4b9c"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "5214c6a380e1c9b82f14ad454e0f832f3bd4a8f2a4eb51fc376296d7fde2c957"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "1b493fd1fbaa1f0c7cdb7ae2a99618540dffbd8805a87f20b471cef0ae777fc4"
+    sha256 cellar: :any_skip_relocation, big_sur:       "4420337deb99438a4e5d93d942fa51113a040d89833a238b8b17a0a01843ea81"
+    sha256 cellar: :any_skip_relocation, catalina:      "d14c8fc80b632074083a00ecf54bc50a25383c2efde58f2ef683f20565f4c745"
+    sha256 cellar: :any_skip_relocation, mojave:        "d75ec5e59e7520eb91659b7e4ee6dee97bd152dee47905f16341455701f5b189"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "df90f9a768473e0d3cc210e7fbc8e08cec1f0c4d364ceb51b3e9066923689440" # linuxbrew-core
   end
 
   depends_on "go" => :build
@@ -55,24 +55,8 @@ class Auditbeat < Formula
     (var/"log/auditbeat").mkpath
   end
 
-  plist_options manual: "auditbeat"
-
-  def plist
-    <<~EOS
-      <?xml version="1.0" encoding="UTF-8"?>
-      <!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN"
-      "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-      <plist version="1.0">
-        <dict>
-          <key>Label</key>
-          <string>#{plist_name}</string>
-          <key>Program</key>
-          <string>#{opt_bin}/auditbeat</string>
-          <key>RunAtLoad</key>
-          <true/>
-        </dict>
-      </plist>
-    EOS
+  service do
+    run opt_bin/"auditbeat"
   end
 
   test do

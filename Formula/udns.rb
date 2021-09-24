@@ -11,34 +11,26 @@ class Udns < Formula
     sha256 cellar: :any, sierra:       "8fbcc7a26f6be81abfe4766e9efc012c720938e8ea9dc9f20497cb82b101e659"
     sha256 cellar: :any, el_capitan:   "59939957b47912ebb286426391a4e2c904ecc416e9de18dc8c0a74052ac82ffe"
     sha256 cellar: :any, yosemite:     "342aff7270a4251655eb7cfc538b39db1805cfe965ada5cad1a2819b727d9107"
-    sha256 cellar: :any, x86_64_linux: "eb334a17a24b5246087dfd86ce1740d66def683e9e3516c96b100fd37d7b1933" # glibc 2.19
   end
 
   disable! date: "2020-12-08", because: :unmaintained
 
   # Build target for dylib. See:
   # https://www.corpit.ru/pipermail/udns/2011q3/000154.html
-  if OS.mac?
-    patch do
-      url "https://raw.githubusercontent.com/Homebrew/formula-patches/85fa66a9/udns/0.4.patch"
-      sha256 "4c3de5d04f93e7d7a9777b3baf3905707199fce9c08840712ccb2fb5fd6d90f9"
-    end
+  patch do
+    url "https://raw.githubusercontent.com/Homebrew/formula-patches/85fa66a9/udns/0.4.patch"
+    sha256 "4c3de5d04f93e7d7a9777b3baf3905707199fce9c08840712ccb2fb5fd6d90f9"
   end
 
   def install
     system "./configure"
     system "make"
-    system "make", OS.mac? ? "dylib" : "sharedlib"
+    system "make", "dylib"
 
     bin.install "dnsget", "rblcheck"
     doc.install "NOTES", "TODO", "ex-rdns.c"
     include.install "udns.h"
-    if OS.mac?
-      lib.install "libudns.a", "libudns.0.dylib", "libudns.dylib"
-    else
-      lib.install "libudns.a", "libudns.so.0"
-      lib.install_symlink "libudns.so.0" => "libudns.so"
-    end
+    lib.install "libudns.a", "libudns.0.dylib", "libudns.dylib"
     man1.install "dnsget.1", "rblcheck.1"
     man3.install "udns.3"
   end

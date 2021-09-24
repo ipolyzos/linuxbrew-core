@@ -1,17 +1,17 @@
 class Hamlib < Formula
   desc "Ham radio control libraries"
   homepage "http://www.hamlib.org/"
-  url "https://github.com/Hamlib/Hamlib/releases/download/4.1/hamlib-4.1.tar.gz"
-  sha256 "b4d4b9467104d1f316c044d002c4c8e62b9f792cbb55558073bd963203b32342"
+  url "https://github.com/Hamlib/Hamlib/releases/download/4.3.1/hamlib-4.3.1.tar.gz"
+  sha256 "3437386dfdd2314f108cf35f1527b20d784256b76633d216a50de94f4045a730"
   license "LGPL-2.1-or-later"
   head "https://github.com/hamlib/hamlib.git"
 
   bottle do
-    sha256 cellar: :any,                 arm64_big_sur: "69ca3e44a728006591fbfd52e8941f630b60a5f78491f5c7a7b00e73d5c09d3a"
-    sha256 cellar: :any,                 big_sur:       "9ceda629c590e4f94150d19b65d41ad60692c36e95a15f3a402a7b77b77264ec"
-    sha256 cellar: :any,                 catalina:      "8438ca728e483627d35c770a76a07d814336e469619e1b7f9baa3f8a3659d0cf"
-    sha256 cellar: :any,                 mojave:        "af9e82439e617309d3d5f979347d0ffd5c3b65768ffc5f93f8031fd74ee71178"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "ee444856e77017b50b0105a4b22757c8ebff45db20871c43c40abdcb7e70d55d"
+    sha256 cellar: :any,                 arm64_big_sur: "7f36daff76d09ccb8e658a35f7af8680eaa26b9fef126ba34fd310ecb0d62867"
+    sha256 cellar: :any,                 big_sur:       "ef3297063fedaf4707a39d20413bf686e0c6385514f922e257f91b2799b2edc0"
+    sha256 cellar: :any,                 catalina:      "766097ea2db2ce5a04c1cdd00bdb25498c90bc7c7d11231510719df3970ec72c"
+    sha256 cellar: :any,                 mojave:        "60053d4a8c3c84f6c25e67b0adc734ff1e6e04ed6b82303070c4960f3f31c45d"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "26df356384a03eb37c3218637e4f7ade77b102ad6f4c5bce880cf67f665f65a4" # linuxbrew-core
   end
 
   depends_on "autoconf" => :build
@@ -19,6 +19,12 @@ class Hamlib < Formula
   depends_on "pkg-config" => :build
   depends_on "libtool"
   depends_on "libusb-compat"
+
+  on_linux do
+    depends_on "gcc"
+  end
+
+  fails_with gcc: "5"
 
   def install
     system "./bootstrap" if build.head?

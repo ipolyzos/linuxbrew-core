@@ -4,6 +4,11 @@ class Liboil < Formula
   url "https://liboil.freedesktop.org/download/liboil-0.3.17.tar.gz"
   sha256 "105f02079b0b50034c759db34b473ecb5704ffa20a5486b60a8b7698128bfc69"
 
+  livecheck do
+    url "https://liboil.freedesktop.org/download/"
+    regex(/href=.*?liboil[._-]v?(\d+(?:\.\d+)+)\.t/i)
+  end
+
   bottle do
     rebuild 1
     sha256 cellar: :any, arm64_big_sur: "915b7c9defeb1e3d056cd4ead9442b6da74c033d776a3d29eab11f3a74cc4bc6"
@@ -14,7 +19,7 @@ class Liboil < Formula
     sha256 cellar: :any, sierra:        "f242435c284690879f84812481843e92c54adc190a8201aa31d550c262e1951d"
     sha256 cellar: :any, el_capitan:    "7d76b7a220caeb8dbaef27b879f4f3ac0ad5b236b563961abd9484e8bc9e0160"
     sha256 cellar: :any, yosemite:      "9ea78f801296e8643f366d634449a043376e9015e9329dc1c591a9ad55a37b66"
-    sha256 cellar: :any, x86_64_linux:  "d9a3f5e5422b01b9d8e7d234ddd8843ca97c7263064d8d34789c5766285db2d2"
+    sha256 cellar: :any, x86_64_linux:  "d9a3f5e5422b01b9d8e7d234ddd8843ca97c7263064d8d34789c5766285db2d2" # linuxbrew-core
   end
 
   depends_on "autoconf" => :build

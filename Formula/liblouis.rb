@@ -1,16 +1,16 @@
 class Liblouis < Formula
   desc "Open-source braille translator and back-translator"
   homepage "http://liblouis.org"
-  url "https://github.com/liblouis/liblouis/releases/download/v3.16.1/liblouis-3.16.1.tar.gz"
-  sha256 "7ca90c52c1fb04b22cd976495b2325700c7d0135c929a42707fab7bab03658e9"
+  url "https://github.com/liblouis/liblouis/releases/download/v3.19.0/liblouis-3.19.0.tar.gz"
+  sha256 "5664b8631913f432efb4419e15b3c41026984682915d0980351cb82f7ef94970"
   license all_of: ["GPL-3.0-or-later", "LGPL-2.1-or-later"]
 
   bottle do
-    sha256 arm64_big_sur: "d5e6cdaf72fe18b14d9e455551b94e3a722eec87c4c528435c5d6b407ae0775e"
-    sha256 big_sur:       "8c670c32218b3905855ae5c5c40186013f4ad5dea16a2207d3ae56e2ac91a352"
-    sha256 catalina:      "ca3b445707462217ea870829f457ca043de82ecb02f2b99302811f8b6831ee31"
-    sha256 mojave:        "0334ee43e9a3e443cdd8531a5923535618353cf2e798641bc200b20db6e8efd4"
-    sha256 x86_64_linux:  "91c8e235efd83fc749555871da522b44f3fe38d3e52555d565428ce396b90ef2"
+    sha256 arm64_big_sur: "3a3240d45f61b595174ade34a9e8472ecc4c2819f1a31376e984f5d4318a2f94"
+    sha256 big_sur:       "c6957a31908c6f4610cc6be392f0b6cf8628101582ed1752273edbe090b0ace9"
+    sha256 catalina:      "e4d01bfcdd90ff82ef9040cde309340eb8bc056fc4c0d62d1b861369a96ef2c5"
+    sha256 mojave:        "b1e4c7388451ee7a25862a39464888343a17a47fa09d05bfc414c0ce0ec55d1c"
+    sha256 x86_64_linux:  "2a289332981f34be748be06e7463bdc62d4402e61fb7478bd68261128ccd9a7c" # linuxbrew-core
   end
 
   head do

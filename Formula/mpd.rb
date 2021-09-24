@@ -1,14 +1,16 @@
 class Mpd < Formula
   desc "Music Player Daemon"
   homepage "https://www.musicpd.org/"
-  url "https://www.musicpd.org/download/mpd/0.22/mpd-0.22.6.tar.xz"
-  sha256 "2be149a4895c3cb613477f8cf1193593e3d8a1d38a75ffa7d32da8c8316a4d5e"
+  url "https://www.musicpd.org/download/mpd/0.22/mpd-0.22.11.tar.xz"
+  sha256 "143f7f34aaee6e87888f3dd35d49aade6656052651b960ca42b46cbb518ca0a0"
   license "GPL-2.0-or-later"
-  revision OS.mac? ? 1 : 2
-  head "https://github.com/MusicPlayerDaemon/MPD.git"
+  head "https://github.com/MusicPlayerDaemon/MPD.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "2773e571f3194ad022552ecd4368b5a889cc55db26c54a74e2ce071d039e85f8"
+    sha256 cellar: :any, arm64_big_sur: "db9228271af87d44a6158f10d8a6a2cf0a238d6e378212951ed5a8c577ac0726"
+    sha256 cellar: :any, big_sur:       "47d7f2f993ef8b1a240f1e8a6d5cfa862a24f01d2f8b86305665f0108dda9697"
+    sha256 cellar: :any, catalina:      "3ea0ab9f080ea931403df706f9c7cbd9a1a95381456063924c8cb8fdfc3b65b5"
+    sha256 cellar: :any, mojave:        "6ea626d87bffeef1b4754e9822459132f1764ff34830642f473bf6f908efcfe5"
   end
 
   depends_on "boost" => :build
@@ -85,32 +87,11 @@ class Mpd < Formula
     EOS
   end
 
-  plist_options manual: "mpd"
-
-  def plist
-    <<~EOS
-      <?xml version="1.0" encoding="UTF-8"?>
-      <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-      <plist version="1.0">
-      <dict>
-          <key>Label</key>
-          <string>#{plist_name}</string>
-          <key>WorkingDirectory</key>
-          <string>#{HOMEBREW_PREFIX}</string>
-          <key>ProgramArguments</key>
-          <array>
-              <string>#{opt_bin}/mpd</string>
-              <string>--no-daemon</string>
-          </array>
-          <key>RunAtLoad</key>
-          <true/>
-          <key>KeepAlive</key>
-          <true/>
-          <key>ProcessType</key>
-          <string>Interactive</string>
-      </dict>
-      </plist>
-    EOS
+  service do
+    run [opt_bin/"mpd", "--no-daemon"]
+    keep_alive true
+    process_type "interactive"
+    working_dir HOMEBREW_PREFIX
   end
 
   test do

@@ -5,6 +5,11 @@ class Librcsc < Formula
   url "https://dotsrc.dl.osdn.net/osdn/rctools/51941/librcsc-4.1.0.tar.gz"
   sha256 "1e8f66927b03fb921c5a2a8c763fb7297a4349c81d1411c450b180178b46f481"
 
+  livecheck do
+    url "https://osdn.net/projects/rctools/releases/"
+    regex(%r{value=.*?/rel/rctools/librcsc/v?(\d+(?:\.\d+)+)["']}i)
+  end
+
   bottle do
     rebuild 1
     sha256 cellar: :any, arm64_big_sur: "833fe11162a367e783177275011d5156933cb33c29c34d423237a253214f5552"
@@ -15,7 +20,7 @@ class Librcsc < Formula
     sha256 cellar: :any, sierra:        "c8b9dc2887f771f07b33bb70cec9ab62b4cee067f8b3a2d7ae57296428881031"
     sha256 cellar: :any, el_capitan:    "c2093c232c857c15bea5dd6c1c6df14aa4b00ed0c6eb3ab7e4d0d3f8c72b54c6"
     sha256 cellar: :any, yosemite:      "c339890cbed4a1ca1b0a14d4375ece92ccee44a1f29023e1f633e9a9e0d6b6d5"
-    sha256 cellar: :any, x86_64_linux:  "664aecab5d3e5e6217c3ee9c38f406de610310a7a98581209174a50f8ce36cc3"
+    sha256 cellar: :any, x86_64_linux:  "664aecab5d3e5e6217c3ee9c38f406de610310a7a98581209174a50f8ce36cc3" # linuxbrew-core
   end
 
   depends_on "boost"

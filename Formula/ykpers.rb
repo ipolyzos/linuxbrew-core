@@ -17,7 +17,7 @@ class Ykpers < Formula
     sha256 cellar: :any, catalina:      "8c5ed1924d1059265589a221b8e2bb26a2bcd59f91ede210e3a1267412867f47"
     sha256 cellar: :any, mojave:        "c2e6089348f9cc4f9c887eeb5975378749c42ea386ef12d7f84a3285b718dc45"
     sha256 cellar: :any, high_sierra:   "79c240a018183c2f62eae6e7c22f631598b167d321a715f0983ff4653c1c2eee"
-    sha256 cellar: :any, x86_64_linux:  "2631355966e48ac591a794c67eb6df29a97230380af1ac4d8c2010923268bd41"
+    sha256 cellar: :any, x86_64_linux:  "2631355966e48ac591a794c67eb6df29a97230380af1ac4d8c2010923268bd41" # linuxbrew-core
   end
 
   depends_on "pkg-config" => :build
@@ -46,11 +46,10 @@ class Ykpers < Formula
       --prefix=#{prefix}
       --with-libyubikey-prefix=#{Formula["libyubikey"].opt_prefix}
     ]
-    on_macos do
-      args << "--with-backend=osx"
-    end
-    on_linux do
-      args << "--with-backend=libusb-1.0"
+    args << if OS.mac?
+      "--with-backend=osx"
+    else
+      "--with-backend=libusb-1.0"
     end
     system "./configure", *args
     system "make", "check"

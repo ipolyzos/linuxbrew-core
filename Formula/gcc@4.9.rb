@@ -6,25 +6,14 @@ class GccAT49 < Formula
   sha256 "6c11d292cd01b294f9f84c9a59c230d80e9e4a47e5c6355f046bb36d4f358092"
   revision 2
 
-  livecheck do
-    url :stable
-    regex(%r{href=.*?gcc[._-]v?(4\.9(?:\.\d+)*)(?:/?["' >]|\.t)}i)
-  end
-
-  # gcc is designed to be portable.
   bottle do
-    sha256 cellar: :any, high_sierra:  "cb153d98245bcbe4809dc19adf688f642285154b19fe907c7de3cb71652b0ec6"
-    sha256 cellar: :any, x86_64_linux: "9d6f97e68f4bf869afcdc773a5ddcc705e14bb6742e0f2932c5b2c3d4bdb5548"
+    rebuild 1
+    sha256 x86_64_linux: "69da4727205f69158982959779c3d5819f516e3395313c8f35130e31e8047898" # linuxbrew-core
   end
 
   # The bottles are built on systems with the CLT installed, and do not work
   # out of the box on Xcode-only systems due to an incorrect sysroot.
-  pour_bottle? do
-    on_macos do
-      reason "The bottle needs the Xcode CLT to be installed."
-      satisfy { MacOS::CLT.installed? }
-    end
-  end
+  pour_bottle? only_if: :clt_installed
 
   # https://gcc.gnu.org/gcc-4.9/
   deprecate! date: "2021-04-11", because: :deprecated_upstream
@@ -76,6 +65,10 @@ class GccAT49 < Formula
     sha256 "325adf3710ce2229b7eeb9e84d3b539556d093ae860027185e7af8a8b00a750e"
   end
 
+  def version_suffix
+    version.major_minor.to_s
+  end
+
   # Fix build with Xcode 9
   # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=82091
   if DevelopmentTools.clang_build_version >= 900
@@ -99,12 +92,6 @@ class GccAT49 < Formula
 
     # Build dependencies in-tree, to avoid having versioned formulas
     resources.each { |r| r.stage(buildpath/r.name) }
-
-    version_suffix = version.major_minor.to_s
-
-    # Change the default directory name for 64-bit libraries to `lib`
-    # http://www.linuxfromscratch.org/lfs/view/development/chapter06/gcc.html
-    inreplace "gcc/config/i386/t-linux64", "m64=../lib64", "m64=." unless OS.mac?
 
     args = [
       "--prefix=#{prefix}",
@@ -132,7 +119,7 @@ class GccAT49 < Formula
       "--enable-multilib",
     ]
 
-    on_macos do
+    if OS.mac?
       args << "--build=x86_64-apple-darwin#{OS.kernel_version}"
       args << "--with-system-zlib"
 
@@ -146,10 +133,12 @@ class GccAT49 < Formula
       # Ensure correct install names when linking against libgcc_s;
       # see discussion in https://github.com/Homebrew/homebrew/pull/34303
       inreplace "libgcc/config/t-slibgcc-darwin", "@shlib_slibdir@", "#{HOMEBREW_PREFIX}/lib/gcc/#{version_suffix}"
-    end
-
-    on_linux do
+    else
       args << "--disable-multilib"
+
+      # Change the default directory name for 64-bit libraries to `lib`
+      # http://www.linuxfromscratch.org/lfs/view/development/chapter06/gcc.html
+      inreplace "gcc/config/i386/t-linux64", "m64=../lib64", "m64=."
     end
 
     mkdir "build" do
@@ -166,14 +155,6 @@ class GccAT49 < Formula
     Dir.glob(man7/"*.7") { |file| add_suffix file, version_suffix }
     # Even when we disable building info pages some are still installed.
     info.rmtree
-
-    unless OS.mac?
-      # Strip the binaries to reduce their size.
-      system("strip", "--strip-unneeded", "--preserve-dates", *Dir[prefix/"**/*"].select do |f|
-        f = Pathname.new(f)
-        f.file? && (f.elf? || f.extname == ".a")
-      end)
-    end
   end
 
   def add_suffix(file, suffix)
@@ -184,8 +165,8 @@ class GccAT49 < Formula
   end
 
   def post_install
-    unless OS.mac?
-      gcc = bin/"gcc-4.9"
+    if OS.linux?
+      gcc = bin/"gcc-#{version_suffix}"
       libgcc = Pathname.new(Utils.safe_popen_read(gcc, "-print-libgcc-file-name")).parent
       raise "command failed: #{gcc} -print-libgcc-file-name" if $CHILD_STATUS.exitstatus.nonzero?
 
@@ -240,7 +221,7 @@ class GccAT49 < Formula
       #     Noted that it should only be passed for the `gcc@*` formulae.
       #   * `-L#{HOMEBREW_PREFIX}/lib` instructs gcc to find the rest
       #     brew libraries.
-      libdir = HOMEBREW_PREFIX/"lib/gcc/4.9"
+      libdir = HOMEBREW_PREFIX/"lib/gcc/#{version_suffix}"
       specs.write specs_string + <<~EOS
         *cpp_unique_options:
         + -isysroot #{HOMEBREW_PREFIX}/nonexistent #{system_header_dirs.map { |p| "-idirafter #{p}" }.join(" ")}

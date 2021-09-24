@@ -13,7 +13,7 @@ class Mycli < Formula
     sha256 cellar: :any,                 big_sur:       "06ebeca7331a42b285c8aeb600a80e435b616df96ee6ffa2f789a989e64eb8e6"
     sha256 cellar: :any,                 catalina:      "5a422d46352babae1bbcb8c529a2bd0885c79d85878eb43ce71818a53fcd1ff6"
     sha256 cellar: :any,                 mojave:        "2c85021224eb11cfc16e9275f798f48202f0f8c450eb05efd6b1e5eeaf4135bb"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "456efa40c7e45319b8e16ddcd2bbbafa96b1b3bb090b63f46dc4c5862691b845"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "456efa40c7e45319b8e16ddcd2bbbafa96b1b3bb090b63f46dc4c5862691b845" # linuxbrew-core
   end
 
   depends_on "rust" => :build
@@ -24,11 +24,6 @@ class Mycli < Formula
   on_linux do
     depends_on "pkg-config" => :build
     depends_on "libffi"
-  end
-
-  resource "asn1crypto" do
-    url "https://files.pythonhosted.org/packages/fc/f1/8db7daa71f414ddabfa056c4ef792e1461ff655c2ae2928a2b675bfed6b4/asn1crypto-0.24.0.tar.gz"
-    sha256 "9d5c20441baf0cb60a4ac34cc447c6c189024b6b4c6cd7877034f4965c464e49"
   end
 
   resource "cffi" do

@@ -8,20 +8,20 @@ class Vgmstream < Formula
   license "ISC"
   revision 2
   version_scheme 1
-  head "https://github.com/losnoco/vgmstream.git"
+  head "https://github.com/losnoco/vgmstream.git", branch: "master"
 
   livecheck do
     url :stable
+    regex(%r{href=["']?[^"' >]*?/tag/([^"' >]+)["' >]}i)
     strategy :github_latest
-    regex(%r{href=.*?/tag/([^"' >]+)["' >]}i)
   end
 
   bottle do
-    sha256 cellar: :any, arm64_big_sur: "f344401ea028c6fced781b98573acc97648380cbb3da37fccb614543528d58b3"
-    sha256 cellar: :any, big_sur:       "a8b9e590e143c8a5820562376a4d8d6455b4aa3719d69134182ccdbe6e2bc940"
-    sha256 cellar: :any, catalina:      "ea5a421a93602621a8bf2a62b2eca9affa50790f16d7153bd3f901ef3edd9d9a"
-    sha256 cellar: :any, mojave:        "1641ceee1b1849446b3aa2c1ccd07241c1641c9546fff3f785ae5f842b695fcc"
-    sha256 cellar: :any, x86_64_linux:  "2df44ac21efd85d3bec303e8128499abe3bd88f63a1cea1b7fbcc2ff5e247eed"
+    sha256                               arm64_big_sur: "f344401ea028c6fced781b98573acc97648380cbb3da37fccb614543528d58b3"
+    sha256                               big_sur:       "a8b9e590e143c8a5820562376a4d8d6455b4aa3719d69134182ccdbe6e2bc940"
+    sha256                               catalina:      "ea5a421a93602621a8bf2a62b2eca9affa50790f16d7153bd3f901ef3edd9d9a"
+    sha256                               mojave:        "1641ceee1b1849446b3aa2c1ccd07241c1641c9546fff3f785ae5f842b695fcc"
+    sha256 cellar: :any,                 x86_64_linux:  "2df44ac21efd85d3bec303e8128499abe3bd88f63a1cea1b7fbcc2ff5e247eed" # linuxbrew-core
   end
 
   depends_on "cmake" => :build

@@ -1,24 +1,25 @@
 class KubeLinter < Formula
   desc "Static analysis tool for Kubernetes YAML files and Helm charts"
   homepage "https://github.com/stackrox/kube-linter"
-  url "https://github.com/stackrox/kube-linter.git",
-      tag:      "0.2.0",
-      revision: "a8478eef702851802631c3dfbcb1aae4126d1e61"
+  url "https://github.com/stackrox/kube-linter/archive/0.2.3.tar.gz"
+  sha256 "420df162c55b7f5d644e50659b4e27bf8cf8d94301fc8bf9464a774f6711100f"
   license "Apache-2.0"
   head "https://github.com/stackrox/kube-linter.git"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, big_sur:      "f8172ff5c72ebaba2fc62a26274dfe5e35765fc3f225342c26eaae6fdabcb50f"
-    sha256 cellar: :any_skip_relocation, catalina:     "f2430146fbe1a2dfd0ab2d2cd9e80ebed5ebf83abd2b9939c10e2945993605e1"
-    sha256 cellar: :any_skip_relocation, mojave:       "8572e63e9f3c061608bbfb4a4c1ed0921b783f9d2a5ded68a812f83bff814078"
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "59568dd42f3dfadecfeb5374979d9be1421fc3b04ae232b991d9ec1917a05b0a"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "4e05ce85b2fb6c0a9982ffe6ea3e00926dc18273ae814d33d6240e8de58e3253"
+    sha256 cellar: :any_skip_relocation, big_sur:       "6a5270455df683d4b136efe92056a74c7c52ec45613836adbdb8e7a2fe78975f"
+    sha256 cellar: :any_skip_relocation, catalina:      "6a5270455df683d4b136efe92056a74c7c52ec45613836adbdb8e7a2fe78975f"
+    sha256 cellar: :any_skip_relocation, mojave:        "6a5270455df683d4b136efe92056a74c7c52ec45613836adbdb8e7a2fe78975f"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "d517df12ccc9511efa99ba96ec12f20a3713f09fce3f3ca37c86090607112ba0" # linuxbrew-core
   end
 
   depends_on "go" => :build
 
   def install
-    system "make", "build"
-    bin.install ".gobin/kube-linter"
+    ENV["CGO_ENABLED"] = "0"
+    ldflags = "-s -w -X golang.stackrox.io/kube-linter/internal/version.version=#{version}"
+    system "go", "build", *std_go_args(ldflags: ldflags), "./cmd/kube-linter"
   end
 
   test do
@@ -48,5 +49,6 @@ class KubeLinter < Formula
 
     # Lint pod.yaml for default errors
     assert_match "No lint errors found!", shell_output("#{bin}/kube-linter lint pod.yaml 2>&1").chomp
+    assert_equal version.to_s, shell_output("#{bin}/kube-linter version").chomp
   end
 end

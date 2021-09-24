@@ -5,7 +5,12 @@ class OpenAdventure < Formula
   url "http://www.catb.org/~esr/open-adventure/advent-1.9.tar.gz"
   sha256 "36466882af195d402b62deaa08e4cef26d1646cf1329f14503ea06fdc5c7219e"
   license "BSD-2-Clause"
-  head "https://gitlab.com/esr/open-adventure"
+  head "https://gitlab.com/esr/open-adventure", branch: "master"
+
+  livecheck do
+    url :homepage
+    regex(/href=.*?advent[._-]v?(\d+(?:\.\d+)+)\.t/i)
+  end
 
   bottle do
     sha256 cellar: :any_skip_relocation, arm64_big_sur: "3e6e5fe49a6e152e07666b01ef6ce83063f1de437e65970079656e8ae4c2e357"
@@ -17,8 +22,12 @@ class OpenAdventure < Formula
   depends_on "asciidoc" => :build
   depends_on "python@3.9" => :build
 
-  uses_from_macos "libedit" => :build
   uses_from_macos "libxml2" => :build
+  uses_from_macos "libedit"
+
+  on_linux do
+    depends_on "pkg-config" => :build
+  end
 
   resource "PyYAML" do
     url "https://files.pythonhosted.org/packages/a0/a4/d63f2d7597e1a4b55aa3b4d6c5b029991d3b824b5bd331af8d4ab1ed687d/PyYAML-5.4.1.tar.gz"

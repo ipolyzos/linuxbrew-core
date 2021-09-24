@@ -4,15 +4,15 @@ class Valabind < Formula
   url "https://github.com/radare/valabind/archive/1.8.0.tar.gz"
   sha256 "3eba8c36c923eda932a95b8d0c16b7b30e8cdda442252431990436519cf87cdd"
   license "GPL-3.0-or-later"
-  revision 1
-  head "https://github.com/radare/valabind.git"
+  revision 2
+  head "https://github.com/radare/valabind.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any,                 arm64_big_sur: "2e1304ff87e55fd7d61e3ee82a1f2d4faad720b4817adfa6f5c6398a2a4c90e3"
-    sha256 cellar: :any,                 big_sur:       "e6a255cbcfa3065cb00ebdb5b5a72e08d96f1152b749313441a9ab0b824629fd"
-    sha256 cellar: :any,                 catalina:      "59ac7361a4a4bb36beb102f172ac1a4cfe3ca1e611498fc574f0fc5a2b2f4b2b"
-    sha256 cellar: :any,                 mojave:        "18b32d4e6409d4a73d23f226f475fc1c41680d4f7f5da31e1e73cd70f4958816"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "4e47bb708c5226d3b0365a7638beedf9aec427ac3883fc970b0cda1afe03eabc"
+    sha256 cellar: :any,                 arm64_big_sur: "e3ab92ce9929d10db47821cb54a99943397f7708bcf9bac7fba29e5c1a5a184d"
+    sha256 cellar: :any,                 big_sur:       "bef04beaf352699df3774e1d26423b16cdd487836553755d6777b5d3a20e4413"
+    sha256 cellar: :any,                 catalina:      "d1013e81b20cf4c4981b7840c12d281fb2042aebb874317e8dff44d550915954"
+    sha256 cellar: :any,                 mojave:        "ca8cb97fd10e22e1ac1a8966889c9eda14f33bedeeae8395811c55748e2740cc"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "d60a5907d80687fc3bf619f357d525ed856aaedf23dbad26fcd8c80636b37698" # linuxbrew-core
   end
 
   depends_on "pkg-config" => :build
@@ -23,7 +23,7 @@ class Valabind < Formula
   uses_from_macos "flex" => :build
 
   def install
-    system "make"
+    system "make", "VALA_PKGLIBDIR=#{Formula["vala"].opt_lib}/vala-#{Formula["vala"].version.major_minor}"
     system "make", "install", "PREFIX=#{prefix}"
   end
 

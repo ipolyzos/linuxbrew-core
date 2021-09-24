@@ -3,7 +3,7 @@ class Clucene < Formula
   homepage "https://clucene.sourceforge.io/"
   url "https://downloads.sourceforge.net/project/clucene/clucene-core-unstable/2.3/clucene-core-2.3.3.4.tar.gz"
   sha256 "ddfdc433dd8ad31b5c5819cc4404a8d2127472a3b720d3e744e8c51d79732eab"
-  head "https://git.code.sf.net/p/clucene/code.git"
+  head "https://git.code.sf.net/p/clucene/code.git", branch: "master"
 
   livecheck do
     url :stable
@@ -19,7 +19,7 @@ class Clucene < Formula
     sha256 cellar: :any, sierra:       "5d25768dc355533553e6c1605a1dc89985ddd26b4d17d10078c39d6b085c03fb"
     sha256 cellar: :any, el_capitan:   "5ee0c98072c18c75dd8c25fd309ccb49f033300d474367a8e325ec601c427f66"
     sha256 cellar: :any, yosemite:     "182db4f73e058e9d28b77cbbd642c40ecc403fbf1d9dc8357387b2c54dba8d1e"
-    sha256 cellar: :any, x86_64_linux: "ba2a75557dc712e5d72f88dc5687a8e13332c197723f462739872b902e04cd93"
+    sha256 cellar: :any, x86_64_linux: "ba2a75557dc712e5d72f88dc5687a8e13332c197723f462739872b902e04cd93" # linuxbrew-core
   end
 
   depends_on "cmake" => :build

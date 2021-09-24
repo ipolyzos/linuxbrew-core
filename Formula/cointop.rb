@@ -1,16 +1,16 @@
 class Cointop < Formula
   desc "Interactive terminal based UI application for tracking cryptocurrencies"
   homepage "https://cointop.sh"
-  url "https://github.com/miguelmota/cointop/archive/v1.6.3.tar.gz"
-  sha256 "636f3cfb5f9d748e874ede149acb6b96c7b2be8d39b73ef22abb9dd0d214358e"
+  url "https://github.com/miguelmota/cointop/archive/v1.6.8.tar.gz"
+  sha256 "ffbec93e12d62172c9859e673e7a4e49068c893450193cdea5c1f5f4a724c9f3"
   license "Apache-2.0"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "c7f83ffd254a7c243bb492e01a84e74acf7c28f1e79c699c44dc66f3a79e90b7"
-    sha256 cellar: :any_skip_relocation, big_sur:       "879b18f3d7a683748009462c983c6c683d53a0c940a8a50c59c5f9edfb205019"
-    sha256 cellar: :any_skip_relocation, catalina:      "99a20daae576755c17c9c8efcbdfb8d7f4eb4a2d0df4248c7b7891d1e7f70202"
-    sha256 cellar: :any_skip_relocation, mojave:        "cf4455df03b81390c281e664b20b662efe203446656b10060e48501ead2545a6"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "06455cba132d2ab36ba8e136798f84479bf2ae2d5fc25b85ce8a02d39ab1b010"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "6e6f2702228f00ea0e33e66b57e33b6e873b04ca0ce4149e50b15d4f906f39e7"
+    sha256 cellar: :any_skip_relocation, big_sur:       "4ef3d48a150386e36d7cd0d19f5813de3858461d056dfb0273ba4ce968354881"
+    sha256 cellar: :any_skip_relocation, catalina:      "4dbacf530ae32ca058a53a44424caf121f7f37f3c04ff5e02107a152767f1415"
+    sha256 cellar: :any_skip_relocation, mojave:        "46eecd1178acc7e3653a365a732a306993316e2ad184f46860217e32c819696a"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "e89737e8695dfa2b27c365feeecaa6c7710d05914451cf5d502b958baab921f4" # linuxbrew-core
   end
 
   depends_on "go" => :build

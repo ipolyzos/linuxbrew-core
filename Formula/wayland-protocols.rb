@@ -1,12 +1,12 @@
 class WaylandProtocols < Formula
   desc "Additional Wayland protocols"
   homepage "https://wayland.freedesktop.org"
-  url "https://wayland.freedesktop.org/releases/wayland-protocols-1.20.tar.xz"
-  sha256 "9782b7a1a863d82d7c92478497d13c758f52e7da4f197aa16443f73de77e4de7"
+  url "https://wayland.freedesktop.org/releases/wayland-protocols-1.22.tar.xz"
+  sha256 "96e7cf03524995a47028236c6d6141c874e693cb80c0be8dabe15455cdd5a5a7"
   license "MIT"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "64e9fc4ff59725f13c60644b9157d099d283eaedc35a451f2b5d6814a3cc9b3c"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "97dc1b8c59b0e36bc6a3f78863de15a5e675f6231d371f6ca98d2ee21ee6cf4e" # linuxbrew-core
   end
 
   depends_on "pkg-config" => [:build, :test]

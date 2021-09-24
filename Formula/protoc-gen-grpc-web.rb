@@ -6,14 +6,14 @@ class ProtocGenGrpcWeb < Formula
   url "https://github.com/grpc/grpc-web/archive/1.2.1.tar.gz"
   sha256 "23cf98fbcb69743b8ba036728b56dfafb9e16b887a9735c12eafa7669862ec7b"
   license "Apache-2.0"
-  revision 2
+  revision 3
 
   bottle do
-    sha256 cellar: :any,                 arm64_big_sur: "c3a06983b33af29bf78f9a9d655dafb103b1ca4917e1a0a4f25cb2b79eb522e1"
-    sha256 cellar: :any,                 big_sur:       "fda7d681b8dcde15ab4056e8aadd4cb554073b68bc0cacd0b40b93fb8876a2a5"
-    sha256 cellar: :any,                 catalina:      "c2c56a4c0bcc4d157b9692d78fe811c7610e5f28cc3354085556ec8789410125"
-    sha256 cellar: :any,                 mojave:        "21ee4f2d07a6c7e12c4b2ee96bc51edeb51f881af1de60ed8cc00a8f6cedcf71"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "450af21cf8491c7b78b3c35ad8c14cfea82d06cfe7c15977aab2c984ac7b7354"
+    sha256 cellar: :any,                 arm64_big_sur: "8625843e386cf1aec90d4f750ad1480586f10e90fa5f8d2092037b92583379d3"
+    sha256 cellar: :any,                 big_sur:       "c706a6449039679963254536a30511f031fe11705ac36ed5d2f3ab2fd83a2aba"
+    sha256 cellar: :any,                 catalina:      "3917c4c2ff273a01472cd46265b5d12a6df0012e721cb271f4c512a894e3ccd5"
+    sha256 cellar: :any,                 mojave:        "b4486c699cd657005acd262ef592784f3bbf3b50408e90d2a84d42dcb5205853"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "24b9313446774da3ce64ec105e0d8dab0289404ad1b6d6530cf307e8b9989279" # linuxbrew-core
   end
 
   depends_on "cmake" => :build
@@ -58,6 +58,7 @@ class ProtocGenGrpcWeb < Formula
     EOS
     (testpath/"test.ts").write testts
     system "npm", "install", *Language::Node.local_npm_install_args, "grpc-web", "@types/google-protobuf"
-    system "tsc", "test.ts"
+    # Specify including lib for `tsc` since `es6` is required for `@types/google-protobuf`.
+    system "tsc", "--lib", "es6", "test.ts"
   end
 end

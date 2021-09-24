@@ -4,6 +4,11 @@ class Avimetaedit < Formula
   url "https://mediaarea.net/download/binary/avimetaedit/1.0.2/AVIMetaEdit_CLI_1.0.2_GNU_FromSource.tar.bz2"
   sha256 "e0b83e17460d0202a54f637cb673a0c03460704e6c2cff0c2e34222efb2c11ca"
 
+  livecheck do
+    url "https://mediaarea.net/AVIMetaEdit/Download/Source"
+    regex(/href=.*?avimetaedit[._-]v?(\d+(?:\.\d+)+)\.t/i)
+  end
+
   bottle do
     sha256 cellar: :any_skip_relocation, arm64_big_sur: "e9e10cf64f7d87cdc85102dffea61ac546b0877896ff721a55857a2e80eb0475"
     sha256 cellar: :any_skip_relocation, big_sur:       "c8cbab65b9f81a1015a5550b042fcc91471b288d8e256723be694f5caf402767"
@@ -12,7 +17,7 @@ class Avimetaedit < Formula
     sha256 cellar: :any_skip_relocation, high_sierra:   "323673de85bd3c8f272d5f8d0b32d34304faaa02f88c2ce44f08c697266e889e"
     sha256 cellar: :any_skip_relocation, sierra:        "75d65e8ef1ecf31ebb016aa7e1a940bdaac33042af895729a230b6ee4beab3f0"
     sha256 cellar: :any_skip_relocation, el_capitan:    "41873fc416d070f417f1387e50515ffa099018c2f8ef27a2b8ce8b8a94b5c43f"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "cf2378bdb33b344b09b14ca9bc41cc0463dbf3e6058339d12ce78c9b9420f3e8"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "cf2378bdb33b344b09b14ca9bc41cc0463dbf3e6058339d12ce78c9b9420f3e8" # linuxbrew-core
   end
 
   def install

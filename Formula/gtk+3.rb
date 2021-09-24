@@ -1,8 +1,8 @@
 class Gtkx3 < Formula
   desc "Toolkit for creating graphical user interfaces"
   homepage "https://gtk.org/"
-  url "https://download.gnome.org/sources/gtk+/3.24/gtk+-3.24.28.tar.xz"
-  sha256 "b04e09763367f1ce932cd2ee3a359d4de150e1c38e7bef7d29aa72557a6b47c6"
+  url "https://download.gnome.org/sources/gtk+/3.24/gtk+-3.24.30.tar.xz"
+  sha256 "ba75bfff320ad1f4cfbee92ba813ec336322cc3c660d406aad014b07087a3ba9"
   license "LGPL-2.0-or-later"
 
   livecheck do
@@ -11,11 +11,11 @@ class Gtkx3 < Formula
   end
 
   bottle do
-    sha256 arm64_big_sur: "f789bc303be1ec09791c7ed3846c99a29bf30543f5954c10613bd80071519b11"
-    sha256 big_sur:       "92ddbf01922c8974581a0d8e91d2eda74e5d3a6093f0da41ab7ef399ed695a1f"
-    sha256 catalina:      "98e0d8e9cfed0dea667da58f062141db261cf33cbde4b72c4765488026f71794"
-    sha256 mojave:        "e9a2d4797e0bbe7a5583128d911b3bab1e9c8290a9b262c9c89e3fd14cc63913"
-    sha256 x86_64_linux:  "84b8f53e4b2dde4cc078f93e7d29dfbe69c2f006211a625f66fc1ed8b068bcad"
+    sha256 arm64_big_sur: "50f08798c70f1ec428f8a577af2fedd2a8b5a7ffff09d4636d42f48e67873db7"
+    sha256 big_sur:       "af17c723acf1cb4f699ff55346c1443ad3e6d0803a403af8409cc766fb35e34a"
+    sha256 catalina:      "24a97ee2d3b5195d2e2b22213157bbbffce7e7cc89523bf5edb7ed41a01dc198"
+    sha256 mojave:        "e5af02a39f1bcd45f7668b43d3235524d3aeef3760a248eeea4c00b25ecbf761"
+    sha256 x86_64_linux:  "dbff8fb269fd40bfecbb0c40bc1c8ce2fa91c549f678f49a769201f2a7c25c0b" # linuxbrew-core
   end
 
   depends_on "docbook" => :build
@@ -32,8 +32,10 @@ class Gtkx3 < Formula
   depends_on "libepoxy"
   depends_on "pango"
 
-  unless OS.mac?
-    depends_on "cmake"
+  uses_from_macos "libxslt" => :build # for xsltproc
+
+  on_linux do
+    depends_on "cmake" => :build
     depends_on "at-spi2-atk"
     depends_on "cairo"
     depends_on "iso-codes"
@@ -41,8 +43,6 @@ class Gtkx3 < Formula
     depends_on "xorgproto"
     depends_on "wayland-protocols"
   end
-
-  uses_from_macos "libxslt" => :build # for xsltproc
 
   def install
     args = std_meson_args + %w[
@@ -54,9 +54,6 @@ class Gtkx3 < Formula
     if OS.mac?
       args << "-Dquartz_backend=true"
       args << "-Dx11_backend=false"
-    else
-      args << "-Dquartz_backend=false"
-      args << "-Dx11_backend=true"
     end
 
     # ensure that we don't run the meson post install script

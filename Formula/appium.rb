@@ -3,24 +3,27 @@ require "language/node"
 class Appium < Formula
   desc "Automation for Apps"
   homepage "https://appium.io/"
-  url "https://registry.npmjs.org/appium/-/appium-1.20.2.tgz"
-  sha256 "a707dc2f21890774b289d87a35caf5e4ca1211d794cbb4daa1b4a82174c6ab43"
+  url "https://registry.npmjs.org/appium/-/appium-1.22.0.tgz"
+  sha256 "69194d5d4ea68e6de101a12332e1484e211ff07a299f1fcf1736e91332a634e7"
   license "Apache-2.0"
-  head "https://github.com/appium/appium.git"
+  head "https://github.com/appium/appium.git", branch: "master"
 
   bottle do
-    rebuild 1
-    sha256 cellar: :any, arm64_big_sur: "dfdf7b266b87ae1305b59edd974bb6c5c45540f039c1d3ec1fc1a9409ae8e0f4"
-    sha256 cellar: :any, big_sur:       "3b1fb101b829a8c4c94a42c452579c7cd90fd48a42fc0d3c0e8af52390312232"
-    sha256 cellar: :any, catalina:      "05cec8a15e6974dd917aa41ebf3bd9d5df45fb8f4c0b9d0496775257cb2c91a5"
-    sha256 cellar: :any, mojave:        "d3fdc01e23b34d4829f6b1f5d63cbc178448ffdae9a28cca17ca879241b2f63c"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "aef088c27cda107b9106c01720f814152bf2ea97cb94b59bc736e459e78aa911"
+    sha256 cellar: :any_skip_relocation, big_sur:       "2817c721f277da6d1e4ba0ed7272ca1d4291b538a0efd6f84fd8c43d86951066"
+    sha256 cellar: :any_skip_relocation, catalina:      "2817c721f277da6d1e4ba0ed7272ca1d4291b538a0efd6f84fd8c43d86951066"
+    sha256 cellar: :any_skip_relocation, mojave:        "2817c721f277da6d1e4ba0ed7272ca1d4291b538a0efd6f84fd8c43d86951066"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "701e78afdcfb0c215a4356390487cd8e3d6950f9adbb5e5f0c7aaf76c2981793"
   end
 
   depends_on "node"
 
   def install
-    system "npm", "install", *Language::Node.std_npm_install_args(libexec)
+    system "npm", "install", *Language::Node.std_npm_install_args(libexec), "--chromedriver-skip-install"
     bin.install_symlink Dir["#{libexec}/bin/*"]
+
+    # Delete obsolete module appium-ios-driver, which installs universal binaries
+    rm_rf libexec/"lib/node_modules/appium/node_modules/appium-ios-driver"
   end
 
   plist_options manual: "appium"
@@ -38,9 +41,6 @@ class Appium < Formula
   test do
     output = shell_output("#{bin}/appium --show-config 2>&1")
     assert_match version.to_str, output
-
-    # Test stays stuck forever on Linux CI
-    return if ENV["HOMEBREW_GITHUB_ACTIONS"]
 
     port = free_port
     begin

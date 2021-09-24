@@ -2,15 +2,17 @@ class Helmsman < Formula
   desc "Helm Charts as Code tool"
   homepage "https://github.com/Praqma/helmsman"
   url "https://github.com/Praqma/helmsman.git",
-      tag:      "v3.6.7",
-      revision: "751b604887b844e001bf78bcde31cb812875d91a"
+      tag:      "v3.7.5",
+      revision: "26e33fe85efc6f06376476bf95dade339c00e1b7"
   license "MIT"
+  head "https://github.com/Praqma/helmsman.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "20aa74928c19928ef2458e9fe5cc5a1e551173504deb83f34af3351165b92c6b"
-    sha256 cellar: :any_skip_relocation, big_sur:       "76e4262a28e0cb2e0ebf197e8f6a7082f6e5b5c41dbc2788a588c14f550e74c5"
-    sha256 cellar: :any_skip_relocation, catalina:      "e73758e6a646eb43abc9560087ed53bb9d018fce82765396b8c3f2ed490b05d8"
-    sha256 cellar: :any_skip_relocation, mojave:        "bee1c42ef4761b0022ec527c7ac586e1a64f5f22e367c10810b6f2a2c5bd3722"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "a379258df0eb19a3309d737a3954261b3bc7c62d3ba16e355215e84d14ea6984"
+    sha256 cellar: :any_skip_relocation, big_sur:       "3881ae1d54e2bc3d9ac65859e2ac7809452f194fa9c5d1363a5723be925124f3"
+    sha256 cellar: :any_skip_relocation, catalina:      "c3ab41bd809eb3a7fb97906a739f00f23615df518d800548310f3656824141a2"
+    sha256 cellar: :any_skip_relocation, mojave:        "31091e9e6c41e855936c9ff5556d346053ae421f0dc1ac2adb7f19d6a19012a1"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "f8f8b519791832403d760800071fb9325a637a23d68bc47a3f6ecc1da858dfd7" # linuxbrew-core
   end
 
   depends_on "go" => :build
@@ -26,6 +28,6 @@ class Helmsman < Formula
     assert_match version.to_s, shell_output("#{bin}/helmsman version")
 
     output = shell_output("#{bin}/helmsman --apply -f #{pkgshare}/example.yaml 2>&1", 1)
-    assert_match "helm diff plugin is not installed", output
+    assert_match "helm diff not found", output
   end
 end

@@ -4,13 +4,13 @@ class PandocCiteproc < Formula
   url "https://hackage.haskell.org/package/pandoc-citeproc-0.17.0.2/pandoc-citeproc-0.17.0.2.tar.gz"
   sha256 "0b8846ca37547004a6a165ff7f47f58a07f783b01da32c8bf5740272fe37e1f2"
   license "BSD-3-Clause"
-  head "https://github.com/jgm/pandoc-citeproc.git"
+  head "https://github.com/jgm/pandoc-citeproc.git", branch: "master"
 
   bottle do
     sha256 catalina:     "518ed9646d3a165b413a4222d87d5148130891fc2505f2e71e20e05507131992"
     sha256 mojave:       "fbbe846a5843e8e0de7d7bafa3ff3af2600c4fbb8ee2e50a05286ac02de52f6e"
     sha256 high_sierra:  "dfd25614701ee6cfdbe4ec0d6e67a9e54f6c08ded7f8b3de65f1db621fdc72dc"
-    sha256 x86_64_linux: "7d4e2e8e38dfb5b3598dc02d14bf4b72d21d6f4ab5e15074059e9a8ddd8e8b62"
+    sha256 x86_64_linux: "7d4e2e8e38dfb5b3598dc02d14bf4b72d21d6f4ab5e15074059e9a8ddd8e8b62" # linuxbrew-core
   end
 
   # https://github.com/jgm/pandoc-citeproc/commit/473378e588c40a6c3cb3b24330431b89cf4f81b4

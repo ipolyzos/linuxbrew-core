@@ -1,8 +1,8 @@
 class Lxc < Formula
   desc "CLI client for interacting with LXD"
   homepage "https://linuxcontainers.org"
-  url "https://linuxcontainers.org/downloads/lxd/lxd-4.13.tar.gz"
-  sha256 "8efd95ad4023e0d197490deb169512977ce81e3560cfd5dd93511ae438405970"
+  url "https://linuxcontainers.org/downloads/lxd/lxd-4.18.tar.gz"
+  sha256 "b60e09e4d349eebfedff8f1ca493533fb7353aceb43cbbcd7f4e340715a5f3a5"
   license "Apache-2.0"
 
   livecheck do
@@ -11,22 +11,19 @@ class Lxc < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "8fe15a0f35bf12c3cb686e0eaee6a9f767aa796ef753b1a4467f401eb7259826"
-    sha256 cellar: :any_skip_relocation, big_sur:       "f82b20a83820f9b22b255582a5ea842daec8b166af1f0c5effde917cdc4343cc"
-    sha256 cellar: :any_skip_relocation, catalina:      "33aa7134e76a7dbfd25ff71f2939de26ae022c61b50b0340af539ae89ee42c6e"
-    sha256 cellar: :any_skip_relocation, mojave:        "fc864c438c591a1ec4799c56e39632c6dfa1f7bf496113ce2fe9fcba7ca05fa9"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "d6918cf5e27fa998615b961fee41a23db1339a37c2f3c2f436b8a910af33cdd1"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "72475f25c36703390972aafd51a9f26f1706c55f2b04f432143cea4a710ac9fb"
+    sha256 cellar: :any_skip_relocation, big_sur:       "1b8696d99622f05e6b68093ed64b87b326205c78ac4911d43b530132590e806b"
+    sha256 cellar: :any_skip_relocation, catalina:      "2363f4fcc3c6b15787013d6e5fb14ec8810e4ab3555c720efa4471c8866e129c"
+    sha256 cellar: :any_skip_relocation, mojave:        "18dbe1472fc07303f0836f47eb8175e31e7d5d00bfb773cf95fb983a7f7d2323"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "2ec6c2d1a557bc14c73715b7563147a703f7d383b6f69b941b829b03afe14eb4" # linuxbrew-core
   end
 
   depends_on "go" => :build
 
   def install
-    ENV["GOPATH"] = buildpath
     ENV["GOBIN"] = bin
-    ENV["GO111MODULE"] = "auto"
 
-    ln_s buildpath/"_dist/src", buildpath/"src"
-    system "go", "install", "-v", "github.com/lxc/lxd/lxc"
+    system "go", "build", *std_go_args, "./lxc"
   end
 
   test do

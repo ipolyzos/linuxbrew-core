@@ -3,7 +3,12 @@ class Liboping < Formula
   homepage "https://noping.cc/"
   url "https://noping.cc/files/liboping-1.10.0.tar.bz2"
   sha256 "eb38aa93f93e8ab282d97e2582fbaea88b3f889a08cbc9dbf20059c3779d5cd8"
-  license "LGPL-2.1"
+  license "LGPL-2.1-or-later"
+
+  livecheck do
+    url :homepage
+    regex(/href=.*?liboping[._-]v?(\d+(?:\.\d+)+)\.t/i)
+  end
 
   bottle do
     sha256 arm64_big_sur: "a8ea63333bfc0a7ec880d0c5727316ff622ff2f4854efc93bd9bc082080f9365"
@@ -14,10 +19,11 @@ class Liboping < Formula
     sha256 sierra:        "42b80e23afe4fb4f296d039b0bdd4ccd0da21937514fdd04a90bc01d39da7aec"
     sha256 el_capitan:    "de0bb72a0752469b262db3a24a41c84746930858462cd08993c057caadd46264"
     sha256 yosemite:      "c4f46d01bdace450a49e2c4fc4ba4056070bf1b869ed07f1b0a1d6a4f7646bc9"
-    sha256 x86_64_linux:  "c85669755c8afdc54ec31e0ba30e49589c84cd0ed2ad2b0988e97135d5381fc1"
+    sha256 x86_64_linux:  "c85669755c8afdc54ec31e0ba30e49589c84cd0ed2ad2b0988e97135d5381fc1" # linuxbrew-core
   end
 
   uses_from_macos "ncurses"
+  uses_from_macos "perl"
 
   def install
     system "./configure", "--disable-debug",

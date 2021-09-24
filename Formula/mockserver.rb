@@ -10,11 +10,10 @@ class Mockserver < Formula
     regex(%r{href=.*?v?(\d+(?:\.\d+)+)/?["' >]}i)
   end
 
-  bottle :unneeded
-
   depends_on "openjdk"
 
   def install
+    inreplace "bin/run_mockserver.sh", "/usr/local", HOMEBREW_PREFIX
     libexec.install Dir["*"]
     (bin/"mockserver").write_env_script libexec/"bin/run_mockserver.sh", JAVA_HOME: Formula["openjdk"].opt_prefix
 

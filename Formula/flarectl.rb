@@ -1,23 +1,23 @@
 class Flarectl < Formula
   desc "CLI application for interacting with a Cloudflare account"
   homepage "https://github.com/cloudflare/cloudflare-go/tree/master/cmd/flarectl"
-  url "https://github.com/cloudflare/cloudflare-go/archive/v0.16.0.tar.gz"
-  sha256 "4ac9c510b1fa1fc7d7fdebac4dfbd91d3fdb15b6e2bba8c78d5268a81328e874"
+  url "https://github.com/cloudflare/cloudflare-go/archive/v0.24.0.tar.gz"
+  sha256 "87aa07679570cd4027ce84b4786a7bf56e2c31f036e73e3c6e31da7af8492a5b"
   license "BSD-3-Clause"
   head "https://github.com/cloudflare/cloudflare-go.git"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "41e0aade2dce1425c9487369a66771706887c2096fbd5a79bad1353ad642e1bc"
-    sha256 cellar: :any_skip_relocation, big_sur:       "261de70b759b8ae16e7fad56eadd1d7f7e5026fc28d0e75c06550f889dbd678b"
-    sha256 cellar: :any_skip_relocation, catalina:      "70a8366ef4abdbbac4605d301936d8e284753692afeeeb5946a101da17ffb4a4"
-    sha256 cellar: :any_skip_relocation, mojave:        "959d0d4a80f2b583aa3e3f5ea1405b73adcd23cd82ab029ab1d3f33ec829631f"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "34bf373ab1f7b3349bb1ac23f776d3d3af0de67966ba3a8c7366eafb9bae7106"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "b189a4d52ab029e761caf884e478448d9bdaf947b7ab48b108bf93539141d142"
+    sha256 cellar: :any_skip_relocation, big_sur:       "e8d6cd1138d003e041945faaf7a3e34a0e783be510c79986003d7b05f26c71fd"
+    sha256 cellar: :any_skip_relocation, catalina:      "55789a68ebae038d5f9a77182fbfe3c03a174293c0a0b2e21c84c840422bc22a"
+    sha256 cellar: :any_skip_relocation, mojave:        "d506e9f56227a5bba3ee64d3b1c653885e3e36aad548b16fba55f892c0d32531"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "c3fddf09e7318a442a8716bad8b592fcaf210a0b1c5e69f66931dc2f166e07bc" # linuxbrew-core
   end
 
   depends_on "go" => :build
 
   def install
-    system "go", "build", *std_go_args, "-ldflags", "-s -w", "./cmd/flarectl"
+    system "go", "build", *std_go_args(ldflags: "-s -w"), "./cmd/flarectl"
   end
 
   test do

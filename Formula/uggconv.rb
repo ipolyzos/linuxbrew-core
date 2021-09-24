@@ -4,6 +4,12 @@ class Uggconv < Formula
   url "https://wyrmcorp.com/software/uggconv/uggconv-1.0.tar.gz"
   sha256 "9a215429bc692b38d88d11f38ec40f43713576193558cd8ca6c239541b1dd7b8"
 
+  # The homepage gives the status as "Final (will not be updated)" and it was
+  # last modified on 2001-12-12.
+  livecheck do
+    skip "No longer developed"
+  end
+
   bottle do
     sha256 cellar: :any_skip_relocation, arm64_big_sur: "002cd504e9385234ab9b1b4595709ffccb2fda5d49c377add9c27eb422c04ed3"
     sha256 cellar: :any_skip_relocation, big_sur:       "820cca76f8c5618ba401a343644cffae2ece5526e0295dc29d0dd0f5f524789a"
@@ -13,7 +19,7 @@ class Uggconv < Formula
     sha256 cellar: :any_skip_relocation, sierra:        "a22594f94bf7baa1908bd1225f52f1db3dd01daa17f99038ecfbd60e22d12b5d"
     sha256 cellar: :any_skip_relocation, el_capitan:    "5ab8b271f2ccc17e5229921f01b92ff7b0c297908902c83d24612bb47592af3c"
     sha256 cellar: :any_skip_relocation, yosemite:      "a40a8a1adee9286acedba6e8eedf20bc53e4bf291fc73478bd3ba0314792c6ce"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "870b52f9831401649041b513817db058a8d100007e043ed797e0eaa6b01bce5d"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "870b52f9831401649041b513817db058a8d100007e043ed797e0eaa6b01bce5d" # linuxbrew-core
   end
 
   def install

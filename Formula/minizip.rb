@@ -3,10 +3,10 @@ class Minizip < Formula
   homepage "https://www.winimage.com/zLibDll/minizip.html"
   url "https://zlib.net/zlib-1.2.11.tar.gz"
   sha256 "c3e5e9fdd5004dcb542feda5ee4f0ff0744628baf8ed2dd5d66f8ca1197cb1a1"
+  license "Zlib"
 
   livecheck do
-    url "https://zlib.net/"
-    regex(/href=.*?zlib[._-]v?(\d+(?:\.\d+)+)\.t/i)
+    formula "zlib"
   end
 
   bottle do
@@ -17,7 +17,7 @@ class Minizip < Formula
     sha256 cellar: :any, mojave:        "503832d6da09e7f16b7036ee1cf3055c25ba3602d3ea9815a9800d1840fb69ea"
     sha256 cellar: :any, high_sierra:   "9fa636770888ef4e9aaa3c1bbf2d3c18fb0e4c393305c2ecf265ca79ecee6e71"
     sha256 cellar: :any, sierra:        "83e4b5b1b52ff484a0ba73637e0961ed3d41ecba4ee3c3cfe667d13ef7e51ad7"
-    sha256 cellar: :any, x86_64_linux:  "d6b3ab9a792e8f5335e2bf34a859c701acb9c506cea1ac8c6e878f60dc5036e8"
+    sha256 cellar: :any, x86_64_linux:  "d6b3ab9a792e8f5335e2bf34a859c701acb9c506cea1ac8c6e878f60dc5036e8" # linuxbrew-core
   end
 
   depends_on "autoconf" => :build
@@ -26,7 +26,7 @@ class Minizip < Formula
 
   uses_from_macos "zlib"
 
-  conflicts_with "minizip2",
+  conflicts_with "minizip-ng",
     because: "both install a `libminizip.a` library"
 
   def install
@@ -34,8 +34,8 @@ class Minizip < Formula
     system "make"
 
     cd "contrib/minizip" do
-      # edits to statically link to libz.a
       if OS.mac?
+        # edits to statically link to libz.a
         inreplace "Makefile.am" do |s|
           s.sub! "-L$(zlib_top_builddir)", "$(zlib_top_builddir)/libz.a"
           s.sub! "-version-info 1:0:0 -lz", "-version-info 1:0:0"

@@ -1,27 +1,10 @@
 class OpenMpi < Formula
   desc "High performance message passing library"
   homepage "https://www.open-mpi.org/"
+  url "https://download.open-mpi.org/release/open-mpi/v4.1/openmpi-4.1.1.tar.bz2"
+  sha256 "e24f7a778bd11a71ad0c14587a7f5b00e68a71aa5623e2157bafee3d44c07cda"
   license "BSD-3-Clause"
-  revision 1 unless OS.mac?
-
-  stable do
-    url "https://download.open-mpi.org/release/open-mpi/v4.1/openmpi-4.1.0.tar.bz2"
-    sha256 "73866fb77090819b6a8c85cb8539638d37d6877455825b74e289d647a39fd5b5"
-
-    if Hardware::CPU.arm?
-      # Dependencies needed for patch. Remove at next release.
-      depends_on "autoconf" => :build
-      depends_on "automake" => :build
-      depends_on "libtool" => :build
-
-      # Patch to fix ARM build. Remove at next release.
-      # https://github.com/open-mpi/ompi/pull/8421
-      patch do
-        url "https://github.com/open-mpi/ompi/commit/4779d8e079314ffd4556e3cb3289fecd07646cc5.patch?full_index=1"
-        sha256 "0553ffcc813919ee06937156073fc18ef6b55fa58201a9cba5168f35f7040c66"
-      end
-    end
-  end
+  revision 2
 
   livecheck do
     url :homepage
@@ -29,24 +12,15 @@ class OpenMpi < Formula
   end
 
   bottle do
-    sha256 arm64_big_sur: "6134b45b6faa235377c5cd017b58393a0a124936c81a14da9902604671143ca8"
-    sha256 big_sur:       "2afe47eb2c9664599a1bf8687d0244a9b9067bc96e3de184cdee8e3110fa8012"
-    sha256 catalina:      "fd21d8d449c7fee6126f11994b6e0d12178b1eab55cbb17f99056d535cb1ace4"
-    sha256 mojave:        "f3a7dca683792a4fe866b62004351b1dae6acf2376609cf36bdc771d9e9104ef"
-    sha256 high_sierra:   "33d3cd119f7f7d7d3154d758cc0ad68ad513624c9a648c9b87d732ea6a8e6068"
-    sha256 x86_64_linux:  "214b0e8a50e481ca85de5d4fb1e24597e9e743741e84aabf1ee6775c24db5adc"
+    sha256 arm64_big_sur: "c24af00250fad2b097822d0d6e51f1027915e375dcbc0590b385b30ef8af6453"
+    sha256 big_sur:       "da310195e62c1a27aea7365b325cb15dd48f99dd673fd1f685f8b5247cfbb48d"
+    sha256 catalina:      "27f25156376078df9cb6e41a57c370cb030f16092ee7dfe85d7a8000f252240e"
+    sha256 mojave:        "4d57102ec2e06043bc97d34130ae5cd9115a6a1718331476f5fbd71d8bef149e"
+    sha256 x86_64_linux:  "89b1fa4388693909e7a058fb413e58dc755dcb9e97e09e3d805a69cf593fb0fa" # linuxbrew-core
   end
 
   head do
     url "https://github.com/open-mpi/ompi.git"
-    depends_on "autoconf" => :build
-    depends_on "automake" => :build
-    depends_on "libtool" => :build
-  end
-
-  # Regenerate for Big Sur due to configure issues
-  # https://github.com/open-mpi/ompi/issues/8218
-  if MacOS.version >= :big_sur
     depends_on "autoconf" => :build
     depends_on "automake" => :build
     depends_on "libtool" => :build
@@ -92,14 +66,13 @@ class OpenMpi < Formula
       --disable-dependency-tracking
       --disable-silent-rules
       --enable-ipv6
-      --enable-mca-no-build=op-avx,reachable-netlink
+      --enable-mca-no-build=reachable-netlink
       --with-libevent=#{Formula["libevent"].opt_prefix}
       --with-sge
     ]
     args << "--with-platform-optimized" if build.head?
 
-    # Remove ` || Hardware::CPU.arm?` in the next release
-    system "./autogen.pl", "--force" if build.head? || Hardware::CPU.arm?
+    system "./autogen.pl", "--force" if build.head?
     system "./configure", *args
     system "make", "all"
     system "make", "check"
@@ -130,7 +103,7 @@ class OpenMpi < Formula
     EOS
     system bin/"mpicc", "hello.c", "-o", "hello"
     system "./hello"
-    system bin/"mpirun", "--allow-run-as-root", "./hello"
+    system bin/"mpirun", "./hello"
     (testpath/"hellof.f90").write <<~EOS
       program hello
       include 'mpif.h'
@@ -144,6 +117,6 @@ class OpenMpi < Formula
     EOS
     system bin/"mpif90", "hellof.f90", "-o", "hellof"
     system "./hellof"
-    system bin/"mpirun", "--allow-run-as-root", "./hellof"
+    system bin/"mpirun", "./hellof"
   end
 end

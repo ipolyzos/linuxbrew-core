@@ -11,7 +11,7 @@ class Valgrind < Formula
   end
 
   bottle do
-    sha256 x86_64_linux: "3a80d5b00b1154e358fb0784295c9c0b4879ae59725ff5738827f2711f9bc3a3"
+    sha256 x86_64_linux: "3a80d5b00b1154e358fb0784295c9c0b4879ae59725ff5738827f2711f9bc3a3" # linuxbrew-core
   end
 
   head do
@@ -33,6 +33,7 @@ class Valgrind < Formula
     ]
 
     system "./autogen.sh" if build.head?
+
     system "./configure", *args
     system "make"
     system "make", "install"

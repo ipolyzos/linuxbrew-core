@@ -1,25 +1,27 @@
 class Duckdb < Formula
   desc "Embeddable SQL OLAP Database Management System"
   homepage "https://www.duckdb.org"
-  url "https://github.com/cwida/duckdb.git",
-      tag:      "v0.2.5",
-      revision: "f480a32933ce45a06c5118bd1bbf2f4ea7be2ef9"
+  url "https://github.com/duckdb/duckdb.git",
+      tag:      "v0.2.9",
+      revision: "1776611ab8770d934f44dd9c8c2ac96f743408a9"
   license "MIT"
 
   bottle do
-    sha256 cellar: :any,                 arm64_big_sur: "af129c44a8fbdfbee227e27175e6d36924bc38b9b0561dc37f22640432dc8a5e"
-    sha256 cellar: :any,                 big_sur:       "487edb3243770fbee6104c74dbd98dbe65e1fa6db917dc532a82dfca8e93fcd3"
-    sha256 cellar: :any,                 catalina:      "9bfe7742ec2fccecdd3a0a3bfc43008b353dad093d79bda164aa81b70e6f204b"
-    sha256 cellar: :any,                 mojave:        "2b8e9c06f8c7781a705f7d09fbce4e8c1da878a52f7e11548e08d7d5d8fb6174"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "342feea9a0291a42eeffd7538f8807cff249910b50eac6d37adaee4f12c6fd91"
+    sha256 cellar: :any,                 arm64_big_sur: "4690ac3b2e1a9ad6b2b649f302a7cc263da0f075f10c3370f294c096babbc4b4"
+    sha256 cellar: :any,                 big_sur:       "53f34d296151b18be3ec75961e15d7099f5bc90eebecd6fe5a3d376f7de20b2c"
+    sha256 cellar: :any,                 catalina:      "19149ad12f65d6c161ad2b4a6d75bfc7bd40dccb0fbab75dfcbb0a6659d7a2d4"
+    sha256 cellar: :any,                 mojave:        "481aa4c9fac1c84a6aae4ab6c3897d95bd59cdf0ac69b9773429eedbf92ba109"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "d453a4e505db3ee6235c1b47494450340daa26fdff473b490287b08a19a0789a" # linuxbrew-core
   end
 
   depends_on "cmake" => :build
   depends_on "python@3.9" => :build
+  depends_on "utf8proc"
 
   def install
+    ENV.deparallelize if OS.linux? # amalgamation builds take GBs of RAM
     mkdir "build/amalgamation"
-    system Formula["python@3.9"].opt_bin/"python3", "scripts/amalgamation.py"
+    system Formula["python@3.9"].opt_bin/"python3", "scripts/amalgamation.py", "--extended"
     cd "build/amalgamation" do
       system "cmake", "../..", *std_cmake_args, "-DAMALGAMATION_BUILD=ON"
       system "make"

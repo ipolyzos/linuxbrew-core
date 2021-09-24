@@ -18,7 +18,6 @@ class Fmdiff < Formula
     sha256 cellar: :any_skip_relocation, yosemite:      "59d9c9d8a8759531a2f715619cfb2bce404fc7378235cf416ea5a426eb8d967f"
   end
 
-  depends_on :macos
   # Needs FileMerge.app, which is part of Xcode.
   depends_on :macos
   depends_on :xcode

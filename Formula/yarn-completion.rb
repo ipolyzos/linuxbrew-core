@@ -5,7 +5,9 @@ class YarnCompletion < Formula
   sha256 "cc9d86bd8d4c662833424f86f1f86cfa0516c0835874768d9cf84aaf79fb8b21"
   license "MIT"
 
-  bottle :unneeded
+  bottle do
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "fa61ffe0566b918f54f590d3767cc467f5218f2911b3b5b7f6491d8d5a7e06f0" # linuxbrew-core
+  end
 
   depends_on "bash"
 

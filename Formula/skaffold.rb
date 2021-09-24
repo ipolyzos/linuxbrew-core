@@ -2,17 +2,17 @@ class Skaffold < Formula
   desc "Easy and Repeatable Kubernetes Development"
   homepage "https://skaffold.dev/"
   url "https://github.com/GoogleContainerTools/skaffold.git",
-      tag:      "v1.22.0",
-      revision: "4e67ac7be12926c9714c48b4bd2b3562c6e1511b"
+      tag:      "v1.32.0",
+      revision: "edd1d458902d64e51e17b83514e1fc693c248259"
   license "Apache-2.0"
-  head "https://github.com/GoogleContainerTools/skaffold.git"
+  head "https://github.com/GoogleContainerTools/skaffold.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "e96e7329c8ea9fd1d7a8890e632e17f140b94e252101a4bbb25f150fdc1a1b55"
-    sha256 cellar: :any_skip_relocation, big_sur:       "b6bd78655c1d8ce3c353833d71e333a37ae27ffe144c307bd17156936abaf230"
-    sha256 cellar: :any_skip_relocation, catalina:      "1d7208717d760052139a6c9e6ce0ad2a9c645d040c3df37ff6e58ca63d8d2420"
-    sha256 cellar: :any_skip_relocation, mojave:        "cd3ba9ea728f43e8eb574cf35c0f39f64635953ae9f099e1b40f14f14e137965"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "61edac99af2bb38a251c82ae39e07086077fe93cb1cf5acb8476999711efdc14"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "f40b1246c5c65e4590525e8e6b43b307fd96290ce809b7c0b8ee7c6c8eea1da2"
+    sha256 cellar: :any_skip_relocation, big_sur:       "472c853214015ca234f9142f8fe3718b142f099867ed3fe0e82532eb2d16f778"
+    sha256 cellar: :any_skip_relocation, catalina:      "29cbefa29462dbd923d4945669ce2843947d3a91ebe41d2c431efb1be9e439e8"
+    sha256 cellar: :any_skip_relocation, mojave:        "3f6a6d0eedf93ddaa16af6bb574a680da130d2e43a376683408487d16b7eeefe"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "dba3877c157aa4b9d099777aa4f2b76306caf2eb8fc6aac1512de43cc008c8db" # linuxbrew-core
   end
 
   depends_on "go" => :build
@@ -29,6 +29,6 @@ class Skaffold < Formula
   test do
     (testpath/"Dockerfile").write "FROM scratch"
     output = shell_output("#{bin}/skaffold init --analyze").chomp
-    assert_equal '{"dockerfiles":["Dockerfile"]}', output
+    assert_equal '{"builders":[{"name":"Docker","payload":{"path":"Dockerfile"}}]}', output
   end
 end

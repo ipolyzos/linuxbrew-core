@@ -1,8 +1,9 @@
 class PerconaServer < Formula
   desc "Drop-in MySQL replacement"
   homepage "https://www.percona.com"
-  url "https://www.percona.com/downloads/Percona-Server-8.0/Percona-Server-8.0.22-13/source/tarball/percona-server-8.0.22-13.tar.gz"
-  sha256 "614249dc7790e82cabf22fdb20492be7ec5b8e98550f662204a17e0e8797cc9a"
+  url "https://www.percona.com/downloads/Percona-Server-8.0/Percona-Server-8.0.25-15/source/tarball/percona-server-8.0.25-15.tar.gz"
+  sha256 "447168d0cda3a0ef82ae0d20aa5af2fccfe5697c0f298262f1e8e315ac5c2dec"
+  license "BSD-3-Clause"
 
   livecheck do
     url "https://www.percona.com/downloads/Percona-Server-LATEST/"
@@ -10,10 +11,10 @@ class PerconaServer < Formula
   end
 
   bottle do
-    sha256 arm64_big_sur: "6fc23e2340c93784c2b12e712688ef293a81693becb500c742bd7182f08b5429"
-    sha256 big_sur:       "1279dd11e7a27faa7617a517b7ff44a7260d2a2591555c436a326017bd978b83"
-    sha256 catalina:      "290a88ceec94ecd8b6d830df04ec27482887b92b8dc12ae9df491afd6afeb141"
-    sha256 mojave:        "feb100bec9928591c10367c22cf0c041ec317d12377ff3eeb4d8f0eb23bbb39f"
+    sha256 arm64_big_sur: "74a341ae970dee92cf8613f6dd371bc05ee5b91328a62e343a68c152a99ac826"
+    sha256 big_sur:       "878942f42c4477365b9c316ccb59f2e7b0fe0165892ee23d753ddf8995626548"
+    sha256 catalina:      "f8da24e9ea607aaee0c84dcb479d9af176906512912a9c196c117f60dff9b5af"
+    sha256 mojave:        "fe725d6eefdda4ff0a69eb8c43e6cccd838ebc644bd6445b632b456a15827ea6"
   end
 
   pour_bottle? do
@@ -22,15 +23,25 @@ class PerconaServer < Formula
   end
 
   depends_on "cmake" => :build
+  depends_on "pkg-config" => :build
+  depends_on "icu4c"
+  depends_on "libevent"
+  depends_on "lz4"
   depends_on "openssl@1.1"
   depends_on "protobuf"
+  depends_on "zstd"
 
   uses_from_macos "curl"
+  uses_from_macos "cyrus-sasl"
+  uses_from_macos "libedit"
+  uses_from_macos "zlib"
 
   on_linux do
-    depends_on "pkg-config" => :build
-    depends_on "libedit"
+    depends_on "patchelf" => :build
     depends_on "readline"
+
+    # Fix build with OpenLDAP 2.5+, which merged libldap_r into libldap
+    patch :DATA
   end
 
   conflicts_with "mariadb", "mysql",
@@ -45,7 +56,7 @@ class PerconaServer < Formula
 
   # https://github.com/percona/percona-server/blob/Percona-Server-#{version}/cmake/boost.cmake
   resource "boost" do
-    url "https://dl.bintray.com/boostorg/release/1.73.0/source/boost_1_73_0.tar.bz2"
+    url "https://boostorg.jfrog.io/artifactory/main/release/1.73.0/source/boost_1_73_0.tar.bz2"
     sha256 "4eb3b8d442b426dc35346235c8733b5ae35ba431690e38c6a8263dce9fcbb402"
   end
 
@@ -57,10 +68,11 @@ class PerconaServer < Formula
   end
 
   def install
+    # -DINSTALL_* are relative to `CMAKE_INSTALL_PREFIX` (`prefix`)
     args = %W[
       -DFORCE_INSOURCE_BUILD=1
       -DCOMPILATION_COMMENT=Homebrew
-      -DDEFAULT_CHARSET=utf8
+      -DDEFAULT_CHARSET=utf8mb4
       -DDEFAULT_COLLATION=utf8mb4_0900_ai_ci
       -DINSTALL_DOCDIR=share/doc/#{name}
       -DINSTALL_INCLUDEDIR=include/mysql
@@ -70,15 +82,19 @@ class PerconaServer < Formula
       -DINSTALL_PLUGINDIR=lib/percona-server/plugin
       -DMYSQL_DATADIR=#{datadir}
       -DSYSCONFDIR=#{etc}
-      -DWITH_SSL=#{Formula["openssl@1.1"].opt_prefix}
-      -DWITH_UNIT_TESTS=OFF
-      -DWITH_EMBEDDED_SERVER=ON
       -DENABLED_LOCAL_INFILE=1
+      -DWITH_EMBEDDED_SERVER=ON
       -DWITH_INNODB_MEMCACHED=ON
+      -DWITH_UNIT_TESTS=OFF
       -DWITH_EDITLINE=system
+      -DWITH_ICU=system
+      -DWITH_LIBEVENT=system
+      -DWITH_LZ4=system
       -DWITH_PROTOBUF=system
+      -DWITH_SSL=#{Formula["openssl@1.1"].opt_prefix}
+      -DWITH_ZLIB=system
+      -DWITH_ZSTD=system
     ]
-    args << "-DWITH_EDITLINE=system" if OS.mac?
 
     # MySQL >5.7.x mandates Boost as a requirement to build & has a strict
     # version check in place to ensure it only builds against expected release.
@@ -98,14 +114,15 @@ class PerconaServer < Formula
     system "make"
     system "make", "install"
 
-    if OS.mac?
-      (prefix/"mysql-test").cd do
-        system "./mysql-test-run.pl", "status", "--vardir=#{Dir.mktmpdir}"
-      end
+    (prefix/"mysql-test").cd do
+      test_args = ["--vardir=#{Dir.mktmpdir}"]
+      # For Linux, disable failing on warning: "Setting thread 31563 nice to 0 failed"
+      # Docker containers lack CAP_SYS_NICE capability by default.
+      test_args << "--nowarnings" if OS.linux?
+      system "./mysql-test-run.pl", "status", *test_args
     end
-    # Test is disabled on Linux as it is currently failing
 
-    on_macos do
+    if OS.mac?
       # Remove libssl copies as the binaries use the keg anyway and they create problems for other applications
       rm lib/"libssl.dylib"
       rm lib/"libssl.1.1.dylib"
@@ -209,3 +226,16 @@ class PerconaServer < Formula
     system "#{bin}/mysqladmin", "--port=#{port}", "--user=root", "--password=", "shutdown"
   end
 end
+
+__END__
+--- a/plugin/auth_ldap/CMakeLists.txt
++++ b/plugin/auth_ldap/CMakeLists.txt
+@@ -36,7 +36,7 @@ IF(WITH_LDAP)
+
+   # libler?
+   MYSQL_ADD_PLUGIN(authentication_ldap_simple ${ALP_SOURCES_SIMPLE}
+-    LINK_LIBRARIES ldap_r MODULE_ONLY MODULE_OUTPUT_NAME "authentication_ldap_simple")
++    LINK_LIBRARIES ldap MODULE_ONLY MODULE_OUTPUT_NAME "authentication_ldap_simple")
+
+   IF(UNIX)
+     IF(INSTALL_MYSQLTESTDIR)

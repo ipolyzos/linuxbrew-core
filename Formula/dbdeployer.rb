@@ -1,30 +1,23 @@
 class Dbdeployer < Formula
   desc "Tool to deploy sandboxed MySQL database servers"
   homepage "https://github.com/datacharmer/dbdeployer"
-  url "https://github.com/datacharmer/dbdeployer/archive/v1.59.0.tar.gz"
-  sha256 "6a6558138faa79e445a0f3751ee6c41ce412b2647851a6ebdb70c11057efe9e6"
+  url "https://github.com/datacharmer/dbdeployer/archive/v1.63.0.tar.gz"
+  sha256 "8d7f554b6cfae8bae07ede9cf56fdb88ba26d84b450f959b9b9c2f734027d841"
   license "Apache-2.0"
-  head "https://github.com/datacharmer/dbdeployer.git"
+  head "https://github.com/datacharmer/dbdeployer.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "8c01239d6368c41369b860d413f90bed667fda48b709f58abc5e33aa9561fb1b"
-    sha256 cellar: :any_skip_relocation, big_sur:       "987f418e2bbda24daf4d920aef22a09aef24c202f7d007005ec5c7810c820666"
-    sha256 cellar: :any_skip_relocation, catalina:      "7209ee6ca22e01bd6a2526d0069e13dc7918c987d5c3b9925975c5de510face5"
-    sha256 cellar: :any_skip_relocation, mojave:        "e787cc9e52baf19755efc5a481d069a208c7fa4c07df84acab393c4582b482d5"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "dabcfef766a021bbdfd190391120f162595608e0467657ec2df796a80a16ee1f"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "81054ec0100e4f9c3fcc090b38cef4f54e382b35f3848cf4dfd6c335d759af2c"
+    sha256 cellar: :any_skip_relocation, big_sur:       "6f387ef8a00328ad1c0780d7ada85a65a8e2ddef3e6981b5fe01e8ef98c2784f"
+    sha256 cellar: :any_skip_relocation, catalina:      "329795cae31ff274e83949dfff8d86b5baa2c58096be8e3b4391b48bb2f1a761"
+    sha256 cellar: :any_skip_relocation, mojave:        "22627bf6e9d9f887af5dbfab99e0db38d8d20227a0c900f501c69e00bed1ce18"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "07b7e1f8f8c1b9ddc6501b70039e1fdce0ef5304f63d301a14995c6fb3c3701a" # linuxbrew-core
   end
 
   depends_on "go" => :build
 
   def install
-    on_macos do
-      system "./scripts/build.sh", "OSX"
-      bin.install "dbdeployer-#{version}.osx" => "dbdeployer"
-    end
-    on_linux do
-      system "./scripts/build.sh", "linux"
-      bin.install "dbdeployer-#{version}.linux" => "dbdeployer"
-    end
+    system "go", "build", *std_go_args(ldflags: "-s -w")
     bash_completion.install "docs/dbdeployer_completion.sh"
   end
 

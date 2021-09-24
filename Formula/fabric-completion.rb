@@ -6,7 +6,9 @@ class FabricCompletion < Formula
   version "1"
   head "https://github.com/kbakulin/fabric-completion.git"
 
-  bottle :unneeded
+  livecheck do
+    skip "No version information available to check"
+  end
 
   def install
     bash_completion.install "fabric-completion.bash" => "fabric"

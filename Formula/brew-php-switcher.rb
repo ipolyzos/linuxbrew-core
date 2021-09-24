@@ -4,9 +4,7 @@ class BrewPhpSwitcher < Formula
   url "https://github.com/philcook/brew-php-switcher/archive/v2.3.tar.gz"
   sha256 "5e6a622354422c66737ac6b76c6ea2db6d1591558a0238d680ba530f2c8b5773"
   license "MIT"
-  head "https://github.com/philcook/brew-php-switcher.git"
-
-  bottle :unneeded
+  head "https://github.com/philcook/brew-php-switcher.git", branch: "master"
 
   depends_on "php" => :test
 

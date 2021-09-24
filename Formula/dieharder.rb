@@ -1,9 +1,14 @@
 class Dieharder < Formula
   desc "Random number test suite"
-  homepage "https://www.phy.duke.edu/~rgb/General/dieharder.php"
-  url "https://www.phy.duke.edu/~rgb/General/dieharder/dieharder-3.31.1.tgz"
+  homepage "https://webhome.phy.duke.edu/~rgb/General/dieharder.php"
+  url "https://webhome.phy.duke.edu/~rgb/General/dieharder/dieharder-3.31.1.tgz"
   sha256 "6cff0ff8394c553549ac7433359ccfc955fb26794260314620dfa5e4cd4b727f"
   revision 3
+
+  livecheck do
+    url :homepage
+    regex(/href=.*?dieharder[._-]v?(\d+(?:\.\d+)+)\.t/i)
+  end
 
   bottle do
     sha256 cellar: :any, arm64_big_sur: "e0650468410dbd840acddb2cebc9e28e7bdd0293d5c442abb8c95d50c8524735"
@@ -12,7 +17,7 @@ class Dieharder < Formula
     sha256 cellar: :any, mojave:        "b7b1bdbb6f105e4286320ad067689d8e3f7a2c7821a53382ebc2007b47d06dc9"
     sha256 cellar: :any, high_sierra:   "341bdf1e0fce90d69db4e6749ec3ee3b8c5903559e365a19e9f5a8ba2723d403"
     sha256 cellar: :any, sierra:        "8a40fb61aef5230ad77b3b851a6e8b6d575ff2adaa747c3b73a75cd203197945"
-    sha256 cellar: :any, x86_64_linux:  "c73860b6159dcac52f7317e850475c526e7d0ded994adf8d61d8ba920b317aac"
+    sha256 cellar: :any, x86_64_linux:  "c73860b6159dcac52f7317e850475c526e7d0ded994adf8d61d8ba920b317aac" # linuxbrew-core
   end
 
   depends_on "gsl"

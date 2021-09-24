@@ -3,6 +3,7 @@ class Ftjam < Formula
   homepage "https://www.freetype.org/jam/"
   url "https://downloads.sourceforge.net/project/freetype/ftjam/2.5.2/ftjam-2.5.2.tar.bz2"
   sha256 "e89773500a92912de918e9febffabe4b6bce79d69af194435f4e032b8a6d66a3"
+  license :cannot_represent
 
   # We check the "ftjam" directory page since versions aren't present in the
   # RSS feed as of writing.
@@ -20,8 +21,10 @@ class Ftjam < Formula
     sha256 cellar: :any_skip_relocation, sierra:       "31e7d5357421066e2b58cab199a690691a8897e442e1472acdb3d0d829657670"
     sha256 cellar: :any_skip_relocation, el_capitan:   "f94287203827dea6ac5031e695c217a48b1b69e939dcd68a489c8477b4100447"
     sha256 cellar: :any_skip_relocation, yosemite:     "95490ead99e537713d8c26d1c1bea72b31ea06153a405867ffe83c044593caa0"
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "08838169b289f6867243ec61ee4aa954abc316317c2c6b2a7ae2fdc243b614cc" # glibc 2.19
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "08838169b289f6867243ec61ee4aa954abc316317c2c6b2a7ae2fdc243b614cc" # linuxbrew-core
   end
+
+  uses_from_macos "bison" => :build
 
   conflicts_with "jam", because: "both install a `jam` binary"
 

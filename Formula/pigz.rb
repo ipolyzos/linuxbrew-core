@@ -15,14 +15,12 @@ class Pigz < Formula
     sha256 cellar: :any_skip_relocation, big_sur:       "6ed76215af752e06d11b176c3c169a55f76cf2010c01e67e62f7543081137b5e"
     sha256 cellar: :any_skip_relocation, catalina:      "c1e5284c99ef13e0401035597901b5b63d19bbb642fd7206d648193c89d0e6e7"
     sha256 cellar: :any_skip_relocation, mojave:        "0d382426d9bf386f21f8412317b58d05fcaf6ada17b260a1b6e95e8f2e955cf4"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "44b6494a84353efaae72610781e79f12540eed93cca0a7a327ee0c28dea56146"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "44b6494a84353efaae72610781e79f12540eed93cca0a7a327ee0c28dea56146" # linuxbrew-core
   end
 
   uses_from_macos "zlib"
 
   def install
-    inreplace "Makefile", "-lm", "-lz -lm" unless OS.mac?
-
     # Fix dyld: lazy symbol binding failed: Symbol not found: _deflatePending
     # Reported 8 Dec 2016 to madler at alumni.caltech.edu
     if MacOS.version == :el_capitan && MacOS::Xcode.version >= "8.0"
@@ -42,7 +40,7 @@ class Pigz < Formula
     assert (testpath/"example.gz").file?
     system bin/"unpigz", testpath/"example.gz"
     assert_equal test_data, (testpath/"example").read
-    system "/bin/dd", "if=/dev/random", "of=foo.bin", "bs=1M", "count=10"
+    system "/bin/dd", "if=/dev/random", "of=foo.bin", "bs=1024k", "count=10"
     system bin/"pigz", "foo.bin"
   end
 end

@@ -29,11 +29,6 @@ class JohnJumbo < Formula
 
   conflicts_with "john", because: "both install the same binaries"
 
-  # https://github.com/magnumripper/JohnTheRipper/blob/bleeding-jumbo/doc/INSTALL#L133-L143
-  fails_with :gcc do
-    cause "Upstream have a hacky workaround for supporting gcc that we can't use."
-  end
-
   # Fixed setup `-mno-sse4.1` for some machines.
   # See details for example from here: https://github.com/magnumripper/JohnTheRipper/pull/4100
   patch do

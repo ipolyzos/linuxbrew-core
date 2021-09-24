@@ -1,8 +1,12 @@
 class Fastbit < Formula
   desc "Open-source data processing library in NoSQL spirit"
   homepage "https://sdm.lbl.gov/fastbit/"
-  url "https://code.lbl.gov/frs/download.php/file/426/fastbit-2.0.3.tar.gz"
+  # Upstream download url is blocking access: Cloudflare Error 1006: IP Address Restriction
+  # Use an archived copy from archive.org until upstream url is restored
+  url "https://web.archive.org/web/20210319090732/code.lbl.gov/frs/download.php/file/426/fastbit-2.0.3.tar.gz"
+  mirror "https://code.lbl.gov/frs/download.php/file/426/fastbit-2.0.3.tar.gz"
   sha256 "1ddb16d33d869894f8d8cd745cd3198974aabebca68fa2b83eb44d22339466ec"
+  license "BSD-3-Clause"
   revision 1
 
   bottle do
@@ -11,7 +15,7 @@ class Fastbit < Formula
     sha256 cellar: :any,                 catalina:      "31e723c0610621033859357ab2a6dc373cf955847ab5c3dcf32696d260fa0de3"
     sha256 cellar: :any,                 mojave:        "0f9a32fe10c3e5c6e2826009f247bc55064ad5612dcda9724cda203c8b18e00e"
     sha256 cellar: :any,                 high_sierra:   "a7d7330e664e04191fe183050b588e4d3ad13aa101553f8f6965deb708c96d72"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "1ac579dadcc1fb2189f45c06847f0052957d53066351abbdd156beb0c63f4790"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "1ac579dadcc1fb2189f45c06847f0052957d53066351abbdd156beb0c63f4790" # linuxbrew-core
   end
 
   depends_on "openjdk"
@@ -32,21 +36,16 @@ class Fastbit < Formula
                           "--with-java=#{Formula["openjdk"].opt_prefix}"
     system "make", "install"
     libexec.install lib/"fastbitjni.jar"
-    (bin/"fastbitjni").write <<~EOS
-      #!/bin/bash
-      exec "#{Formula["openjdk"].opt_bin}/java" -jar '#{libexec}/fastbitjni.jar' "$@"
-    EOS
+    bin.write_jar_script libexec/"fastbitjni.jar", "fastbitjni"
   end
 
   test do
-    assert_equal prefix.to_s,
-                 shell_output("#{bin}/fastbit-config --prefix").chomp
+    assert_equal prefix.to_s, shell_output("#{bin}/fastbit-config --prefix").chomp
     (testpath/"test.csv").write <<~EOS
       Potter,Harry
       Granger,Hermione
       Weasley,Ron
     EOS
-    system bin/"ardea", "-d", testpath,
-           "-m", "a:t,b:t", "-t", testpath/"test.csv"
+    system bin/"ardea", "-d", testpath, "-m", "a:t,b:t", "-t", testpath/"test.csv"
   end
 end

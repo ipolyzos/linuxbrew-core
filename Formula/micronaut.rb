@@ -1,34 +1,36 @@
 class Micronaut < Formula
   desc "Modern JVM-based framework for building modular microservices"
   homepage "https://micronaut.io/"
-  url "https://github.com/micronaut-projects/micronaut-starter/archive/v2.4.2.tar.gz"
-  sha256 "dffdc386b378ab9fb4367b9802e351216da0e248fff4607123e49cc83b5ed4ed"
+  url "https://github.com/micronaut-projects/micronaut-starter/archive/v3.0.1.tar.gz"
+  sha256 "61b58f5fd46c2986929aba75add112e20fe69d80b1425f6eb4389edead36887f"
   license "Apache-2.0"
+  revision 1
 
   livecheck do
     url :stable
-    strategy :github_latest
+    regex(/^v?(\d+(?:\.\d+)+)$/i)
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, big_sur:      "6bd52d53099de814d99fc5918c8f5ed5aef17f98d0fc869e708b5ec3154791fc"
-    sha256 cellar: :any_skip_relocation, catalina:     "6c3fbab1729010f101c228452f09d9dfd4c280696ec5e3c03d68024c5edc39e8"
-    sha256 cellar: :any_skip_relocation, mojave:       "c80e5c70b0b3aa9aca560dba62410eee0fd931b5ad6b4175a2b337c25a3f9934"
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "b61d2951deb70685cd552a4e9686e69908cb3a562a5a226d0082ddd38675f54d"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "04070f1c0d03d4929534bd0ed36447fc50c3fcc9ec2fe95eb88ecceb211379b1"
+    sha256 cellar: :any_skip_relocation, big_sur:       "493d84f3de354af6511804928d2105aa0d777f842795dca0332ec91a50ac74ea"
+    sha256 cellar: :any_skip_relocation, catalina:      "eb811d45baba54fb60f6a3987de1ae72ad22ec14b0f6f4e3b5fa23a03b304b02"
+    sha256 cellar: :any_skip_relocation, mojave:        "d671f193cc23d3e5b72d746a954d8603ea5db224e321d1f33248eff2195fbe45"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "8a17f2840067063c419b77be91b6afaf5257972288ece1b021b1226696dcfa65" # linuxbrew-core
   end
 
-  depends_on "gradle" => :build
-  depends_on "openjdk"
+  # Uses a hardcoded list of supported JDKs. Try switching to `openjdk` on update.
+  depends_on "openjdk@11"
 
   def install
-    system "gradle", "micronaut-cli:assemble", "-x", "test"
+    system "./gradlew", "micronaut-cli:assemble", "-x", "test"
 
     mkdir_p libexec/"bin"
     mv "starter-cli/build/exploded/bin/mn", libexec/"bin/mn"
     mv "starter-cli/build/exploded/lib", libexec/"lib"
 
     bash_completion.install "starter-cli/build/exploded/bin/mn_completion"
-    (bin/"mn").write_env_script libexec/"bin/mn", Language::Java.overridable_java_home_env
+    (bin/"mn").write_env_script libexec/"bin/mn", Language::Java.overridable_java_home_env("11")
   end
 
   test do

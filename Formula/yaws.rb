@@ -4,7 +4,7 @@ class Yaws < Formula
   url "https://github.com/erlyaws/yaws/archive/yaws-2.0.9.tar.gz"
   sha256 "a2bbfe10c780ef2c3b238eaf76d902f4921c63b49d135bb9878b163ef1870a6d"
   license "BSD-3-Clause"
-  head "https://github.com/erlyaws/yaws.git"
+  head "https://github.com/erlyaws/yaws.git", branch: "master"
 
   livecheck do
     url :stable
@@ -17,6 +17,7 @@ class Yaws < Formula
     sha256 cellar: :any_skip_relocation, big_sur:       "79fe292028db08b81a2f66f80cbc2fd7c52e9801692c416ea275663c61dd4533"
     sha256 cellar: :any_skip_relocation, catalina:      "99c7e7a4fb01e682a1f1cf513ac6b4202f9f030fea64836a0b71354802fde033"
     sha256 cellar: :any_skip_relocation, mojave:        "f8b43c32a42426bc2e0b774e8abde8c7b32206ad19c230231ba22f32a1312eb5"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "fc32687f3ccaa7c9f57e320ac6a0be5c26c2348bf9cb6021ce398d2366411217" # linuxbrew-core
   end
 
   depends_on "autoconf" => :build
@@ -24,17 +25,27 @@ class Yaws < Formula
   depends_on "libtool" => :build
   depends_on "erlang"
 
+  on_linux do
+    depends_on "linux-pam"
+  end
+
   # the default config expects these folders to exist
   skip_clean "var/log/yaws"
   skip_clean "lib/yaws/examples/ebin"
   skip_clean "lib/yaws/examples/include"
 
   def install
+    # Ensure pam headers are found on Xcode-only installs
+    extra_args = %W[
+      --with-extrainclude=#{MacOS.sdk_path}/usr/include/security
+    ]
+    if OS.linux?
+      extra_args = %W[
+        --with-extrainclude=#{Formula["linux-pam"].opt_include}/security
+      ]
+    end
     system "autoreconf", "-fvi"
-    system "./configure", "--prefix=#{prefix}",
-                          # Ensure pam headers are found on Xcode-only installs
-                          "--with-extrainclude=#{MacOS.sdk_path}/usr/include/security",
-                          "SED=/usr/bin/sed"
+    system "./configure", "--prefix=#{prefix}", *extra_args
     system "make", "install", "WARNINGS_AS_ERRORS="
 
     cd "applications/yapp" do
@@ -45,6 +56,9 @@ class Yaws < Formula
     # the default config expects these folders to exist
     (lib/"yaws/examples/ebin").mkpath
     (lib/"yaws/examples/include").mkpath
+
+    # Remove Homebrew shims references on Linux
+    inreplace Dir["#{prefix}/var/yaws/www/*/Makefile"], Superenv.shims_path, "/usr/bin" if OS.linux?
   end
 
   def post_install

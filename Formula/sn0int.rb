@@ -1,16 +1,16 @@
 class Sn0int < Formula
   desc "Semi-automatic OSINT framework and package manager"
   homepage "https://github.com/kpcyrd/sn0int"
-  url "https://github.com/kpcyrd/sn0int/archive/v0.20.1.tar.gz"
-  sha256 "e973330d717bd0d8af0e4c510a7015e77a467e8bbe321e305118398578434717"
+  url "https://github.com/kpcyrd/sn0int/archive/v0.22.0.tar.gz"
+  sha256 "acc65e1ba4d2c117e03d4c4064b9121f7b3aef16562329ffced06cc75d598b34"
   license "GPL-3.0-or-later"
 
   bottle do
-    sha256 cellar: :any,                 arm64_big_sur: "5b32f53978ce16e9c2adfa8026261946a4536b901b662ded443c99a71824e452"
-    sha256 cellar: :any,                 big_sur:       "7ffb3d7af88ac5bdda2bf13f68f4e3d7a3243761b4c1097afd1b8962593eccee"
-    sha256 cellar: :any,                 catalina:      "3b19b2480ca176ed1ccea49442c202f5ae2988ebbf61a6666d6ab68869a1bb8a"
-    sha256 cellar: :any,                 mojave:        "cb3ff1efd4d5d823c75a6128f65574cf8f846e9434269aeac56ce00d61c44704"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "e08df00a83f2fb0d8089bf6323cf2e4bdfaa1cb8394b5cd174d32db08b27ad1b"
+    sha256 cellar: :any,                 arm64_big_sur: "292bc7f13087ef8d3f60bfbb2f532c4590f5e59559ebcc5efbb09721721adcd3"
+    sha256 cellar: :any,                 big_sur:       "047c660782189a8708c3478a0a6c2d9fbd949cf95fcc91f678fde0d24ed324c0"
+    sha256 cellar: :any,                 catalina:      "991fd7b49994a29fe6596f1d3dd56104719feb9bf15d865ce7e58ba823e9ea7e"
+    sha256 cellar: :any,                 mojave:        "863e8f5dc164cb0345fcf74b8e5bd209a2684697daa0546fffbccdb2c3ac96c7"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "c72bdb72056a949b1f099f503aa3e665832d2024121fc779794e8d8d2b1afbb0" # linuxbrew-core
   end
 
   depends_on "pkg-config" => :build
@@ -27,13 +27,12 @@ class Sn0int < Formula
   def install
     system "cargo", "install", *std_cargo_args
 
-    system "#{bin}/sn0int completions bash > sn0int.bash"
-    system "#{bin}/sn0int completions fish > sn0int.fish"
-    system "#{bin}/sn0int completions zsh > _sn0int"
-
-    bash_completion.install "sn0int.bash"
-    fish_completion.install "sn0int.fish"
-    zsh_completion.install "_sn0int"
+    bash_output = Utils.safe_popen_read(bin/"sn0int", "completions", "bash")
+    (bash_completion/"sn0int").write bash_output
+    zsh_output = Utils.safe_popen_read(bin/"sn0int", "completions", "zsh")
+    (zsh_completion/"_sn0int").write zsh_output
+    fish_output = Utils.safe_popen_read(bin/"sn0int", "completions", "fish")
+    (fish_completion/"sn0int.fish").write fish_output
 
     system "make", "-C", "docs", "man"
     man1.install "docs/_build/man/sn0int.1"
@@ -49,6 +48,6 @@ class Sn0int < Formula
           -- nothing to do here
       end
     EOS
-    system "#{bin}/sn0int", "run", "-vvxf", testpath/"true.lua"
+    system bin/"sn0int", "run", "-vvxf", testpath/"true.lua"
   end
 end

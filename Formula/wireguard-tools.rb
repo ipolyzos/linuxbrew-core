@@ -1,10 +1,10 @@
 class WireguardTools < Formula
   desc "Tools for the WireGuard secure network tunnel"
   homepage "https://www.wireguard.com/"
-  url "https://git.zx2c4.com/wireguard-tools/snapshot/wireguard-tools-1.0.20210315.tar.xz"
-  sha256 "af001d5492be6bf58ef0bebe04b446b6f50eb53e1226fab679cc34af40733a22"
+  url "https://git.zx2c4.com/wireguard-tools/snapshot/wireguard-tools-1.0.20210914.tar.xz"
+  sha256 "97ff31489217bb265b7ae850d3d0f335ab07d2652ba1feec88b734bc96bd05ac"
   license "GPL-2.0-only"
-  head "https://git.zx2c4.com/wireguard-tools.git"
+  head "https://git.zx2c4.com/wireguard-tools.git", branch: "master"
 
   livecheck do
     url :head
@@ -12,19 +12,15 @@ class WireguardTools < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "6814c231237dcbfaf07ca6c32a581b8e0c5cb77221a810d49b8ca9d2ea6a9e77"
-    sha256 cellar: :any_skip_relocation, big_sur:       "a430931f6c5e75da8191a52f25d5e596d821fa895ca1cd7cbf6e567baa053411"
-    sha256 cellar: :any_skip_relocation, catalina:      "eeecbb9a6788baaca5d07f6304750f1d9c05c4e10096824e4c297f507ff00d60"
-    sha256 cellar: :any_skip_relocation, mojave:        "71d028421938522d7a435f5c5fd5c4e18dc28bcd53a380466fe05ad844d480c1"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "012c58d971e655bae775965e13b27236c458609cdf9c1787e1b4e56f96b869ad"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "92e86c34ca2a747177fdc78ed6dfe44970f4943a6d929ca1c3c04698c05b5631"
+    sha256 cellar: :any_skip_relocation, big_sur:       "fddbe8d3d5d10d9f4f5cb34fb1235367a93f127decda021842d58f92d53fc686"
+    sha256 cellar: :any_skip_relocation, catalina:      "f24424c4b4c8aeaccc23f61c8b01f7296e8622d4be0436ac26b9de664a99d6bd"
+    sha256 cellar: :any_skip_relocation, mojave:        "79939305daed2313e0be3aa2e9420eb0c576e25c557d22a36b9dae6591ba8710"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "b6870c3e5fad02dbdfd95280a09b089b667351547ee0e47f80c9285e9078b8bc" # linuxbrew-core
   end
 
   depends_on "bash"
   depends_on "wireguard-go"
-
-  on_linux do
-    depends_on "libmnl"
-  end
 
   def install
     system "make", "BASHCOMPDIR=#{bash_completion}", "WITH_BASHCOMPLETION=yes", "WITH_WGQUICK=yes",

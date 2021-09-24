@@ -5,9 +5,7 @@ class RbenvVars < Formula
   sha256 "9e6a5726aad13d739456d887a43c220ba9198e672b32536d41e884c0a54b4ddb"
   license "MIT"
   revision 1
-  head "https://github.com/sstephenson/rbenv-vars.git"
-
-  bottle :unneeded
+  head "https://github.com/sstephenson/rbenv-vars.git", branch: "master"
 
   depends_on "rbenv"
 

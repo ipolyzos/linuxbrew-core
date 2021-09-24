@@ -1,19 +1,16 @@
 class OrocosKdl < Formula
   desc "Orocos Kinematics and Dynamics C++ library"
   homepage "https://orocos.org/"
-  url "https://github.com/orocos/orocos_kinematics_dynamics/archive/v1.4.0.tar.gz"
-  sha256 "05b93e759923684dc07433ccae1e476d158d89b3c2be5079c20062406da7b4dd"
-  license "LGPL-2.1"
+  url "https://github.com/orocos/orocos_kinematics_dynamics/archive/v1.5.1.tar.gz"
+  sha256 "5acb90acd82b10971717aca6c17874390762ecdaa3a8e4db04984ea1d4a2af9b"
+  license "LGPL-2.1-or-later"
 
   bottle do
-    sha256 cellar: :any, arm64_big_sur: "a935a1f650fdff2a93909d71bca9cf37a907c626ab08f18f5479323fb32b46bf"
-    sha256 cellar: :any, big_sur:       "11f44349bb30654acb195b84796e5b9492e5fa7539c1c8aababf98eaea239cf2"
-    sha256 cellar: :any, catalina:      "e65054479e7b34fd559f72f4485a5e34b57b457325bb8487576309ddad7a26fa"
-    sha256 cellar: :any, mojave:        "3d88fc55d86c9d1194ed3896bf1524405997e601ae75acbd37b176f882f07868"
-    sha256 cellar: :any, high_sierra:   "32e9cd3e10a20c046a45122557dda364352619c59acffca07f8c858cdcff9765"
-    sha256 cellar: :any, sierra:        "2696ca8480d6be3de18a141630388ef5fe5486096c02f99726b6d07cc91ff958"
-    sha256 cellar: :any, el_capitan:    "87d3407e88f69187f10119d109321c8ece7c04154262475665f462923f69ffe9"
-    sha256 cellar: :any, x86_64_linux:  "64f15475c1ea44fb029eb035f5f95224015f5564f69d97101fd26e0665ed5f82"
+    sha256 cellar: :any,                 arm64_big_sur: "70f546d7391dea4d7005d93f3720cde06f14e53b3cc7c514d67376ea05ac6493"
+    sha256 cellar: :any,                 big_sur:       "1c7f7a1fc384bd107acd0d3b8d302beed12c89198617f19b2c74d89e437e3ee8"
+    sha256 cellar: :any,                 catalina:      "4318687278abffc43d727c33539957387dbbab41f7ec9c08a4f5ff7a6061abd1"
+    sha256 cellar: :any,                 mojave:        "be089171fe396309561089d802e13ec101e56e91a5d2141207d588c1f703f52b"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "76ca5a86d809b86783da8111f4d3aa54f0f3cf6e2eb09dc499e0b5de4e6257f9" # linuxbrew-core
   end
 
   depends_on "cmake" => :build

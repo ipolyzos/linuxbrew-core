@@ -4,9 +4,7 @@ class PackerCompletion < Formula
   url "https://github.com/mrolli/packer-bash-completion/archive/1.4.3.tar.gz"
   sha256 "af7b3b49b29ffdb05b519dad2d83066f3d166dd8e29abd406ca0f3d480901df4"
   license "MIT"
-  head "https://github.com/mrolli/packer-bash-completion.git"
-
-  bottle :unneeded
+  head "https://github.com/mrolli/packer-bash-completion.git", branch: "master"
 
   def install
     bash_completion.install "packer"

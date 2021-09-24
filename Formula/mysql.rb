@@ -1,10 +1,9 @@
 class Mysql < Formula
   desc "Open source relational database management system"
   homepage "https://dev.mysql.com/doc/refman/8.0/en/"
-  url "https://cdn.mysql.com/Downloads/MySQL-8.0/mysql-boost-8.0.23.tar.gz"
-  sha256 "1c7a424303c134758e59607a0b3172e43a21a27ff08e8c88c2439ffd4fc724a5"
-  license "GPL-2.0-only"
-  revision 1
+  url "https://cdn.mysql.com/Downloads/MySQL-8.0/mysql-boost-8.0.26.tar.gz"
+  sha256 "209442c1001c37bcbc001845e1dc623d654cefb555b47b528742a53bf21c0b4d"
+  license "GPL-2.0-only" => { with: "Universal-FOSS-exception-1.0" }
 
   livecheck do
     url "https://dev.mysql.com/downloads/mysql/?tpl=files&os=src"
@@ -12,39 +11,54 @@ class Mysql < Formula
   end
 
   bottle do
-    sha256 arm64_big_sur: "813a67f5351719ddd2cd6977e842c1cf35880e9a2bc51095f37cb628d97282eb"
-    sha256 big_sur:       "9e9e4b5bfcad47adfbf7f2af7ebf2c2cc7411d2fb88a4a5155eaa2d919e899a1"
-    sha256 catalina:      "a5533c5f81c6651efee6f47e36bd51ac1e720cc70bd7403c1ac50af4eab33c7f"
-    sha256 mojave:        "23452cab50b70f8a0576001853665bdfff41df3b1c61b28d778dcecc153fb4d1"
-    sha256 x86_64_linux:  "230e67a6fd33a2e8e2ea6d4816a9b2531b9ebd4b01fd5853544872e8ccbbf669"
+    rebuild 1
+    sha256 arm64_big_sur: "824108be85caecc0b1101647c0f267fa5db8db084e865c5783fbdea111e93edf"
+    sha256 big_sur:       "5ad5be7141887ef52146e9d8950efdbcf3fbb99ca2dd1f3e3e05291b11eba498"
+    sha256 catalina:      "1cec65a2f5f219793c2f67c95108e2eedd524aaabc55c632a08b592655ea5a53"
+    sha256 mojave:        "375ae3a6ff585065e72dcf4d865ef8c9bdb1dccdc8c1f8b116f39425fbbc45ba"
+    sha256 x86_64_linux:  "b87249c85a9553cdbacbf7cc8db5b3a2a2fcba0bab10bdb0856418e83882b8ba" # linuxbrew-core
   end
 
   depends_on "cmake" => :build
+  depends_on "pkg-config" => :build
+  depends_on "icu4c"
+  depends_on "libevent"
+  depends_on "lz4"
   depends_on "openssl@1.1"
   depends_on "protobuf"
+  depends_on "zstd"
 
+  uses_from_macos "curl"
   uses_from_macos "cyrus-sasl"
-
-  # Fix error: Cannot find system editline libraries.
   uses_from_macos "libedit"
+  uses_from_macos "zlib"
+
+  on_linux do
+    depends_on "patchelf" => :build
+    depends_on "gcc" # for C++17
+
+    ignore_missing_libraries "metadata_cache.so"
+
+    # Disable ABI checking
+    patch :DATA
+  end
 
   conflicts_with "mariadb", "percona-server",
     because: "mysql, mariadb, and percona install the same binaries"
 
-  unless OS.mac?
-    depends_on "patchelf" => :build
-    depends_on "pkg-config" => :build
-  end
+  fails_with gcc: "5"
 
   def datadir
     var/"mysql"
   end
 
   def install
-    # Fix libmysqlgcs.a(gcs_logging.cc.o): relocation R_X86_64_32
-    # against `_ZN17Gcs_debug_options12m_debug_noneB5cxx11E' can not be used when making
-    # a shared object; recompile with -fPIC
-    ENV.append_to_cflags "-fPIC" unless OS.mac?
+    if OS.linux?
+      # Fix libmysqlgcs.a(gcs_logging.cc.o): relocation R_X86_64_32
+      # against `_ZN17Gcs_debug_options12m_debug_noneB5cxx11E' can not be used when making
+      # a shared object; recompile with -fPIC
+      ENV.append_to_cflags "-fPIC"
+    end
 
     # -DINSTALL_* are relative to `CMAKE_INSTALL_PREFIX` (`prefix`)
     args = %W[
@@ -58,10 +72,16 @@ class Mysql < Formula
       -DINSTALL_PLUGINDIR=lib/plugin
       -DMYSQL_DATADIR=#{datadir}
       -DSYSCONFDIR=#{etc}
+      -DWITH_SYSTEM_LIBS=ON
       -DWITH_BOOST=boost
       -DWITH_EDITLINE=system
-      -DWITH_SSL=#{Formula["openssl@1.1"].opt_prefix}
+      -DWITH_ICU=system
+      -DWITH_LIBEVENT=system
+      -DWITH_LZ4=system
       -DWITH_PROTOBUF=system
+      -DWITH_SSL=system
+      -DWITH_ZLIB=system
+      -DWITH_ZSTD=system
       -DWITH_UNIT_TESTS=OFF
       -DENABLED_LOCAL_INFILE=1
       -DWITH_INNODB_MEMCACHED=ON
@@ -76,6 +96,7 @@ class Mysql < Formula
     end
 
     # Remove libssl copies as the binaries use the keg anyway and they create problems for other applications
+    # Reported upstream at https://bugs.mysql.com/bug.php?id=103227
     rm_rf lib/"libssl.dylib"
     rm_rf lib/"libssl.1.1.dylib"
     rm_rf lib/"libcrypto.1.1.dylib"
@@ -141,30 +162,10 @@ class Mysql < Formula
     s
   end
 
-  plist_options manual: "mysql.server start"
-
-  def plist
-    <<~EOS
-      <?xml version="1.0" encoding="UTF-8"?>
-      <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-      <plist version="1.0">
-      <dict>
-        <key>KeepAlive</key>
-        <true/>
-        <key>Label</key>
-        <string>#{plist_name}</string>
-        <key>ProgramArguments</key>
-        <array>
-          <string>#{opt_bin}/mysqld_safe</string>
-          <string>--datadir=#{datadir}</string>
-        </array>
-        <key>RunAtLoad</key>
-        <true/>
-        <key>WorkingDirectory</key>
-        <string>#{datadir}</string>
-      </dict>
-      </plist>
-    EOS
+  service do
+    run [opt_bin/"mysqld_safe", "--datadir=#{var}/mysql"]
+    keep_alive true
+    working_dir var/"mysql"
   end
 
   test do
@@ -183,3 +184,18 @@ class Mysql < Formula
     system "#{bin}/mysqladmin", "--port=#{port}", "--user=root", "--password=", "shutdown"
   end
 end
+
+__END__
+diff --git a/cmake/abi_check.cmake b/cmake/abi_check.cmake
+index 0e1886bb..87b7aff7 100644
+--- a/cmake/abi_check.cmake
++++ b/cmake/abi_check.cmake
+@@ -30,7 +30,7 @@
+ # (Solaris) sed or diff might act differently from GNU, so we run only 
+ # on systems we can trust.
+ IF(LINUX)
+-  SET(RUN_ABI_CHECK 1)
++  SET(RUN_ABI_CHECK 0)
+ ELSE()
+   SET(RUN_ABI_CHECK 0)
+ ENDIF()

@@ -5,7 +5,17 @@ class Hyperspec < Formula
   version "7.0"
   sha256 "1ac1666a9dc697dbd8881262cad4371bcd2e9843108b643e2ea93472ba85d7c3"
 
-  bottle :unneeded
+  livecheck do
+    url :homepage
+    regex(/href=.*?HyperSpec[._-]v?(\d+(?:[.-]\d+)+)\.t/i)
+    strategy :page_match do |page, regex|
+      page.scan(regex).map { |match| match&.first&.gsub("-", ".") }
+    end
+  end
+
+  bottle do
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "4c7fdfee29fd4e726c9ec8aa42bb0b23d19024a86c04c2edde0e48bc51dfcdb4" # linuxbrew-core
+  end
 
   def install
     doc.install Dir["*"]

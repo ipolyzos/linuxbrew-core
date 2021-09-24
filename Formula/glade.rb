@@ -16,7 +16,6 @@ class Glade < Formula
   depends_on "docbook-xsl" => :build
   depends_on "gobject-introspection" => :build
   depends_on "itstool" => :build
-  depends_on "libxslt" => :build
   depends_on "meson" => :build
   depends_on "ninja" => :build
   depends_on "pkg-config" => :build
@@ -25,6 +24,8 @@ class Glade < Formula
   depends_on "gtk+3"
   depends_on "hicolor-icon-theme"
   depends_on "libxml2"
+
+  uses_from_macos "libxslt" => :build
 
   on_macos do
     depends_on "gtk-mac-integration"
@@ -50,7 +51,8 @@ class Glade < Formula
 
   test do
     # executable test (GUI)
-    system "#{bin}/glade", "--version"
+    # fails in Linux CI with (glade:20337): Gtk-WARNING **: 21:45:31.876: cannot open display:
+    system "#{bin}/glade", "--version" if OS.mac?
     # API test
     (testpath/"test.c").write <<~EOS
       #include <gladeui/glade.h>

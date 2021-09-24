@@ -2,8 +2,8 @@ class Moarvm < Formula
   desc "Virtual machine for NQP and Rakudo Perl 6"
   homepage "https://moarvm.org"
   # NOTE: Please keep these values in sync with nqp & rakudo when updating.
-  url "https://github.com/MoarVM/MoarVM/releases/download/2021.02/MoarVM-2021.02.tar.gz"
-  sha256 "19a0c3679e7be8081ddea28a02264be8a821cf624452e35977f8a4b9764d3123"
+  url "https://github.com/MoarVM/MoarVM/releases/download/2021.09/MoarVM-2021.09.tar.gz"
+  sha256 "9d233e62ac8e4d4580359a794f88f4d26edad54781d915f96b31464439a32cba"
   license "Artistic-2.0"
 
   livecheck do
@@ -12,10 +12,11 @@ class Moarvm < Formula
   end
 
   bottle do
-    sha256 arm64_big_sur: "d5dfaa9a8c725ee6e24c73033ff14c0aa2ebfd575c233b4989a7073187f52b84"
-    sha256 big_sur:       "eebbd9f0d5abcf241e3117c506d27accdf18b5319d57d021a384cce0e03a68ab"
-    sha256 catalina:      "bf543ff6e53137fac8b9930bdbc3ef727593624e995bb245780938ab12866a28"
-    sha256 mojave:        "3aaba49e0d74dd38a8ac460b9c7239ddd171d7554bdb4bdf5535bad76ab6c82e"
+    sha256 arm64_big_sur: "5cdfa62090556dabf3ff82ec1a4aa90fae77dd787f1f27eda6e69d52e8bb29f4"
+    sha256 big_sur:       "f10c8d6e1815f918487b18fbb0b96dbe7fa729877207560f95f06202b42208da"
+    sha256 catalina:      "2c0f4bd59164c854ea65abbdd63a98edc843141c321e93e85375fd3c6bb7da15"
+    sha256 mojave:        "d9603dab3126485cd3af9ace65b09d83560a471996c2954249589ee5d901f729"
+    sha256 x86_64_linux:  "aa042125df58b53aeda8dd809d86c7c693f7b733f92356c75696350abd8f4177" # linuxbrew-core
   end
 
   depends_on "libatomic_ops"
@@ -26,8 +27,8 @@ class Moarvm < Formula
   conflicts_with "rakudo-star", because: "rakudo-star currently ships with moarvm included"
 
   resource "nqp" do
-    url "https://github.com/Raku/nqp/releases/download/2021.02/nqp-2021.02.tar.gz"
-    sha256 "d24b1dc8c9f5e743787098a19c9d17b75f57dd34d293716d5b15b9105037d4ef"
+    url "https://github.com/Raku/nqp/releases/download/2021.09/nqp-2021.09.tar.gz"
+    sha256 "7f296eecb3417e28a08372642247124ca2413b595f30e959a0c9938a625c82d8"
   end
 
   def install

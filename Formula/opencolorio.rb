@@ -1,18 +1,17 @@
 class Opencolorio < Formula
   desc "Color management solution geared towards motion picture production"
   homepage "https://opencolorio.org/"
-  url "https://github.com/imageworks/OpenColorIO/archive/v2.0.0.tar.gz"
-  sha256 "b407afcbcaecad8409545857796b9b6e27b0be0c85f2b9e7aa7d251bdc3a4416"
+  url "https://github.com/imageworks/OpenColorIO/archive/v2.1.0.tar.gz"
+  sha256 "81fc7853a490031632a69c73716bc6ac271b395e2ba0e2587af9995c2b0efb5f"
   license "BSD-3-Clause"
-  head "https://github.com/imageworks/OpenColorIO.git"
+  head "https://github.com/imageworks/OpenColorIO.git", branch: "master"
 
   bottle do
-    rebuild 1
-    sha256                               arm64_big_sur: "3f501b862fd81a38e3395b74cea1c315222cae167d218bf29e9781880b40bc60"
-    sha256                               big_sur:       "cac7814fd18e6b7bfafc5e00a2b0bd82ff31bc8c93b80fb6d50b5c89816081b8"
-    sha256                               catalina:      "f421a922c08d79d16cb3b13a0bd5e89391b532d3d4f4bd673a265d01c21913da"
-    sha256                               mojave:        "f1300eca64637ad73adbfb2d3a77e59d65b5eae008fbbf4676d30555636f645e"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "1ed3679be524c271f3b6a176c20658897cdaeda1ff40f7df3f4487d5206aa954"
+    sha256 cellar: :any,                 arm64_big_sur: "36f49aa701d4121185e300594128b1b55264b7f0d8da930f3e195668fa63ee2d"
+    sha256 cellar: :any,                 big_sur:       "e948b41de75e637b6e458eac15d2d018d2dce9a060b9b24e4be9cf4c689e9820"
+    sha256 cellar: :any,                 catalina:      "1502fca0c423ced4903f48870f1788f4166a6cb69310bd82f76d5dba655c68ff"
+    sha256 cellar: :any,                 mojave:        "64e9a2916188c3ccd8ae7459cf5e4ab3664c3d4cb8b764bed8314a5e95e141ae"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "89ab1f3231189abfd2edcd8a33a245d5d79dca897fe3c57a1e56a762e872ac5c" # linuxbrew-core
   end
 
   depends_on "cmake" => :build
@@ -23,7 +22,7 @@ class Opencolorio < Formula
   def install
     args = std_cmake_args + %W[
       -DCMAKE_VERBOSE_MAKEFILE=OFF
-      -DCMAKE_INSTALL_RPATH=#{lib}
+      -DCMAKE_INSTALL_RPATH=#{rpath}
       -DPYTHON=python3
       -DPYTHON_EXECUTABLE=#{Formula["python@3.9"].opt_bin}/"python3"
     ]

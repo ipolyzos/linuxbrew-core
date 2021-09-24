@@ -1,10 +1,10 @@
 class Terraform < Formula
   desc "Tool to build, change, and version infrastructure"
   homepage "https://www.terraform.io/"
-  url "https://github.com/hashicorp/terraform/archive/v0.15.0.tar.gz"
-  sha256 "89e1d82ee6f02bb9c280f1d9ab0c0edc6061c4442bf43af0f4e4f1001730188e"
+  url "https://github.com/hashicorp/terraform/archive/v1.0.7.tar.gz"
+  sha256 "76c343637517df13abe5e25ad55057b3c2a85604591d37cf5b29685083a0de43"
   license "MPL-2.0"
-  head "https://github.com/hashicorp/terraform.git"
+  head "https://github.com/hashicorp/terraform.git", branch: "main"
 
   livecheck do
     url "https://releases.hashicorp.com/terraform/"
@@ -12,16 +12,24 @@ class Terraform < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "682044b77ba20f3bf815f9627a1e2f8ae62c0d7aa89fb1258eea364adffe2a79"
-    sha256 cellar: :any_skip_relocation, big_sur:       "ae918a0c2c992622b86c81bdfbb5e36578f24b671b639b0d18edfdf28dd36444"
-    sha256 cellar: :any_skip_relocation, catalina:      "719f211d31931adcb0ac3e056c93f9fecc6eb60c49e95dcd73e08fd3bb2c51e2"
-    sha256 cellar: :any_skip_relocation, mojave:        "c674d1c55f79d3d5d73ddf32fa4ac493b0592072db50f324c3377998e94b1aea"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "adb4acb41f7e10d563b67b1897d52598a62c453048997ce55bb6a0b5aa20ae88"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "6157896dce234a226e294353bf7c4a66230977d0d2720f5152cdb3207b522c72"
+    sha256 cellar: :any_skip_relocation, big_sur:       "df5489b52be0a74cb2d6602593678acd0150861dca6755ead2e1623327500348"
+    sha256 cellar: :any_skip_relocation, catalina:      "89c905302b81b74931aa85ed7ef1765ade632b88983786ae8ebd2aa3a30e8440"
+    sha256 cellar: :any_skip_relocation, mojave:        "1f2694f09019a2e61fd03debf56d692bb17cd18067943311efc700085d48b823"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "2c1591c9de3d8da747f2d4deaa94d9fba8f214aea532c43ad536aa8e525a2da3" # linuxbrew-core
   end
 
   depends_on "go" => :build
 
+  on_linux do
+    depends_on "gcc"
+  end
+
   conflicts_with "tfenv", because: "tfenv symlinks terraform binaries"
+
+  # Needs libraries at runtime:
+  # /usr/lib/x86_64-linux-gnu/libstdc++.so.6: version `GLIBCXX_3.4.29' not found (required by node)
+  fails_with gcc: "5"
 
   def install
     # v0.6.12 - source contains tests which fail if these environment variables are set locally.

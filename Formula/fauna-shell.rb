@@ -3,15 +3,15 @@ require "language/node"
 class FaunaShell < Formula
   desc "Interactive shell for FaunaDB"
   homepage "https://fauna.com/"
-  url "https://registry.npmjs.org/fauna-shell/-/fauna-shell-0.12.3.tgz"
-  sha256 "aa8c08fb5994b08f2eebf06c0da388dbf65a3f7e21a09d99bf8938c200302ebd"
+  url "https://registry.npmjs.org/fauna-shell/-/fauna-shell-0.12.6.tgz"
+  sha256 "89af638e5009bd12c5d8fc9901bff8580a09a61479d15e7b3fd6fd3e3188b8e8"
   license "MPL-2.0"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "cfbe8588059242d72ea0600146a185281aa01d605ee475f7e4cab695e3eccadd"
-    sha256 cellar: :any_skip_relocation, big_sur:       "93895f6f174600ec76a2cb06c38f0def11f165e3fb23feaa0aa07c65b9ee01ae"
-    sha256 cellar: :any_skip_relocation, catalina:      "9f70b2a5419ea0a3e8e16736208c337af3dd7e07c4cdb8e66da8ec05fcbf1bdd"
-    sha256 cellar: :any_skip_relocation, mojave:        "3165ff49383e20add88f52d4c1e7c8c8f7a3082321f57fb0fdedb3646a057022"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "543c21f8b5b5da35305f51117a95783d4c1f4c8d5da77a60ead0e4041bcf39ee"
+    sha256 cellar: :any_skip_relocation, big_sur:       "2a007b7fac07f321a6dd35a49a400a3a576dafb107b451775b5ef0b64ada5e52"
+    sha256 cellar: :any_skip_relocation, catalina:      "2a007b7fac07f321a6dd35a49a400a3a576dafb107b451775b5ef0b64ada5e52"
+    sha256 cellar: :any_skip_relocation, mojave:        "2a007b7fac07f321a6dd35a49a400a3a576dafb107b451775b5ef0b64ada5e52"
   end
 
   depends_on "node"
@@ -28,6 +28,6 @@ class FaunaShell < Formula
     pipe_output("#{bin}/fauna add-endpoint https://db.fauna.com:443", "your_fauna_secret\nfauna_endpoint\n")
 
     output = shell_output("#{bin}/fauna list-endpoints")
-    assert_equal "fauna_endpoint *\n", output
+    assert_match "fauna_endpoint *\n", output
   end
 end

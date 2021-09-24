@@ -1,16 +1,16 @@
 class Sniffglue < Formula
   desc "Secure multithreaded packet sniffer"
   homepage "https://github.com/kpcyrd/sniffglue"
-  url "https://github.com/kpcyrd/sniffglue/archive/v0.12.0.tar.gz"
-  sha256 "09f10be89311f69a3373cf5abc65fa1d7add1836d6836914b78281a0d94a9e78"
+  url "https://github.com/kpcyrd/sniffglue/archive/v0.13.1.tar.gz"
+  sha256 "5994522cb62b2555185f042dcb6dd57d8aaa0ebaf015958d18de79501e6736d2"
   license "GPL-3.0-or-later"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "7711fba881a079e3de12648a63c98d4e97539973408ec444b091b6b301eff433"
-    sha256 cellar: :any_skip_relocation, big_sur:       "6d6894afc00176326c7b4932573c427d545b99faebecd38e95eefe41b3135872"
-    sha256 cellar: :any_skip_relocation, catalina:      "5fc37f26b3b0f6732901f1d6a2ad4143c133c787b49266517f509ef7c59c48c1"
-    sha256 cellar: :any_skip_relocation, mojave:        "d6a6dc71f619a033e206bd37a96ee59256b68996630ce32574cf6f5c99977c35"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "115dc1c2b6e066d178fca6ec8b18352441ebdff0b6ee1def5cbfeffa21d9d3ed"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "6867fe5fd18b395984786d6b385fe40f7a4e8e2cb445b10160e0b5909c22fb2f"
+    sha256 cellar: :any_skip_relocation, big_sur:       "f5c6e604ff357fc18299d58ee7fabaf5367c96d74ead8eec5e3fe48a3bc5a094"
+    sha256 cellar: :any_skip_relocation, catalina:      "1bd82eb72d4bedc1f6ea571152a56702512aefba276ee91fefa6d615e4d40550"
+    sha256 cellar: :any_skip_relocation, mojave:        "5f5c54123a64a027c297df1bb4cc644aef975dc7d037ca06d02b26995c194b48"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "d8645c8778588dbf14bef016b6b069e1ccd3c51d8d3692d1d8257421e75a3cd9" # linuxbrew-core
   end
 
   depends_on "rust" => :build
@@ -26,12 +26,6 @@ class Sniffglue < Formula
     sha256 "bac79a9c3413637f871193589d848697af895b7f2700d949022224d59aa6830f"
   end
 
-  # Fix build with Rust 1.51. Remove at next release.
-  patch do
-    url "https://github.com/kpcyrd/sniffglue/commit/e2244ab2616272faa8ebce18308e146f275250c4.patch?full_index=1"
-    sha256 "9eeda436c2a807a891195ff15a0bb29ce3493341d8ae19e5b2b9005a640453b9"
-  end
-
   def install
     system "cargo", "install", *std_cargo_args
 
@@ -41,6 +35,6 @@ class Sniffglue < Formula
 
   test do
     testpath.install resource("testdata")
-    system "#{bin}/sniffglue", "-r", "SkypeIRC.pcap"
+    system bin/"sniffglue", "-r", "SkypeIRC.pcap"
   end
 end

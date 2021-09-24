@@ -1,29 +1,26 @@
 class Earthly < Formula
   desc "Build automation tool for the container era"
   homepage "https://earthly.dev/"
-  url "https://github.com/earthly/earthly/archive/v0.5.10.tar.gz"
-  sha256 "71d8f7c5dd603cb6bdd2679baf20ade5fc419bc5cb5e53a723775302222f59d5"
+  url "https://github.com/earthly/earthly/archive/v0.5.17.tar.gz"
+  sha256 "1dcc56b419413480fa2e116606cab2c8003483e0b8052443aa7b7da0572ce47f"
   license "BUSL-1.1"
   head "https://github.com/earthly/earthly.git"
 
-  livecheck do
-    url :stable
-    strategy :github_latest
+  bottle do
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "6ced4b644da7733596ddb225d4d07dddcdf3cea9975a1dcdce724e65093142fb"
+    sha256 cellar: :any_skip_relocation, big_sur:       "45b1406d85fbc167590873e727dd63624ed17bceadc289bb4c6c7f8e8a669317"
+    sha256 cellar: :any_skip_relocation, catalina:      "16c593502fd9a7270edab13a2ed8c9ca44486eb90bc97dceef99ec8c092ddadf"
+    sha256 cellar: :any_skip_relocation, mojave:        "a9a09599ccebca0c987ea802cfc861097055ab2662db97c417bfeb83756fdb90"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "e3b8af702a1afbb4ec9e795dc1f7f51421938a57378488764463b279cb26afb3" # linuxbrew-core
   end
 
-  bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "7cb042be498c5eece87fe21dc4058cb0e120f9de3975c3ec7b6bcfc5ad136f15"
-    sha256 cellar: :any_skip_relocation, big_sur:       "a85579fe2ce56105f8325efdb699be34885623c61058d104904dbcee10b9cb0b"
-    sha256 cellar: :any_skip_relocation, catalina:      "f7d7f6e751034d9315c8466e128b94ecb448d995d7ed3aaa1f5537a19c6d9281"
-    sha256 cellar: :any_skip_relocation, mojave:        "4c984626fc13facd2b1654b414754812ef478360911f28a4f3a4d5c4ec3cb648"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "a9e16ca0d2115152d5c03482c6afd903eedab99188c4656dbbeeee2d288a5ab6"
-  end
+  disable! date: "2021-07-15", because: "has an incompatible license"
 
   depends_on "go" => :build
 
   def install
     ldflags = "-X main.DefaultBuildkitdImage=earthly/buildkitd:v#{version} -X main.Version=v#{version} " \
-              "-X main.GitSha=a5026a1428d3329dd99f0ab85f3530552a3a5f02 "
+              "-X main.GitSha=bdeda2542465cb0bc0c8985a905aa2e3579a3f7b "
     tags = "dfrunmount dfrunsecurity dfsecrets dfssh dfrunnetwork"
     system "go", "build",
         "-tags", tags,
@@ -44,7 +41,7 @@ class Earthly < Formula
       \tRUN echo Homebrew
     EOS
 
-    output = shell_output("#{bin}/earthly --buildkit-host 127.0.0.1 +default 2>&1", 1).strip
-    assert_match "Error while dialing invalid address 127.0.0.1", output
+    output = shell_output("#{bin}/earthly --buildkit-host 127.0.0.1 +default 2>&1", 6).strip
+    assert_match "buildkitd failed to start", output
   end
 end

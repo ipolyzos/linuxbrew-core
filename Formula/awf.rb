@@ -5,7 +5,7 @@ class Awf < Formula
   sha256 "bb14517ea3eed050b3fec37783b79c515a0f03268a55dfd0b96a594b5b655c78"
   license "GPL-3.0"
   revision 2
-  head "https://github.com/valr/awf.git"
+  head "https://github.com/valr/awf.git", branch: "master"
 
   bottle do
     sha256 cellar: :any, arm64_big_sur: "60373a676e554ca3b82465ff01d7bfbde233fad9e7d1ec115656903c90336a29"
@@ -14,8 +14,10 @@ class Awf < Formula
     sha256 cellar: :any, mojave:        "b0290ffc5c750f924cbf96a2a5398215a41137a69211d262387789e399aba9d8"
     sha256 cellar: :any, high_sierra:   "090ec40bbd96bea15714d411b9c89e6b06ca9723050252f00623b49c61da1497"
     sha256 cellar: :any, sierra:        "417806f1ab0aa5d1c2e2e0302dd2c3c4cdaaf2957ac18fbfe1f9a2ced72947bd"
-    sha256 cellar: :any, x86_64_linux:  "18e68a5fb538e601bd2d7d6485f82427cb8c8607028e8ebcac8174d7348b8f7b"
+    sha256 cellar: :any, x86_64_linux:  "18e68a5fb538e601bd2d7d6485f82427cb8c8607028e8ebcac8174d7348b8f7b" # linuxbrew-core
   end
+
+  deprecate! date: "2021-05-24", because: :repo_archived
 
   depends_on "autoconf" => :build
   depends_on "automake" => :build

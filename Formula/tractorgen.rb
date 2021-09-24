@@ -1,9 +1,14 @@
 class Tractorgen < Formula
   desc "Generates ASCII tractor art"
-  homepage "http://www.kfish.org/software/tractorgen/"
-  url "http://www.kfish.org/software/tractorgen/dl/tractorgen-0.31.7.tar.gz"
+  homepage "http://www.vergenet.net/~conrad/software/tractorgen/"
+  url "http://www.vergenet.net/~conrad/software/tractorgen/dl/tractorgen-0.31.7.tar.gz"
   sha256 "469917e1462c8c3585a328d035ac9f00515725301a682ada1edb3d72a5995a8f"
-  license "GPL-2.0"
+  license "GPL-2.0-or-later"
+
+  livecheck do
+    url :homepage
+    regex(/href=.*?tractorgen[._-]v?(\d+(?:\.\d+)+)\.t/i)
+  end
 
   bottle do
     sha256 cellar: :any_skip_relocation, arm64_big_sur: "cc7c0c6f2a31533393973e0931d984d1ceff57e2ee1f49c03a8633d33ecfde7b"
@@ -14,7 +19,7 @@ class Tractorgen < Formula
     sha256 cellar: :any_skip_relocation, sierra:        "646d87ca0cb1a5ec93a8aa1ddaa1f28233347ca0a1f56e49c323809ec8295432"
     sha256 cellar: :any_skip_relocation, el_capitan:    "ccac503b4577fc81e69d3e778c27c31fad9a1c5fa8627e97f293d87ab1177f8d"
     sha256 cellar: :any_skip_relocation, yosemite:      "e50de2fd2d9015873282a62fc7a21f3ef419d527d07eeab3830ace52ec25c3c9"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "82f73ee51bdb80b3f227beaadb77bb6c50ced655a6bc75922d23a7ffcf5c2f52"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "82f73ee51bdb80b3f227beaadb77bb6c50ced655a6bc75922d23a7ffcf5c2f52" # linuxbrew-core
   end
 
   def install

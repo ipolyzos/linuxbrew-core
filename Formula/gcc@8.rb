@@ -1,35 +1,29 @@
-require "os/linux/glibc"
-
 class GccAT8 < Formula
   desc "GNU compiler collection"
   homepage "https://gcc.gnu.org/"
-  url "https://ftp.gnu.org/gnu/gcc/gcc-8.4.0/gcc-8.4.0.tar.xz"
-  mirror "https://ftpmirror.gnu.org/gcc/gcc-8.4.0/gcc-8.4.0.tar.xz"
-  sha256 "e30a6e52d10e1f27ed55104ad233c30bd1e99cfb5ff98ab022dc941edd1b2dd4"
-  revision 3
+  url "https://ftp.gnu.org/gnu/gcc/gcc-8.5.0/gcc-8.5.0.tar.xz"
+  mirror "https://ftpmirror.gnu.org/gcc/gcc-8.5.0/gcc-8.5.0.tar.xz"
+  sha256 "d308841a511bb830a6100397b0042db24ce11f642dab6ea6ee44842e5325ed50"
+  license all_of: [
+    "LGPL-2.1-or-later",
+    "GPL-3.0-or-later" => { with: "GCC-exception-3.1" },
+  ]
 
   livecheck do
     url :stable
     regex(%r{href=.*?gcc[._-]v?(8(?:\.\d+)+)(?:/?["' >]|\.t)}i)
   end
 
-  # gcc is designed to be portable.
-  # reminder: always add 'cellar :any'
   bottle do
-    sha256 big_sur:      "a835ceb445a4b4019e14fda6fb4a984a7f633faf5ef5f9f49bddbe23cae1e7fc"
-    sha256 catalina:     "4ef99da615886fab55a27d34bfa4ac88761c9cb73ebcb5ed199d6a0fe6997fd3"
-    sha256 mojave:       "6e73d66113184f35f91c285f3754cc0c67797876cf0a97c75bdce4d92d6af074"
-    sha256 x86_64_linux: "937cc91f2e2b0b11e768b91e61ad41ef368f34eddd3926ed308cf3961b7a562d"
+    sha256 big_sur:      "c23c342d120580e8fbd897712b6ddce67fb0f0235ca8745736f4c00d8b0f2bd5"
+    sha256 catalina:     "e031d1e8b3ac06f7fb3ae54e594254dcfdfd2e84e54b15ee370f570d4353db7c"
+    sha256 mojave:       "5ddd8753dbd6a3a3841e3ef72f67608761e0ab574ca3218b4fed54f1399cc861"
+    sha256 x86_64_linux: "261b97f96a1cb1a3a6409827b4ecf62b4ff58fbe2581c9e7428c7796bd9c8e54" # linuxbrew-core
   end
 
   # The bottles are built on systems with the CLT installed, and do not work
   # out of the box on Xcode-only systems due to an incorrect sysroot.
-  pour_bottle? do
-    on_macos do
-      reason "The bottle needs the Xcode CLT to be installed."
-      satisfy { MacOS::CLT.installed? }
-    end
-  end
+  pour_bottle? only_if: :clt_installed
 
   depends_on arch: :x86_64
   depends_on "gmp"
@@ -46,11 +40,13 @@ class GccAT8 < Formula
   # GCC bootstraps itself, so it is OK to have an incompatible C++ stdlib
   cxxstdlib_check :skip
 
+  def version_suffix
+    version.major.to_s
+  end
+
   def install
     # GCC will suffer build errors if forced to use a particular linker.
     ENV.delete "LD"
-
-    version_suffix = version.major.to_s
 
     # Even when suffixes are appended, the info pages conflict when
     # install-info is run so pretend we have an outdated makeinfo
@@ -63,13 +59,7 @@ class GccAT8 < Formula
     #  - BRIG
     languages = %w[c c++ objc obj-c++ fortran]
 
-    args = []
-
     pkgversion = "Homebrew GCC #{pkg_version} #{build.used_options*" "}".strip
-
-    # Change the default directory name for 64-bit libraries to `lib`
-    # http://www.linuxfromscratch.org/lfs/view/development/chapter06/gcc.html
-    inreplace "gcc/config/i386/t-linux64", "m64=../lib64", "m64=" unless OS.mac?
 
     args = %W[
       --prefix=#{prefix}
@@ -86,7 +76,7 @@ class GccAT8 < Formula
       --with-bugurl=#{tap.issues_url}
     ]
 
-    on_macos do
+    if OS.mac?
       args << "--build=x86_64-apple-darwin#{OS.kernel_version.major}"
       args << "--with-system-zlib"
 
@@ -100,26 +90,35 @@ class GccAT8 < Formula
         args << "--with-sysroot=#{sdk}"
       end
 
-      # Ensure correct install names when linking against libgcc_s;
-      # see discussion in https://github.com/Homebrew/homebrew/pull/34303
-      inreplace "libgcc/config/t-slibgcc-darwin", "@shlib_slibdir@", "#{HOMEBREW_PREFIX}/lib/gcc/#{version_suffix}"
-    end
+      # Workaround for Xcode 12.5 bug on Intel
+      # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=100340
+      args << "--without-build-config" if DevelopmentTools.clang_build_version >= 1205
 
-    on_linux do
+      # Ensure correct install names when linking against libgcc_s;
+      # see discussion in https://github.com/Homebrew/legacy-homebrew/pull/34303
+      inreplace "libgcc/config/t-slibgcc-darwin", "@shlib_slibdir@", "#{HOMEBREW_PREFIX}/lib/gcc/#{version_suffix}"
+    else
       # Fix Linux error: gnu/stubs-32.h: No such file or directory.
       args << "--disable-multilib"
+
+      # Change the default directory name for 64-bit libraries to `lib`
+      # http://www.linuxfromscratch.org/lfs/view/development/chapter06/gcc.html
+      inreplace "gcc/config/i386/t-linux64", "m64=../lib64", "m64="
     end
 
     mkdir "build" do
       system "../configure", *args
 
-      make_args = []
-      # Use -headerpad_max_install_names in the build,
-      # otherwise lto1 load commands cannot be edited on El Capitan
-      make_args << "BOOT_LDFLAGS=-Wl,-headerpad_max_install_names" if OS.mac?
-
-      system "make", *make_args
-      system "make", OS.mac? ? "install" : "install-strip"
+      if OS.mac?
+        # Use -headerpad_max_install_names in the build,
+        # otherwise updated load commands won't fit in the Mach-O header.
+        # This is needed because `gcc` avoids the superenv shim.
+        system "make", "BOOT_LDFLAGS=-Wl,-headerpad_max_install_names"
+        system "make", "install"
+      else
+        system "make"
+        system "make", "install-strip"
+      end
     end
 
     # Handle conflicts between GCC formulae and avoid interfering
@@ -138,8 +137,8 @@ class GccAT8 < Formula
   end
 
   def post_install
-    unless OS.mac?
-      gcc = bin/"gcc-8"
+    if OS.linux?
+      gcc = bin/"gcc-#{version_suffix}"
       libgcc = Pathname.new(Utils.safe_popen_read(gcc, "-print-libgcc-file-name")).parent
       raise "command failed: #{gcc} -print-libgcc-file-name" if $CHILD_STATUS.exitstatus.nonzero?
 
@@ -197,7 +196,7 @@ class GccAT8 < Formula
       #     Noted that it should only be passed for the `gcc@*` formulae.
       #   * `-L#{HOMEBREW_PREFIX}/lib` instructs gcc to find the rest
       #     brew libraries.
-      libdir = HOMEBREW_PREFIX/"lib/gcc/8"
+      libdir = HOMEBREW_PREFIX/"lib/gcc/#{version_suffix}"
       specs.write specs_string + <<~EOS
         *cpp_unique_options:
         + -isysroot #{HOMEBREW_PREFIX}/nonexistent #{system_header_dirs.map { |p| "-idirafter #{p}" }.join(" ")}
@@ -226,9 +225,13 @@ class GccAT8 < Formula
 
     (testpath/"hello-cc.cc").write <<~EOS
       #include <iostream>
+      struct exception { };
       int main()
       {
         std::cout << "Hello, world!" << std::endl;
+        try { throw exception{}; }
+          catch (exception) { }
+          catch (...) { }
         return 0;
       }
     EOS

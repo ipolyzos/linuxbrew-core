@@ -5,14 +5,14 @@ class ParquetTools < Formula
       tag:      "apache-parquet-1.12.0",
       revision: "db75a6815f2ba1d1ee89d1a90aeb296f1f3a8f20"
   license "Apache-2.0"
-  head "https://github.com/apache/parquet-mr.git"
+  head "https://github.com/apache/parquet-mr.git", branch: "master"
 
   bottle do
     sha256 cellar: :any_skip_relocation, arm64_big_sur: "72bdfcf0a71023b65def0a02b1b581ba7a9b228ea5a1594923fddb2d1eb098d6"
     sha256 cellar: :any_skip_relocation, big_sur:       "c84021c2e6e9475380715420dec0edc741c59edb525e197a1c355fd3679187e6"
     sha256 cellar: :any_skip_relocation, catalina:      "0bb7bd347b698537ef9b8690648aa6b13c328fd3c60eec5c6614b94c8d770835"
     sha256 cellar: :any_skip_relocation, mojave:        "17e6ad97c0d0fcab7989305eabd2b853cdc694f059f29d36cda5d94422de4e33"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "4272e5d74e45e3d17a5620b742971c4c04196a3136ad7986f902fa9e93e26be5"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "4272e5d74e45e3d17a5620b742971c4c04196a3136ad7986f902fa9e93e26be5" # linuxbrew-core
   end
 
   # See https://issues.apache.org/jira/browse/PARQUET-1666

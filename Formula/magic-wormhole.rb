@@ -9,10 +9,11 @@ class MagicWormhole < Formula
   revision OS.mac? ? 3 : 4
 
   bottle do
-    sha256 cellar: :any, arm64_big_sur: "a84aa56907f144db2fdff32c92aa34b8659b01d8a173980e0b1e5a2bf4af3bd7"
-    sha256 cellar: :any, big_sur:       "2161f687eb4b80e17e95cc9e3fb85df16182ef04c889201cd88a3e06f5e72f9b"
-    sha256 cellar: :any, catalina:      "5bf94ab8222f5d06c1c24ee21277d1cf6fcd578ea85185457eb8c442ff0888d0"
-    sha256 cellar: :any, mojave:        "7e61f4f0435bd9638dcafac1a617e9117ac45c67de1a2a108e79c942b9adac0b"
+    sha256 cellar: :any,                 arm64_big_sur: "a84aa56907f144db2fdff32c92aa34b8659b01d8a173980e0b1e5a2bf4af3bd7"
+    sha256 cellar: :any,                 big_sur:       "2161f687eb4b80e17e95cc9e3fb85df16182ef04c889201cd88a3e06f5e72f9b"
+    sha256 cellar: :any,                 catalina:      "5bf94ab8222f5d06c1c24ee21277d1cf6fcd578ea85185457eb8c442ff0888d0"
+    sha256 cellar: :any,                 mojave:        "7e61f4f0435bd9638dcafac1a617e9117ac45c67de1a2a108e79c942b9adac0b"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "cc1fe5af4f82e2588ae83e1fe71f5f5da8953955f30f4f29d965fa8a95b3e314" # linuxbrew-core
   end
 
   depends_on "rust" => :build
@@ -161,7 +162,8 @@ class MagicWormhole < Formula
     venv = virtualenv_create(libexec, "python3")
     venv.pip_install resource("wheel")
     venv.pip_install resource("cffi")
-    virtualenv_install_with_resources
+    venv.pip_install resources
+    venv.pip_install_and_link buildpath
   end
 
   test do

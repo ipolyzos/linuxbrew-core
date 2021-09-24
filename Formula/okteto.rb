@@ -1,17 +1,17 @@
 class Okteto < Formula
   desc "Build better apps by developing and testing code directly in Kubernetes"
   homepage "https://okteto.com"
-  url "https://github.com/okteto/okteto/archive/1.12.8.tar.gz"
-  sha256 "ed59dedde11d5134c96456707a0984c3f23a86a63b979e1fc70b9c6d0ad241cd"
+  url "https://github.com/okteto/okteto/archive/1.14.0.tar.gz"
+  sha256 "bda3f6afba7eaf634bec41bf6d7147e02056367f84975d8e90c49ef3b230aa7a"
   license "Apache-2.0"
-  head "https://github.com/okteto/okteto.git"
+  head "https://github.com/okteto/okteto.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "5d07b4d1e5b238273889abbfe99109eb203cf6585200e6d3daf1b0128fa84b85"
-    sha256 cellar: :any_skip_relocation, big_sur:       "d961e39a305f6f9b189b04c1956c3a271853bd939495856b1932cb22b620ec5b"
-    sha256 cellar: :any_skip_relocation, catalina:      "9190f9c9b6081905b0d0dc2a6603b2afc89e0040fd5129cab50f0a511d780b9f"
-    sha256 cellar: :any_skip_relocation, mojave:        "1054c0231d29146d71c3aac2a33ae398e7256ab0e356daf0ba8ef4c7d0f59457"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "e08762b352e94d6adfac4bcec192e79e8a91d1b0aa231ea118dc005b7916decf"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "a43098e6a61440fcf441d7ca295d2376267a4a15e316f9f046ce974b016119be"
+    sha256 cellar: :any_skip_relocation, big_sur:       "c3262c6248dbe829537f039b21451d668bc150ced4ca186c1994f812ea544df8"
+    sha256 cellar: :any_skip_relocation, catalina:      "9524c0e80ba5c3102b60a0bf96a3c3372fdf1d8f02356148e857887eae65eee6"
+    sha256 cellar: :any_skip_relocation, mojave:        "44eb84a19cc8a35f7129b5758c14dc6d21980b57763f6830463093ee870200a7"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "bcc874df1a98f2aebc21b5f2d0c5c451d93dc61dbc54fe9afa685f986afdb2db" # linuxbrew-core
   end
 
   depends_on "go" => :build
@@ -19,7 +19,7 @@ class Okteto < Formula
   def install
     ldflags = "-s -w -X github.com/okteto/okteto/pkg/config.VersionString=#{version}"
     tags = "osusergo netgo static_build"
-    system "go", "build", *std_go_args, "-ldflags", ldflags, "-tags", tags
+    system "go", "build", *std_go_args(ldflags: ldflags), "-tags", tags
   end
 
   test do

@@ -20,7 +20,6 @@ class Contacts < Formula
   disable! date: "2020-12-08", because: :unmaintained
 
   depends_on xcode: :build
-  depends_on :macos
 
   def install
     system "make", "SDKROOT=#{MacOS.sdk_path}"

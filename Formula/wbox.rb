@@ -4,6 +4,11 @@ class Wbox < Formula
   url "http://www.hping.org/wbox/wbox-5.tar.gz"
   sha256 "1589d85e83c8ee78383a491d89e768ab9aab9f433c5f5e035cfb5eed17efaa19"
 
+  livecheck do
+    url :homepage
+    regex(/href=.*?wbox[._-]v?(\d+(?:\.\d+)*)\.t/i)
+  end
+
   bottle do
     sha256 cellar: :any_skip_relocation, arm64_big_sur: "e87df4ac144cb716bd7528c15170376927aebc7f50d72dcd704ff4a5d3b45246"
     sha256 cellar: :any_skip_relocation, big_sur:       "21c7d9bd3cdbc504149109c8f9c1b3245ce31cc1a34536e326703b4e108e4c8b"
@@ -13,7 +18,7 @@ class Wbox < Formula
     sha256 cellar: :any_skip_relocation, sierra:        "241edb51af197d72022a48cb8444506188269b335b057ceaa7bf952db86777d8"
     sha256 cellar: :any_skip_relocation, el_capitan:    "0e813a0982d6b9228217f14352812d9e6880cce44757f8af9a0447bf5e4a1e63"
     sha256 cellar: :any_skip_relocation, yosemite:      "ee2bd7599a73c3a9f3fe9f8c2d441d753914981b2420e591050780d436bbf011"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "463120cebca012c9f72083a5e01dea8ceb47f1987f1854159cf0512eab7e4408"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "463120cebca012c9f72083a5e01dea8ceb47f1987f1854159cf0512eab7e4408" # linuxbrew-core
   end
 
   def install

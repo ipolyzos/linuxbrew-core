@@ -4,9 +4,7 @@ class SonarCompletion < Formula
   url "https://github.com/a1dutch/sonarqube-bash-completion/archive/1.1.tar.gz"
   sha256 "506a592b166cff88786ae9e6215f922b8ed3617c65a4a88169211a80ef1c6b66"
   license "Apache-2.0"
-  head "https://github.com/a1dutch/sonarqube-bash-completion.git"
-
-  bottle :unneeded
+  head "https://github.com/a1dutch/sonarqube-bash-completion.git", branch: "master"
 
   def install
     bash_completion.install "etc/bash_completion.d/sonar"

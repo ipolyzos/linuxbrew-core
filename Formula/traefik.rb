@@ -1,60 +1,37 @@
 class Traefik < Formula
   desc "Modern reverse proxy"
   homepage "https://traefik.io/"
-  url "https://github.com/traefik/traefik/releases/download/v2.4.8/traefik-v2.4.8.src.tar.gz"
-  sha256 "874d22a52b7541b5155db675562ab5db3c99d2530633de3a058c4ae6125c86d1"
+  url "https://github.com/traefik/traefik/releases/download/v2.5.3/traefik-v2.5.3.src.tar.gz"
+  sha256 "40e34c8a13a783a41e7391909e66570e665de5067aa4148be552f748d8994086"
   license "MIT"
-  head "https://github.com/traefik/traefik.git"
+  head "https://github.com/traefik/traefik.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "aab8b6652d689778ea2287f71d6468ee12370d41431a6be8345730190098c134"
-    sha256 cellar: :any_skip_relocation, big_sur:       "355e8e863ca704a2f40df2c8ac860add614fd1b970780c14be539d1742f03fd0"
-    sha256 cellar: :any_skip_relocation, catalina:      "2e152ebea4b1f2b2f477e8506cecd36fc7d7fc2e3274d72e50c6a3fecc5d4c95"
-    sha256 cellar: :any_skip_relocation, mojave:        "bdf8a9e69a5537ecf156f64a957c4b0784798db2efbf61a11c8574b4d886506d"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "2d1653acd77b4391d720e4bd6a4bfe37ef72e8baecf40f7a92aff25622227746"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "7172cff4b0ba6bf8f320af540dc13d55382ebc290ab35a8ac3dfbabf7c7df785"
+    sha256 cellar: :any_skip_relocation, big_sur:       "1af4398419ad2d381a218bd53e333cedf222d5c681c51b62b4c03134e8a67cd0"
+    sha256 cellar: :any_skip_relocation, catalina:      "315e547e7cd74fc8b88e86b5ced504f101044b527b46ec2b74d1ea9b5332e09a"
+    sha256 cellar: :any_skip_relocation, mojave:        "df84a76e97a4df0518ff6270858b3e74d2f84a73882d62e5c2d2a066da77936b"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "96d7dcddf01290005ecd88fc58ba31711e57067f9b815216411123ea1df09b4a" # linuxbrew-core
   end
 
   depends_on "go" => :build
   depends_on "go-bindata" => :build
 
   def install
+    ldflags = %W[
+      -s -w
+      -X github.com/traefik/traefik/v#{version.major}/pkg/version.Version=#{version}
+    ].join(" ")
     system "go", "generate"
-    system "go", "build",
-      "-ldflags", "-s -w -X github.com/traefik/traefik/v#{version.major}/pkg/version.Version=#{version}",
-      "-trimpath", "-o", bin/"traefik", "./cmd/traefik"
+    system "go", "build", *std_go_args(ldflags: ldflags), "./cmd/traefik"
   end
 
-  plist_options manual: "traefik"
-
-  def plist
-    <<~EOS
-      <?xml version="1.0" encoding="UTF-8"?>
-      <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-      <plist version="1.0">
-        <dict>
-          <key>KeepAlive</key>
-          <false/>
-          <key>Label</key>
-          <string>#{plist_name}</string>
-          <key>ProgramArguments</key>
-          <array>
-            <string>#{opt_bin}/traefik</string>
-            <string>--configfile=#{etc/"traefik/traefik.toml"}</string>
-          </array>
-          <key>EnvironmentVariables</key>
-          <dict>
-          </dict>
-          <key>RunAtLoad</key>
-          <true/>
-          <key>WorkingDirectory</key>
-          <string>#{var}</string>
-          <key>StandardErrorPath</key>
-          <string>#{var}/log/traefik.log</string>
-          <key>StandardOutPath</key>
-          <string>#{var}/log/traefik.log</string>
-        </dict>
-      </plist>
-    EOS
+  service do
+    run [opt_bin/"traefik", "--configfile=#{etc}/traefik/traefik.toml"]
+    keep_alive false
+    working_dir var
+    log_path var/"log/traefik.log"
+    error_log_path var/"log/traefik.log"
   end
 
   test do

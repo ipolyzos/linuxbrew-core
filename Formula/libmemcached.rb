@@ -3,6 +3,7 @@ class Libmemcached < Formula
   homepage "https://libmemcached.org/"
   url "https://launchpad.net/libmemcached/1.0/1.0.18/+download/libmemcached-1.0.18.tar.gz"
   sha256 "e22c0bb032fde08f53de9ffbc5a128233041d9f33b5de022c0978a2149885f82"
+  license "BSD-3-Clause"
   revision 2
 
   bottle do
@@ -12,7 +13,7 @@ class Libmemcached < Formula
     sha256 cellar: :any, catalina:      "24c7d9597b28d79f50f86777aa506b1955737d9e3298e1d79c3ad95b74fb66f8"
     sha256 cellar: :any, mojave:        "203121f43d48b8245a1bb963eded3d56aa44ec921176b9819004e62b12acdc48"
     sha256 cellar: :any, high_sierra:   "59032bd9e04061aaa7ffafdda12e66535f2e73da25571da0cede2dc21bc62f22"
-    sha256 cellar: :any, x86_64_linux:  "0b7430e9e2d048e10580161acd2e3138800d71a1e200fd937645eb8d97443a13"
+    sha256 cellar: :any, x86_64_linux:  "0b7430e9e2d048e10580161acd2e3138800d71a1e200fd937645eb8d97443a13" # linuxbrew-core
   end
 
   depends_on "memcached" => :test
@@ -36,7 +37,8 @@ class Libmemcached < Formula
       #include <libmemcached-1.0/memcached.h>
 
       int main(int argc, char **argv) {
-          const char *conf = "--SERVER=localhost:11211";
+          char conf[50] = "--SERVER=127.0.0.1:";
+          strncat(conf, argv[1], 5);
           memcached_st *memc = memcached(conf, strlen(conf));
           assert(memc != NULL);
 
@@ -65,14 +67,10 @@ class Libmemcached < Formula
     system ENV.cc, "test.c", "-I#{include}", "-L#{lib}", "-lmemcached", "-o", "test"
 
     memcached = Formula["memcached"].bin/"memcached"
-    # Assumes port 11211 is not already taken
-    io = if Process.uid.zero?
-      IO.popen("#{memcached} -u root --listen=localhost:22122")
-    else
-      IO.popen("#{memcached} --listen=localhost:11211")
-    end
+    port = free_port
+    io = IO.popen("#{memcached} -l 127.0.0.1 -p #{port}")
     sleep 1
-    system "./test"
+    system "./test", port
     Process.kill "TERM", io.pid
   end
 end

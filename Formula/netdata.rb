@@ -11,11 +11,12 @@ class Netdata < Formula
   end
 
   bottle do
-    sha256 arm64_big_sur: "0568a4cafa481062063768c710c3ea924e92c95d5723720b9858dd5edc4c9cf0"
-    sha256 big_sur:       "39521fa2e058702dd343672302389b4507088352eb07e5ec41ba6ed54747f821"
-    sha256 catalina:      "f8faef68bd371013bb2b38d834982b0adb868efdd096eccc964ab9f562c2f3ce"
-    sha256 mojave:        "d906de464e725959fc7006160569712bebaba1ceb09b9d96da50bb21e987df76"
-    sha256 x86_64_linux:  "084f2cb3f285c30951e5389464194b18c1019e59a30203877f9f7256c4735bc0"
+    rebuild 1
+    sha256 arm64_big_sur: "96e5940c2b39c8d0cf4c3d6400f388d17c4d8a2f6a7feeca6937ed2270cdcf8b"
+    sha256 big_sur:       "d3bad874d783b3b59407768d7ef796c4a596e89aca6aaa7ea66194c7b809a193"
+    sha256 catalina:      "f4c04a549cdacdfce6549bae882621cf91c08c3aeb974947ed61724fc9feb057"
+    sha256 mojave:        "52acdf9ac5b1986cdc7f02d079a74486db527e32e09036ce2505c38c85c8d125"
+    sha256 x86_64_linux:  "47852899dd863453a019d05c14af2a1ed163f1cae9af21a17468d3c7fcecf86b" # linuxbrew-core
   end
 
   depends_on "autoconf" => :build
@@ -69,11 +70,10 @@ class Netdata < Formula
       --enable-dbengine
       --with-user=netdata
     ]
-    on_macos do
+    if OS.mac?
       args << "UUID_LIBS=-lc"
       args << "UUID_CFLAGS=-I/usr/include"
-    end
-    on_linux do
+    else
       args << "UUID_LIBS=-luuid"
       args << "UUID_CFLAGS=-I#{Formula["util-linux"].opt_include}"
     end
@@ -96,28 +96,9 @@ class Netdata < Formula
     (var/"netdata").mkpath
   end
 
-  plist_options manual: "#{HOMEBREW_PREFIX}/sbin/netdata -D"
-
-  def plist
-    <<~EOS
-      <?xml version="1.0" encoding="UTF-8"?>
-      <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-      <plist version="1.0">
-        <dict>
-          <key>Label</key>
-          <string>#{plist_name}</string>
-          <key>RunAtLoad</key>
-          <true/>
-          <key>ProgramArguments</key>
-          <array>
-              <string>#{opt_sbin}/netdata</string>
-              <string>-D</string>
-          </array>
-          <key>WorkingDirectory</key>
-          <string>#{var}</string>
-        </dict>
-      </plist>
-    EOS
+  service do
+    run [opt_sbin/"netdata", "-D"]
+    working_dir var
   end
 
   test do

@@ -5,6 +5,11 @@ class Ogmtools < Formula
   sha256 "c8d61d1dbceb981dc7399c1a85e43b509fd3d071fb8d3ca89ea9385e6e40fdea"
   license "GPL-2.0"
 
+  livecheck do
+    url :homepage
+    regex(/href=.*?ogmtools[._-]v?(\d+(?:\.\d+)+)\.t/i)
+  end
+
   bottle do
     sha256 cellar: :any, arm64_big_sur: "34cfdabab2892f91fd6a6164a041f62eef1da1cf7a2097ad5fe5e2e904de21a3"
     sha256 cellar: :any, big_sur:       "939be64a395371009f70c9c596e86df908e429ad6915dee142752c1114f2e1d3"
@@ -14,7 +19,7 @@ class Ogmtools < Formula
     sha256 cellar: :any, sierra:        "ec07a396ce68d5c646c838e3129dbe6c8ca8ff7ea9126cd31f9844016582d0ec"
     sha256 cellar: :any, el_capitan:    "8e0ceae59b3a69647511dff89566a734d25a96a764893c7599ee1ece73890db5"
     sha256 cellar: :any, yosemite:      "3a43fec619944cd6fa8e57bd067477ef63997919e11174ddafb160c47b28fd5d"
-    sha256 cellar: :any, x86_64_linux:  "0d5b5c91f6c304d9e6adf77a3dd514bfafcd70766bd569f045e70ea18612da32"
+    sha256 cellar: :any, x86_64_linux:  "0d5b5c91f6c304d9e6adf77a3dd514bfafcd70766bd569f045e70ea18612da32" # linuxbrew-core
   end
 
   depends_on "libogg"

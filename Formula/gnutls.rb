@@ -1,11 +1,10 @@
 class Gnutls < Formula
   desc "GNU Transport Layer Security (TLS) Library"
   homepage "https://gnutls.org/"
-  url "https://www.gnupg.org/ftp/gcrypt/gnutls/v3.6/gnutls-3.6.15.tar.xz"
-  mirror "https://www.mirrorservice.org/sites/ftp.gnupg.org/gcrypt/gnutls/v3.6/gnutls-3.6.15.tar.xz"
-  sha256 "0ea8c3283de8d8335d7ae338ef27c53a916f15f382753b174c18b45ffd481558"
-  # license "LGPL-2.1-or-later AND GPL-3.0-only" - review syntax after resolving https://github.com/Homebrew/brew/pull/8260
-  license "GPL-3.0-only"
+  url "https://www.gnupg.org/ftp/gcrypt/gnutls/v3.6/gnutls-3.6.16.tar.xz"
+  mirror "https://www.mirrorservice.org/sites/ftp.gnupg.org/gcrypt/gnutls/v3.6/gnutls-3.6.16.tar.xz"
+  sha256 "1b79b381ac283d8b054368b335c408fedcb9b7144e0c07f531e3537d4328f3b3"
+  license all_of: ["LGPL-2.1-or-later", "GPL-3.0-only"]
 
   livecheck do
     url "https://www.gnupg.org/ftp/gcrypt/gnutls/v3.6/"
@@ -14,11 +13,7 @@ class Gnutls < Formula
 
   bottle do
     rebuild 1
-    sha256 arm64_big_sur: "2be786f86b84f77ce5d9c15d4f059a240b4284039109a383b3a1d47f32ace17f"
-    sha256 big_sur:       "72bc4290e20b342e85f6cc0e02f2d780eeff11bb1a9c40a4eb4473512ff09d9b"
-    sha256 catalina:      "774fe85d6dfd00e5882258eeaf5edc81e98bf4d074b7fe49a52bcf116e50bc8a"
-    sha256 mojave:        "0add13d231debe9e8a941f0295c09b87446127ca69bb2c67a069ac17cf6da858"
-    sha256 x86_64_linux:  "b2e4acbf5a062f3688bbee333592a563aaed639de9bbace805db62a985efbbab"
+    sha256 x86_64_linux: "022fb300ceaef9ad84519925fea3f01eaa63e137cf8da95bde8edef0ecb639a7" # linuxbrew-core
   end
 
   depends_on "autoconf" => :build
@@ -34,7 +29,7 @@ class Gnutls < Formula
   depends_on "unbound"
 
   on_linux do
-    depends_on "autogen" => :build
+    depends_on "autogen"
 
     resource "cacert" do
       # homepage "http://curl.haxx.se/docs/caextract.html"
@@ -74,8 +69,11 @@ class Gnutls < Formula
   end
 
   def post_install
-    on_macos(&method(:macos_post_install))
-    on_linux(&method(:linux_post_install))
+    if OS.mac?
+      macos_post_install
+    else
+      linux_post_install
+    end
   end
 
   def macos_post_install
@@ -86,7 +84,7 @@ class Gnutls < Formula
       /System/Library/Keychains/SystemRootCertificates.keychain
     ]
 
-    certs_list = `security find-certificate -a -p #{keychains.join(" ")}`
+    certs_list = `/usr/bin/security find-certificate -a -p #{keychains.join(" ")}`
     certs = certs_list.scan(
       /-----BEGIN CERTIFICATE-----.*?-----END CERTIFICATE-----/m,
     )
@@ -98,7 +96,17 @@ class Gnutls < Formula
         openssl_io.close_write
       end
 
-      $CHILD_STATUS.success?
+      next unless $CHILD_STATUS.success?
+
+      # XXX And drop Kerberos certs which may invalidate the whole trust store
+      # due to bug in gnutls (https://gitlab.com/gnutls/gnutls/-/issues/1255)
+      IO.popen("openssl x509 -inform pem -issuer -noout 2>/dev/null", "r+") do |openssl_io|
+        openssl_io.write(cert)
+        openssl_io.close_write
+        cn = openssl_io.read
+        openssl_io.close_read
+        cn.exclude? "CN=com.apple.kerberos.kdc"
+      end
     end
 
     # Check that the certificate is trusted in keychain

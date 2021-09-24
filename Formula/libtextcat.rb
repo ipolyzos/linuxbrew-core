@@ -6,6 +6,11 @@ class Libtextcat < Formula
   sha256 "5677badffc48a8d332e345ea4fe225e3577f53fc95deeec8306000b256829655"
   license "BSD-3-Clause"
 
+  livecheck do
+    url :homepage
+    regex(/href=.*?libtextcat[._-]v?(\d+(?:\.\d+)+)\.t/i)
+  end
+
   bottle do
     rebuild 1
     sha256 cellar: :any, arm64_big_sur: "a7d4587c077074798e16772f893cea69a90a99ff89b6071690a9980083b55e93"
@@ -16,7 +21,7 @@ class Libtextcat < Formula
     sha256 cellar: :any, sierra:        "24fe8791549204d8ef6e596fc327fbd3a645c729b440ba31ef47cf545f6f5b30"
     sha256 cellar: :any, el_capitan:    "afa51f83d0a3c96ffc6f6c35011c864347f31d2c3aea987102c59f0257177072"
     sha256 cellar: :any, yosemite:      "1a63f24b16949843f6a3f6c17d9467208a471cfa6bf1b193738fa94c2d320f02"
-    sha256 cellar: :any, x86_64_linux:  "90b38de4353d0e026a9b6259b698e34d0091c94d8d54579bef4f07de7fb97869"
+    sha256 cellar: :any, x86_64_linux:  "90b38de4353d0e026a9b6259b698e34d0091c94d8d54579bef4f07de7fb97869" # linuxbrew-core
   end
 
   def install

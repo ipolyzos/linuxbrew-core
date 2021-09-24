@@ -4,7 +4,7 @@ class Pjproject < Formula
   url "https://github.com/pjsip/pjproject/archive/2.10.tar.gz"
   sha256 "936a4c5b98601b52325463a397ddf11ab4106c6a7b04f8dc7cdd377efbb597de"
   license "GPL-2.0-or-later"
-  head "https://github.com/pjsip/pjproject.git"
+  head "https://github.com/pjsip/pjproject.git", branch: "master"
 
   livecheck do
     url :stable
@@ -17,7 +17,7 @@ class Pjproject < Formula
     sha256 cellar: :any, catalina:     "ce9e2f67c5ae7148b7c7883ac3c6dbcc9dd7892695af93c02dc44b3e52f109dd"
     sha256 cellar: :any, mojave:       "26c273e3e975fc955f3c8ffb03c8332629fd42f123a4144645adb30817f9f428"
     sha256 cellar: :any, high_sierra:  "114939ba488f6f78f1d337d27eb1873aacfb9c55788b60543f6dbab7e23f745e"
-    sha256 cellar: :any, x86_64_linux: "f1e7a9a2cf19457b9193d901536402a7d4bfe422124f8a6b171ed020589dca35"
+    sha256 cellar: :any, x86_64_linux: "f1e7a9a2cf19457b9193d901536402a7d4bfe422124f8a6b171ed020589dca35" # linuxbrew-core
   end
 
   depends_on macos: :high_sierra # Uses Security framework API enum cases introduced in 10.13.4
@@ -30,10 +30,9 @@ class Pjproject < Formula
     system "make", "install"
 
     arch = Utils.safe_popen_read("uname", "-m").chomp
-    on_macos do
+    if OS.mac?
       bin.install "pjsip-apps/bin/pjsua-#{arch}-apple-darwin#{OS.kernel_version}" => "pjsua"
-    end
-    on_linux do
+    else
       bin.install "pjsip-apps/bin/pjsua-#{arch}-unknown-linux-gnu" => "pjsua"
     end
   end

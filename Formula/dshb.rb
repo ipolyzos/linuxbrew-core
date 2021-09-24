@@ -15,7 +15,6 @@ class Dshb < Formula
   disable! date: "2020-12-08", because: :unmaintained
 
   depends_on xcode: ["8.0", :build]
-  depends_on :macos
 
   def install
     system "make", "release"

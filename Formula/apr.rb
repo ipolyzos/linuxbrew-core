@@ -12,12 +12,12 @@ class Apr < Formula
     sha256 cellar: :any, big_sur:       "d9a9554a726ec60e124055a55747e6e7f4cff6310955d6340be340ac053ac097"
     sha256 cellar: :any, catalina:      "3f5c1fa8f17715291ce9f66cf4eb4f518ac1aa856c485f0157036459ad63792c"
     sha256 cellar: :any, mojave:        "4627416a5d9c651d2d4fbb7faa639d6f7a89c7c0558576eeac1f17a81a17f3bd"
-    sha256 cellar: :any, x86_64_linux:  "2a84daae135cba580e909b0580625c3a77d214127d3ff072da730f4b9f631426"
+    sha256 cellar: :any, x86_64_linux:  "2a84daae135cba580e909b0580625c3a77d214127d3ff072da730f4b9f631426" # linuxbrew-core
   end
 
   keg_only :provided_by_macos, "Apple's CLT provides apr"
 
-  depends_on "autoconf" => :build
+  depends_on "autoconf@2.69" => :build
 
   on_linux do
     depends_on "util-linux"
@@ -58,9 +58,9 @@ class Apr < Formula
     # No need for this to point to the versioned path.
     inreplace bin/"apr-#{version.major}-config", prefix, opt_prefix
 
-    on_linux do
+    if OS.linux?
       # Avoid references to the Homebrew shims directory
-      inreplace prefix/"build-#{version.major}/libtool", HOMEBREW_SHIMS_PATH/"linux/super/", "/usr/bin/"
+      inreplace prefix/"build-#{version.major}/libtool", Superenv.shims_path, "/usr/bin"
     end
   end
 

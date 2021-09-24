@@ -4,9 +4,9 @@ class Bats < Formula
   url "https://github.com/sstephenson/bats/archive/v0.4.0.tar.gz"
   sha256 "480d8d64f1681eee78d1002527f3f06e1ac01e173b761bc73d0cf33f4dc1d8d7"
   license "MIT"
-  head "https://github.com/sstephenson/bats.git"
+  head "https://github.com/sstephenson/bats.git", branch: "master"
 
-  bottle :unneeded
+  deprecate! date: "2021-05-24", because: :repo_archived
 
   conflicts_with "bats-core", because: "both install `bats` executables"
 

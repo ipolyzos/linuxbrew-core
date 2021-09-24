@@ -4,14 +4,14 @@ class Sleef < Formula
   url "https://github.com/shibatch/sleef/archive/3.5.1.tar.gz"
   sha256 "415ee9b1bcc5816989d3d4d92afd0cd3f9ee89cbd5a33eb008e69751e40438ab"
   license "BSL-1.0"
-  head "https://github.com/shibatch/sleef.git"
+  head "https://github.com/shibatch/sleef.git", branch: "master"
 
   bottle do
     sha256 cellar: :any, big_sur:      "1277b28f0a610af52bf3f646b4d893a08dd0d0d18004e04b439d47293b93b15d"
     sha256 cellar: :any, catalina:     "87ddfa37e9405dfc66c35295295e5f09e497fb1bc8c07c9e0f38560aeb46398f"
     sha256 cellar: :any, mojave:       "f9e95775f5e41924f42eae7c4ae1f567229a49989e1f8a380d55355e37680d9c"
     sha256 cellar: :any, high_sierra:  "353ca63589a038009ad9b39dadcf3ef4c46153f738fcfb07d58a25dfc37e945a"
-    sha256 cellar: :any, x86_64_linux: "c53bbb4cfca5a7cc75d077b966150c3672c168e54bde6c5fa75874da21a6f1e2"
+    sha256 cellar: :any, x86_64_linux: "c53bbb4cfca5a7cc75d077b966150c3672c168e54bde6c5fa75874da21a6f1e2" # linuxbrew-core
   end
 
   depends_on "cmake" => :build

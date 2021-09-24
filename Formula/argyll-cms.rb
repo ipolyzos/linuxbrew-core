@@ -1,8 +1,8 @@
 class ArgyllCms < Formula
   desc "ICC compatible color management system"
   homepage "https://www.argyllcms.com/"
-  url "https://www.argyllcms.com/Argyll_V2.1.2_src.zip"
-  sha256 "be378ca836b17b8684db05e9feaab138d711835ef00a04a76ac0ceacd386a3e3"
+  url "https://www.argyllcms.com/Argyll_V2.2.1_src.zip"
+  sha256 "24cbef0e81a7ce8424957cbcb399cdea2f069f64866536d181e879ce1ed18ff8"
   license "AGPL-3.0-only"
 
   livecheck do
@@ -11,11 +11,10 @@ class ArgyllCms < Formula
   end
 
   bottle do
-    rebuild 1
-    sha256 cellar: :any, arm64_big_sur: "5e8e8a930085732ca5c9b8a2d1c17a3e061a2c0ec808e012cc66a7b1606c8b89"
-    sha256 cellar: :any, big_sur:       "4b35f61daa05c91346c27c6c51a18f3cff08569a70e7520abb93772c6a09fe83"
-    sha256 cellar: :any, catalina:      "e2d28da901faf4c20dc5269a79676cbf4b0a188e0d007100d8bb3945f41c31bc"
-    sha256 cellar: :any, mojave:        "6d5f4584dcbe74982cae2cd8d6162fa27d332508deb7414e9a22f473ac3479d0"
+    sha256 cellar: :any, arm64_big_sur: "cd01b34b8340af770348c75ba24f241c4165a343fd470e9104ce6680f9a67987"
+    sha256 cellar: :any, big_sur:       "23d23cf1ec9dd7d5d128ac055031a7dadfe60942cb013b90d40922dfec564ea8"
+    sha256 cellar: :any, catalina:      "48ad5563ffb6bdb54671d4e11605a14963c5c0a82e632c710e97086f650b0ae1"
+    sha256 cellar: :any, mojave:        "198c516d829ff22b66f948768ec5841228e002ed840f647a799aab79b202657f"
   end
 
   depends_on "jam" => :build
@@ -24,16 +23,6 @@ class ArgyllCms < Formula
   depends_on "libtiff"
 
   conflicts_with "num-utils", because: "both install `average` binaries"
-
-  # Fixes calls to obj_msgSend, whose signature changed in macOS 10.15.
-  # Follows the advice in this blog post, which should be compatible
-  # with both older and newer versions of macOS.
-  # https://www.mikeash.com/pyblog/objc_msgsends-new-prototype.html
-  # Submitted upstream: https://www.freelists.org/post/argyllcms/Patch-Fix-macOS-build-failures-from-obj-msgSend-definition-change
-  patch do
-    url "https://raw.githubusercontent.com/Homebrew/formula-patches/f6ede0dff06c2d9e3383416dc57c5157704b6f3a/argyll-cms/fix_objc_msgSend.diff"
-    sha256 "fa86f5f21ed38bec6a20a79cefb78ef7254f6185ef33cac23e50bb1de87507a4"
-  end
 
   # Fixes a missing header, which is an error by default on arm64 but not x86_64
   patch do

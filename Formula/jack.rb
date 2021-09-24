@@ -1,8 +1,8 @@
 class Jack < Formula
   desc "Audio Connection Kit"
   homepage "https://jackaudio.org/"
-  url "https://github.com/jackaudio/jack2/archive/v1.9.17.tar.gz"
-  sha256 "38f674bbc57852a8eb3d9faa1f96a0912d26f7d5df14c11005ad499c8ae352f2"
+  url "https://github.com/jackaudio/jack2/archive/v1.9.19.tar.gz"
+  sha256 "9030f4dc11773351b6ac96affd9c89803a5587ebc1b091e5ff866f433327e4b0"
   license "GPL-2.0-or-later"
 
   livecheck do
@@ -11,72 +11,63 @@ class Jack < Formula
   end
 
   bottle do
-    sha256 arm64_big_sur: "30c242528a4d4995027685b6a9dbe0ef588101d8a77449f8b4d0efc11fda4fe0"
-    sha256 big_sur:       "63d190108f0d1265b3e2fa25118bbe1c993dbbf4922fff9d04d6ee1d786eb4bd"
-    sha256 catalina:      "526aa853b3738080f6710f957cb213e0ba313f6045270e08ffef775ddea30c3a"
-    sha256 mojave:        "8f3a34b8bb3406174b1c1e2d5f377ec85dec41372f3c772dac4abbde80d18a92"
+    rebuild 2
+    sha256 arm64_big_sur: "8460ec59472c5dc1d7f1196dcb68578539054cfb597390793f91c99eb0b9596a"
+    sha256 big_sur:       "939c93be6d821e73abe360c69c57b0786086b03bcf95233a0ef1836e18c472f7"
+    sha256 catalina:      "fbec3032a541f3e9ce3b327994d4bd305f3f849d1cb3831ec460b2bd2e029c08"
+    sha256 mojave:        "b2974079582c370b9056ac2f98308cb321dc767ac3f67229e891e1de6bc86c8f"
+    sha256 x86_64_linux:  "83eb0dfca4705a7380da7a6a0bf628898f1b7103f288c77f1150ddf092843672" # linuxbrew-core
   end
 
   depends_on "autoconf" => :build
   depends_on "automake" => :build
   depends_on "libtool" => :build
   depends_on "pkg-config" => :build
-  depends_on "aften"
+  depends_on "python@3.9" => :build
   depends_on "berkeley-db"
   depends_on "libsamplerate"
   depends_on "libsndfile"
-  depends_on "python@3.9"
+  depends_on "readline"
+
+  on_macos do
+    depends_on "aften"
+  end
+
+  on_linux do
+    depends_on "alsa-lib"
+    depends_on "systemd"
+  end
 
   def install
-    on_macos do
+    if OS.mac? && MacOS.version <= :high_sierra
       # See https://github.com/jackaudio/jack2/issues/640#issuecomment-723022578
-      ENV.append "LDFLAGS", "-Wl,-compatibility_version,1" if MacOS.version <= :high_sierra
-      ENV.append "LDFLAGS", "-Wl,-current_version,#{version}" if MacOS.version <= :high_sierra
+      ENV.append "LDFLAGS", "-Wl,-compatibility_version,1"
+      ENV.append "LDFLAGS", "-Wl,-current_version,#{version}"
     end
     system Formula["python@3.9"].opt_bin/"python3", "./waf", "configure", "--prefix=#{prefix}"
     system Formula["python@3.9"].opt_bin/"python3", "./waf", "build"
     system Formula["python@3.9"].opt_bin/"python3", "./waf", "install"
+
+    # Remove Python script used to control D-Bus JACK as it isn't enabled in formula
+    rm bin/"jack_control"
   end
 
-  plist_options manual: "jackd -X coremidi -d coreaudio"
-
-  def plist
-    <<~EOS
-      <?xml version="1.0" encoding="UTF-8"?>
-      <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-      <plist version="1.0">
-      <dict>
-        <key>Label</key>
-        <string>#{plist_name}</string>
-        <key>WorkingDirectory</key>
-        <string>#{opt_prefix}</string>
-        <key>EnvironmentVariables</key>
-        <dict>
-          <key>PATH</key>
-          <string>/usr/bin:/bin:/usr/sbin:/sbin:#{HOMEBREW_PREFIX}/bin</string>
-        </dict>
-        <key>ProgramArguments</key>
-        <array>
-          <string>#{opt_bin}/jackd</string>
-          <string>-X</string>
-          <string>coremidi</string>
-          <string>-d</string>
-          <string>coreaudio</string>
-        </array>
-        <key>RunAtLoad</key>
-        <true/>
-        <key>KeepAlive</key>
-        <true/>
-      </dict>
-      </plist>
-    EOS
+  service do
+    run [opt_bin/"jackd", "-X", "coremidi", "-d", "coreaudio"]
+    keep_alive true
+    working_dir opt_prefix
+    environment_variables PATH: "/usr/bin:/bin:/usr/sbin:/sbin:#{HOMEBREW_PREFIX}/bin"
   end
 
   test do
     source_name = "test_source"
     sink_name = "test_sink"
     fork do
-      exec "#{bin}/jackd", "-X", "coremidi", "-d", "dummy"
+      if OS.mac?
+        exec "#{bin}/jackd", "-X", "coremidi", "-d", "dummy"
+      else
+        exec "#{bin}/jackd", "-d", "dummy"
+      end
     end
     system "#{bin}/jack_wait", "--wait", "--timeout", "10"
     fork do
@@ -84,7 +75,7 @@ class Jack < Formula
     end
     midi_sink = IO.popen "#{bin}/jack_midi_dump #{sink_name}"
     sleep 1
-    system "#{bin}/jack_connect #{source_name}:out #{sink_name}:input"
+    system "#{bin}/jack_connect", "#{source_name}:out", "#{sink_name}:input"
     sleep 1
     Process.kill "TERM", midi_sink.pid
 

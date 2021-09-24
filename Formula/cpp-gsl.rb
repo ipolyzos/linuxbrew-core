@@ -4,7 +4,7 @@ class CppGsl < Formula
   url "https://github.com/Microsoft/GSL/archive/v3.1.0.tar.gz"
   sha256 "d3234d7f94cea4389e3ca70619b82e8fb4c2f33bb3a070799f1e18eef500a083"
   license "MIT"
-  head "https://github.com/Microsoft/GSL.git"
+  head "https://github.com/Microsoft/GSL.git", branch: "main"
 
   bottle do
     sha256 cellar: :any_skip_relocation, arm64_big_sur: "1fe9e903b18a03aa61226caafb7109b2c7f638b0e4d510c64c4911b2566b855a"
@@ -12,7 +12,7 @@ class CppGsl < Formula
     sha256 cellar: :any_skip_relocation, catalina:      "ba5b32881db75527872525bcde6bef641bdb6c89dff511ccf5105229f1ba1e7c"
     sha256 cellar: :any_skip_relocation, mojave:        "262709d81631cc7aa7477b03bd1904320da93b12cecf4aded01e3cc59917287f"
     sha256 cellar: :any_skip_relocation, high_sierra:   "262709d81631cc7aa7477b03bd1904320da93b12cecf4aded01e3cc59917287f"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "97f327299cd75544b8cd99c97a7d574e00d939e3e001cdec0b9045df30731977"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "97f327299cd75544b8cd99c97a7d574e00d939e3e001cdec0b9045df30731977" # linuxbrew-core
   end
 
   depends_on "cmake" => :build

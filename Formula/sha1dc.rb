@@ -7,7 +7,7 @@ class Sha1dc < Formula
 
   # The "master" branch is unusably broken and behind the
   # "simplified_c90" branch that's the basis for release.
-  head "https://github.com/cr-marcstevens/sha1collisiondetection.git"
+  head "https://github.com/cr-marcstevens/sha1collisiondetection.git", branch: "master"
 
   bottle do
     sha256 cellar: :any, arm64_big_sur: "392a2173a9bf9a53f40edb2ef6c77a9d34ee567c9d18f405288b7b83e7fdc87b"
@@ -18,7 +18,7 @@ class Sha1dc < Formula
     sha256 cellar: :any, sierra:        "9eba4b19247672b715376e2086689e7418235d850a158636d2ba3deb46851933"
     sha256 cellar: :any, el_capitan:    "32d59c039a26d232b35f3c1877ca8c78ba0a303866adefee002c017359b03267"
     sha256 cellar: :any, yosemite:      "939388a0fe029d8cba8080a778269322489c55f787301947c82fb30cf8433b08"
-    sha256 cellar: :any, x86_64_linux:  "0a0f7f393040e0469b52c6f8f14f663dfc9d59b8b33749ea09c469e68d779c65"
+    sha256 cellar: :any, x86_64_linux:  "0a0f7f393040e0469b52c6f8f14f663dfc9d59b8b33749ea09c469e68d779c65" # linuxbrew-core
   end
 
   depends_on "coreutils" => :build # GNU install

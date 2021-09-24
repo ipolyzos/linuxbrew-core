@@ -5,9 +5,7 @@ class RbenvBundlerRubyVersion < Formula
   sha256 "96c6b7eb191d436142fef0bb8c28071d54aca3e1a10ca01a525d1066699b03f2"
   license "Unlicense"
   revision 1
-  head "https://github.com/aripollak/rbenv-bundler-ruby-version.git"
-
-  bottle :unneeded
+  head "https://github.com/aripollak/rbenv-bundler-ruby-version.git", branch: "master"
 
   depends_on "rbenv"
 

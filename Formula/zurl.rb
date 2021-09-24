@@ -1,7 +1,7 @@
 class Zurl < Formula
   desc "HTTP and WebSocket client worker with ZeroMQ interface"
   homepage "https://github.com/fanout/zurl"
-  url "https://dl.bintray.com/fanout/source/zurl-1.11.0.tar.bz2"
+  url "https://github.com/fanout/zurl/releases/download/v1.11.0/zurl-1.11.0.tar.bz2"
   sha256 "18aa3b077aefdba47cc46c5bca513ca2e20f2564715be743f70e4efa4fdccd7a"
   license "GPL-3.0-or-later"
   revision 3
@@ -11,7 +11,7 @@ class Zurl < Formula
     sha256 cellar: :any,                 big_sur:       "ec815b28c14380cbc309c11fb2becb4e0421b3d933dfbe4f3b881941b97069c3"
     sha256 cellar: :any,                 catalina:      "2d34fd92311ba6e171d3bc3a5c567daa4238a0d06e0cd078c79ce4c5368890a3"
     sha256 cellar: :any,                 mojave:        "21b2977646141c7d191a9f835c42b70eff3e793b799228386043ac62ae44a34b"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "ee8a345ae1aa761b5c37183a93414255779491c843f1433bd78d000fa42121b4"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "ee8a345ae1aa761b5c37183a93414255779491c843f1433bd78d000fa42121b4" # linuxbrew-core
   end
 
   depends_on "pkg-config" => :build

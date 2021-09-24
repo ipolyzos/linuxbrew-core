@@ -11,12 +11,10 @@ class Chadwick < Formula
   end
 
   bottle do
-    sha256 cellar: :any, arm64_big_sur: "3feae6163c485d40c22f4dcbd0f2772245e8010e7beb4b9f9c399bd93d46f475"
-    sha256 cellar: :any, big_sur:       "d03f388d1a56550fdc5b9832bf0a952c35a5b7d38f0661885c0dc4b7ee01d718"
     sha256 cellar: :any, catalina:      "693c6ee0980401936a83453bdbc398aeb0eb06ba9bb8e101046508b14edfdc98"
     sha256 cellar: :any, mojave:        "a068fd25b1e8b3d6f9a56a8a1d4ac18a49f07f82450b1ab3f3766b86fb0a362a"
     sha256 cellar: :any, high_sierra:   "427b5c0fca10b23b66c56bda3537080df2ba467edea59a9dfd2f0fba56f50f9b"
-    sha256 cellar: :any, x86_64_linux:  "0ac0ab43ad4ecd66454b88ba1f04ac9c8e258caf0ea1202012e3d9d1dd2794a5"
+    sha256 cellar: :any, x86_64_linux:  "0ac0ab43ad4ecd66454b88ba1f04ac9c8e258caf0ea1202012e3d9d1dd2794a5" # linuxbrew-core
   end
 
   def install

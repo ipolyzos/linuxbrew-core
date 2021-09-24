@@ -7,7 +7,7 @@ class Nethack < Formula
   version "3.6.6"
   sha256 "cfde0c3ab6dd7c22ae82e1e5a59ab80152304eb23fb06e3129439271e5643ed2"
   license "NGPL"
-  head "https://github.com/NetHack/NetHack.git"
+  head "https://github.com/NetHack/NetHack.git", branch: "NetHack-3.7"
 
   # The /download/ page loads the following page in an iframe and this contains
   # links to version directories which contain the archive files.
@@ -22,7 +22,7 @@ class Nethack < Formula
     sha256 catalina:      "69418bfcba43b656118140a7e50992772567c4c2ab4827ce0af343892a149945"
     sha256 mojave:        "4d186d190dcab9cc719a3868aa73a6c311407f8c1510e1d3bfd185a8070177bc"
     sha256 high_sierra:   "6b6b5eb3571c69d31ac0c88f42acae3cea5f42ec513bafd03960db8c9f994177"
-    sha256 x86_64_linux:  "7b62ff8bc77a49942b76eb1e5bee8ebcc290a748d80079e492ef5008ffc94ae0"
+    sha256 x86_64_linux:  "7b62ff8bc77a49942b76eb1e5bee8ebcc290a748d80079e492ef5008ffc94ae0" # linuxbrew-core
   end
 
   uses_from_macos "bison" => :build

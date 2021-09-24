@@ -1,8 +1,8 @@
 class Librealsense < Formula
   desc "Intel RealSense D400 series and SR300 capture"
   homepage "https://github.com/IntelRealSense/librealsense"
-  url "https://github.com/IntelRealSense/librealsense/archive/v2.43.0.tar.gz"
-  sha256 "767cdb01be6c6d569944a1c547f0b5a59b9458974e0ce0484f85eb66d0413ea5"
+  url "https://github.com/IntelRealSense/librealsense/archive/v2.49.0.tar.gz"
+  sha256 "2578ea0e75546aeebd908da732f52e0122bf37750d5a45f3adf92945a673aefd"
   license "Apache-2.0"
   head "https://github.com/IntelRealSense/librealsense.git"
 
@@ -12,18 +12,21 @@ class Librealsense < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 big_sur:      "4e8b518b9d5674f3fd8772f0072f33f3068ac3815005ba9d4b9728091a44e60b"
-    sha256 cellar: :any,                 catalina:     "3e2e9dad9d11b5055b1499d169bd47d24da57303a352844fb069ff19f9e570a8"
-    sha256 cellar: :any,                 mojave:       "05713870dfad3d5a5d2255c0234b6979b65b47bec7b139a47c8a4c67efd5a85d"
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "0a07f0236c168e4e60a0053ece6d529d187edbaab9df3c2ed2ab25e66c687707"
+    sha256 cellar: :any,                 big_sur:      "4c696d7911ab9321c26df52208dd433824e855f50b7a019018c980771c53b5ba"
+    sha256 cellar: :any,                 catalina:     "e32b24f59e07ceaac9482a1e1e961f4a0713ff045958e2d5f41872899f6bb4b8"
+    sha256 cellar: :any,                 mojave:       "6353572f45ee221eea411c12fb1ba1deeb24b9eea1cf8b15e860886012a000c7"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "6f270359de31964fecc5d4fff3f3a351271ae7071b13366e74b4f5d8b0562c98" # linuxbrew-core
   end
 
   depends_on "cmake" => :build
   depends_on "pkg-config" => :build
   depends_on "glfw"
   depends_on "libusb"
+  depends_on "openssl@1.1"
 
   def install
+    ENV["OPENSSL_ROOT_DIR"] = Formula["openssl@1.1"].prefix
+
     args = std_cmake_args
     args << "-DENABLE_CCACHE=OFF"
 

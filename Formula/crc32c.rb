@@ -4,7 +4,7 @@ class Crc32c < Formula
   url "https://github.com/google/crc32c/archive/1.1.1.tar.gz"
   sha256 "a6533f45b1670b5d59b38a514d82b09c6fb70cc1050467220216335e873074e8"
   license "BSD-3-Clause"
-  head "https://github.com/google/crc32c.git"
+  head "https://github.com/google/crc32c.git", branch: "main"
 
   bottle do
     sha256 cellar: :any, arm64_big_sur: "82e70741895a3e29dc0f8e48b0dd10e13e8cd380012457c1bf984ace3fd6dd03"
@@ -12,13 +12,12 @@ class Crc32c < Formula
     sha256 cellar: :any, catalina:      "8ac4299583c3155c0410e246277214110bbbe453df5cc6b67694c67ba722bfbc"
     sha256 cellar: :any, mojave:        "f5e232ed8a57eea6b226f4596f94281ea4ea5467c626e83a1576e74aee32711e"
     sha256 cellar: :any, high_sierra:   "a8f21980c0fee7ffb9911b1eaa1bf7641940b4bb798a7dbd508ae60a6c1a46a8"
-    sha256 cellar: :any, x86_64_linux:  "fade39ba2de89b5f331d458f132ae09f52049648b6c5567ab3eac727142d8f53"
+    sha256 cellar: :any, x86_64_linux:  "fade39ba2de89b5f331d458f132ae09f52049648b6c5567ab3eac727142d8f53" # linuxbrew-core
   end
 
   depends_on "cmake" => :build
 
   def install
-    ENV.cxx11 unless OS.mac?
     system "cmake", ".", "-DCRC32C_BUILD_TESTS=0",
                           "-DCRC32C_BUILD_BENCHMARKS=0", "-DCRC32C_USE_GLOG=0",
                          *std_cmake_args

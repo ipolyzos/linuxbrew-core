@@ -1,11 +1,10 @@
 class ZshViMode < Formula
   desc "Better and friendly vi(vim) mode plugin for ZSH"
   homepage "https://github.com/jeffreytse/zsh-vi-mode"
-  url "https://github.com/jeffreytse/zsh-vi-mode/archive/refs/tags/v0.8.2.tar.gz"
-  sha256 "888d68b451fc3221c2ee1648dbfbff38e524048b2c78620a244650fc76946c28"
+  url "https://github.com/jeffreytse/zsh-vi-mode/archive/refs/tags/v0.8.4.tar.gz"
+  sha256 "d16814693099dcc6f47afe3e5575af539a7aee1071f3f532c233800918722398"
   license "MIT"
-
-  bottle :unneeded
+  head "https://github.com/jeffreytse/zsh-vi-mode.git", branch: "master"
 
   def install
     pkgshare.install "zsh-vi-mode.zsh"
@@ -14,13 +13,13 @@ class ZshViMode < Formula
 
   def caveats
     <<~EOS
-      To activate the zsh vi mode, add the following at the end of your .zshrc:
+      To activate the zsh vi mode, add the following line to your .zshrc:
         source #{opt_pkgshare}/zsh-vi-mode.plugin.zsh
     EOS
   end
 
   test do
     assert_match "zsh-vi-mode",
-      shell_output("zsh -c '. #{pkgshare}/zsh-vi-mode.plugin.zsh && echo $ZVM_NAME'")
+      shell_output("zsh -c '. #{pkgshare}/zsh-vi-mode.plugin.zsh && zvm_version'")
   end
 end

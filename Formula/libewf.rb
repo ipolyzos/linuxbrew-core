@@ -2,16 +2,16 @@ class Libewf < Formula
   desc "Library for support of the Expert Witness Compression Format"
   homepage "https://github.com/libyal/libewf"
   # The main libewf repository is currently "experimental".
-  url "https://github.com/libyal/libewf-legacy/releases/download/20140811/libewf-20140811.tar.gz"
-  sha256 "b2c3a04ea7f49646518d108df8ea00fc0d2ca670064bb59428d8878ed8aef80d"
+  url "https://github.com/libyal/libewf-legacy/releases/download/20140812/libewf-20140812.tar.gz"
+  sha256 "be90b7af2a63cc3f15d32ce722a19fbd5bbb0173ce20995ba2b27cc9072d6f25"
   license "LGPL-3.0-or-later"
 
   bottle do
-    sha256 cellar: :any, arm64_big_sur: "b2eb1858fa0942fea2edc3db283fe0c09f20ba79fa25ec0b7a4b7547f98a4124"
-    sha256 cellar: :any, big_sur:       "1068de52fbf9dcc6bb65e959db1626da3850cc251c5c9ca4dc87a2f8cd895607"
-    sha256 cellar: :any, catalina:      "a40427480d4e53c8f3886868bb01551a94e3edb14b959465ee4083c9a25f581b"
-    sha256 cellar: :any, mojave:        "4af14fb4edc94c14ad5400024865c91fb545190abbe5b763e43fb25bd30d33ab"
-    sha256 cellar: :any, x86_64_linux:  "bcf00b94ec00112267361ec4e93d76d0efadb4fde6048c3faff7275ca58b84d1"
+    sha256 cellar: :any,                 arm64_big_sur: "a86d3ab0f59dcb04fbf49ce271c79817694b4890a3f041ad297847b26117b968"
+    sha256 cellar: :any,                 big_sur:       "01223ea80696527795667054cf517c08160e5beb015ed9d7098639f3786d540c"
+    sha256 cellar: :any,                 catalina:      "16f6fe5bc2d8a30f216241ecc70ef23b3122043e4e75992d166fda26dad1463c"
+    sha256 cellar: :any,                 mojave:        "5669d19089228d1702a8b6469189d0fff7af625514fcd5a56b08f1f98ff81a33"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "54caa34a84e142b5da8c6e26b4783990088afa154cc909b70cd5fb379c84274e" # linuxbrew-core
   end
 
   head do
@@ -29,10 +29,6 @@ class Libewf < Formula
   uses_from_macos "zlib"
 
   def install
-    # Workaround bug in gcc-5 that causes the following error:
-    # undefined reference to `libuna_ ...
-    ENV.append_to_cflags "-std=gnu89" if ENV.cc == "gcc-5"
-
     if build.head?
       system "./synclibs.sh"
       system "./autogen.sh"

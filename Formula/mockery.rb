@@ -1,24 +1,23 @@
 class Mockery < Formula
   desc "Mock code autogenerator for Golang"
   homepage "https://github.com/vektra/mockery"
-  url "https://github.com/vektra/mockery/archive/v2.7.4.tar.gz"
-  sha256 "22297f811490d4eac93f26b129ed3b58a9d5b42893496a32acce0b4756676870"
+  url "https://github.com/vektra/mockery/archive/v2.9.4.tar.gz"
+  sha256 "9c490eaa5dd509581e7c272d6af22b17c22b2915267e242ce927f17850ff4a59"
   license "BSD-3-Clause"
-  head "https://github.com/vektra/mockery.git"
+  head "https://github.com/vektra/mockery.git", branch: "master"
 
   bottle do
-    rebuild 1
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "8800172f0f5a79fbb3e0993126313a269844b91bd02c57576c85aeffd2f22e5e"
-    sha256 cellar: :any_skip_relocation, big_sur:       "8067f6c4b60902b0c4f1295889f318ff6f5ff7bc88696f825921948728df5ff4"
-    sha256 cellar: :any_skip_relocation, catalina:      "d773da6f15148f639d91e555c1135be6a25973adf7602d8a8c8d34e4d08faa89"
-    sha256 cellar: :any_skip_relocation, mojave:        "3f451f3c8f14796bc4fc526c287667ee1de9578a078837ee1cfe7c98a219b68e"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "8e96fcc7ad01e782a4f35d428e7446ad396fd74b32fa73bd3af1c02e9995e55c"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "ef632ca52587510de84aa0cacbde3b175419f65453117601eeeca1acf0a54e73"
+    sha256 cellar: :any_skip_relocation, big_sur:       "d4f6b798059264dd3c2a3436a507f62a511104e41fd54755f17ecc03fe5b38d6"
+    sha256 cellar: :any_skip_relocation, catalina:      "1c084c687d02f76d076031b6bdecdb47bd84eb7cc143cbae2922fc67011a8d1f"
+    sha256 cellar: :any_skip_relocation, mojave:        "7783607cf39d781c8817d27ecfbc0653c3a8653d82307842f2d0586f520d2b07"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "529950d9c488a4f154d3995cd2e03cdef7e61089267ff0cf8c0661131b698c46" # linuxbrew-core
   end
 
   depends_on "go" => :build
 
   def install
-    system "go", "build", *std_go_args, "-ldflags", "-s -w -X github.com/vektra/mockery/v2/pkg/config.SemVer=#{version}"
+    system "go", "build", *std_go_args(ldflags: "-s -w -X github.com/vektra/mockery/v2/pkg/config.SemVer=#{version}")
   end
 
   test do

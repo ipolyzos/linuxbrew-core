@@ -1,19 +1,16 @@
 class Libxc < Formula
   desc "Library of exchange and correlation functionals for codes"
   homepage "https://tddft.org/programs/libxc/"
-  url "https://gitlab.com/libxc/libxc/-/archive/4.3.4/libxc-4.3.4.tar.bz2"
-  sha256 "0efe8b33d151de8787e33c4ba8e2161ffb9da978753f3bd12c5c0a018e7d3ef5"
+  url "https://gitlab.com/libxc/libxc/-/archive/5.1.6/libxc-5.1.6.tar.bz2"
+  sha256 "0ee0975a1dd54389e62d6dc90ae0b8c7bb0cdcafde8e3ce939673be5a0c3aae3"
   license "MPL-2.0"
-  revision OS.mac? ? 1 : 2
 
   bottle do
-    rebuild 1
-    sha256 cellar: :any,                 arm64_big_sur: "418bb8ff673392e6d4a74a3563dac777162e3b8b99c1c780ea9c9ab642057f76"
-    sha256 cellar: :any,                 big_sur:       "2aaa3faf0271abb1b3c6b6ea33c7e8c5d7a89ced2717531da71729ea2e77fd24"
-    sha256 cellar: :any,                 catalina:      "77bb1192676ef031b3254e36f443b48163c2e6926afc959feaa84b4952a5b642"
-    sha256 cellar: :any,                 mojave:        "069042e1d8511e2025e289cb3daec98728304df3a7521aced7103581686d74c8"
-    sha256 cellar: :any,                 high_sierra:   "e84708fbaa5746ef8d25b57d34a5127501096ffacaa448b17d5b87ad4e81ae0b"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "d36ef990c391f0488ce80e6edb21fe78c3e9c6ac110ef7849a276b4b509bc0ba"
+    sha256 cellar: :any,                 arm64_big_sur: "bab54fd6f307ac24bc5bd3ab6141daf2149abc990f3d1c2774164a4953d5fe03"
+    sha256 cellar: :any,                 big_sur:       "042fd1f69c5eb656fafb3132e3e74e6243db2d54bb085e825772c78e4ebb1c8e"
+    sha256 cellar: :any,                 catalina:      "e35ea54099046a72da1e9ac35e838b12055aef0c5c81be282e579758c640df00"
+    sha256 cellar: :any,                 mojave:        "eb030e211e6523a252007c84e330bd0e6248ddc14676d61f5daf1b328ca219b0"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "59641b78ef6a37cab93991fba107c4a2dd62a610c54adda0766bed0ba7b38ee6" # linuxbrew-core
   end
 
   depends_on "autoconf" => :build
@@ -46,8 +43,7 @@ class Libxc < Formula
 
     (testpath/"test.f90").write <<~EOS
       program lxctest
-        use xc_f90_types_m
-        use xc_f90_lib_m
+        use xc_f03_lib_m
       end program lxctest
     EOS
     system "gfortran", "test.f90", "-L#{lib}", "-lxc", "-I#{include}",

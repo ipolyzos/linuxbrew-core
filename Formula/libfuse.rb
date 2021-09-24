@@ -1,18 +1,15 @@
 class Libfuse < Formula
   desc "Reference implementation of the Linux FUSE interface"
   homepage "https://github.com/libfuse/libfuse"
-  url "https://github.com/libfuse/libfuse/releases/download/fuse-3.10.3/fuse-3.10.3.tar.xz"
-  sha256 "eb8373f208b05a39702f9f437f6e49caf4b1ace26a9acb68110b49912078560f"
+  url "https://github.com/libfuse/libfuse/releases/download/fuse-3.10.5/fuse-3.10.5.tar.xz"
+  sha256 "b2e283485d47404ac896dd0bb7f7ba81e1470838e677e45f659804c3a3b69666"
   license any_of: ["LGPL-2.1-only", "GPL-2.0-only"]
-  head "https://github.com/libfuse/libfuse.git"
+  head "https://github.com/libfuse/libfuse.git", branch: "master"
 
   bottle do
-    sha256 x86_64_linux: "9969ed56fd264e7c9095d48e8bc85b46fb0945e9532f7b56a7cde03e921b8ffd"
+    sha256 x86_64_linux: "29dcc55f2ca373707a5ed43afe95c3153848ce7b845cc13ca2827ee769097e7d" # linuxbrew-core
   end
 
-  depends_on "autoconf" => :build
-  depends_on "automake" => :build
-  depends_on "libtool" => :build
   depends_on "meson" => :build
   depends_on "ninja" => :build
   depends_on :linux

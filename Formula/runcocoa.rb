@@ -5,7 +5,9 @@ class Runcocoa < Formula
   version "20120108"
   sha256 "d90079efb92c8eef3c8e2c142683eb0c632ca61120c9e4a617bf9dac5362bf86"
 
-  bottle :unneeded
+  livecheck do
+    skip "No version information available to check"
+  end
 
   def install
     bin.install "runcocoa.sh" => "runcocoa"

@@ -7,12 +7,12 @@ class Ncurses < Formula
   license "MIT"
 
   bottle do
-    sha256 arm64_big_sur: "111ab64b5ffbe5aebe18096a2ff95e8e8f6426955799181db8338677e8f853e4"
-    sha256 big_sur:       "b34b4aa433f23405c6104bf810836eed2686f11c660b8668a7af86f99be2329f"
-    sha256 catalina:      "eae51ad3391edafe3d6c649ba44f607ee1464b4b5d9ee48770e9817ee5f0ccdd"
-    sha256 mojave:        "1771e0ce821cf8cbe38d0ce8d1843fd559532923222edc5dbf5b31fcf24fed90"
-    sha256 high_sierra:   "4648be8457b081026d3da80f290abaf3fbfdcb49d62914861a63fc706f9adabe"
-    sha256 x86_64_linux:  "fc5a0983a8afae8ef46945f3bec9dba9d66e81e879027d100d05088ea6f8043d"
+    rebuild 1
+    sha256 arm64_big_sur: "f71176d3a18401a49c1ef6da6e03987551161140c62353859f9db97d6520f5c5"
+    sha256 big_sur:       "37587c0fbfd02b432e8a65522feadbb865fb754c3fe911b3a584abafb0f0effb"
+    sha256 catalina:      "225b8df20eb79a762ea5163fb020c055a804d2c3289c676daa9277cc0c55f76f"
+    sha256 mojave:        "66e1c57db9437cca11a5d6248e148a5ec00bbb0522c0d45b4fa3a95d5eba9783"
+    sha256 x86_64_linux:  "7bbb5beecaf8a534c2b6e31c0327908dc17862bb78cb97f269701c8384e4c0e2" # linuxbrew-core
   end
 
   keg_only :provided_by_macos
@@ -24,15 +24,19 @@ class Ncurses < Formula
   end
 
   def install
-    system "./configure", "--prefix=#{prefix}",
-                          "--enable-pc-files",
-                          "--with-pkg-config-libdir=#{lib}/pkgconfig",
-                          "--enable-sigwinch",
-                          "--enable-symlinks",
-                          "--enable-widec",
-                          "--with-shared",
-                          "--with-gpm=no",
-                          "--without-ada"
+    args = [
+      "--prefix=#{prefix}",
+      "--enable-pc-files",
+      "--with-pkg-config-libdir=#{lib}/pkgconfig",
+      "--enable-sigwinch",
+      "--enable-symlinks",
+      "--enable-widec",
+      "--with-shared",
+      "--with-gpm=no",
+      "--without-ada",
+    ]
+    args << "--with-terminfo-dirs=#{share}/terminfo:/etc/terminfo:/lib/terminfo:/usr/share/terminfo" if OS.linux?
+    system "./configure", *args
     system "make", "install"
     make_libncurses_symlinks
 

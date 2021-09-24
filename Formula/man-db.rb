@@ -5,7 +5,7 @@ class ManDb < Formula
   mirror "https://download-mirror.savannah.gnu.org/releases/man-db/man-db-2.9.4.tar.xz"
   sha256 "b66c99edfad16ad928c889f87cf76380263c1609323c280b3a9e6963fdb16756"
   license "GPL-2.0-or-later"
-  revision 1
+  revision 2
 
   livecheck do
     url "https://download.savannah.gnu.org/releases/man-db/"
@@ -13,11 +13,11 @@ class ManDb < Formula
   end
 
   bottle do
-    sha256 arm64_big_sur: "17a3f7d1314e32d74725f1f4bfcf7b715d60d8aff9b5a61d0ed5bbde2840f103"
-    sha256 big_sur:       "767c60fc61f4af286f60753ffca8297baaad41696e38eac2c9e12dc442ffb822"
-    sha256 catalina:      "b7f2d5cebcfe7727be74347a05d8d95da9759710f8f25703dd753f4c44af4158"
-    sha256 mojave:        "fb26c658449765651d30d47d08f60bd647195e35ff7afbe1bbcc48c1ec2748dd"
-    sha256 x86_64_linux:  "9a9c0f2b74135afd2ed3e50883eaa95d4f4c163be77a90d7ad636c6e54b01c86"
+    sha256 arm64_big_sur: "6a96017a3bbef997608f6f6fd6e03e5106ae99c5058566be8e7115e4966f6641"
+    sha256 big_sur:       "4529e4902e85caf37876458918ce7eac6513f28d4893834da88b1b772b3f22a9"
+    sha256 catalina:      "297439323c747e9fcfc6f27aca5c465affe33a614685cd4d90b32901d4a9a61f"
+    sha256 mojave:        "727b00709a5bde708f039abd8bcad7f861b4815301a5773d1fabc79fbeac2645"
+    sha256 x86_64_linux:  "7491ca56d978110228e6d0cdcb925b803190b965b12b640b44b6d9af60e83d77" # linuxbrew-core
   end
 
   depends_on "pkg-config" => :build
@@ -39,13 +39,10 @@ class ManDb < Formula
       --disable-setuid
       --disable-nls
       --program-prefix=g
+      --with-config-file=#{etc}/man_db.conf
+      --with-systemdtmpfilesdir=#{etc}/tmpfiles.d
+      --with-systemdsystemunitdir=#{etc}/systemd/system
     ]
-
-    unless OS.mac?
-      args << "--with-config-file=#{etc}/man_db.conf"
-      args << "--with-systemdtmpfilesdir=#{etc}/tmpfiles.d"
-      args << "--with-systemdsystemunitdir=#{etc}/systemd/system"
-    end
 
     system "./configure", *args
 
@@ -89,10 +86,11 @@ class ManDb < Formula
   test do
     ENV["PAGER"] = "cat"
     output = shell_output("#{bin}/gman true")
-    if OS.mac?
+    on_macos do
       assert_match "BSD General Commands Manual", output
       assert_match "The true utility always returns with exit code zero", output
-    else
+    end
+    on_linux do
       assert_match "true - do nothing, successfully", output
       assert_match "GNU coreutils online help: <http://www.gnu.org/software/coreutils/", output
     end

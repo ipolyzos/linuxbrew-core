@@ -10,11 +10,12 @@ class QtAT5 < Formula
   license all_of: ["GFDL-1.3-only", "GPL-2.0-only", "GPL-3.0-only", "LGPL-2.1-only", "LGPL-3.0-only"]
 
   bottle do
-    sha256 cellar: :any,                 arm64_big_sur: "ca6ad27d24c751b85f2b577df3773d52b48f0f286c5b1414ae8d1437ad72a3e4"
-    sha256 cellar: :any,                 big_sur:       "e7b8af5d4a61e1ab8ec6b564ed998adca00096b0d9253ab1869ffceae386e90e"
-    sha256 cellar: :any,                 catalina:      "bb2f387b24ff94be3bd555be8201ac8b458bf2927e912cf3d5543fb0057e826d"
-    sha256 cellar: :any,                 mojave:        "b683d62158780905d1bcf43f4159169db3cd4ca196dd4e12d3fd261dc4825d6f"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "64bc8e93a572f89d45428587165c3837a4f17449ed2f072eeac84c411504b717"
+    rebuild 1
+    sha256 cellar: :any,                 arm64_big_sur: "6128558bbf98848bb762d8e1e532303b694bf120d4f9be16e1a969ba62fa3d22"
+    sha256 cellar: :any,                 big_sur:       "a11186f808f81ccae91a1b79d14a1014428f744a0943688e2fd2b95ba989ddc2"
+    sha256 cellar: :any,                 catalina:      "02280e07b5fe37344d834df7901b1040aa9f257d668a8d6b76382bd97bc91a68"
+    sha256 cellar: :any,                 mojave:        "0089f9216563b73d1920ce1c6e359e2a83e97a07ec8e83162e7c7503bcd36318"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "23273be99ee0b115bdbf8cc17bd9a162308cfb60fc6faf6170244bfb08bb6dea" # linuxbrew-core
   end
 
   keg_only :versioned_formula
@@ -28,11 +29,11 @@ class QtAT5 < Formula
   uses_from_macos "flex"
   uses_from_macos "sqlite"
 
-  unless OS.mac?
+  on_linux do
     depends_on "at-spi2-core"
     depends_on "fontconfig"
+    depends_on "gcc"
     depends_on "glib"
-    depends_on "gperf"
     depends_on "icu4c"
     depends_on "libproxy"
     depends_on "libxkbcommon"
@@ -42,7 +43,7 @@ class QtAT5 < Formula
     depends_on "libdrm"
     depends_on "mesa"
     depends_on "pulseaudio"
-    depends_on "python@3.8"
+    depends_on "python@3.9"
     depends_on "sdl2"
     depends_on "systemd"
     depends_on "xcb-util"
@@ -54,11 +55,34 @@ class QtAT5 < Formula
     depends_on "wayland"
   end
 
+  fails_with gcc: "5"
+
   # Find SDK for 11.x macOS
   # Upstreamed, remove when Qt updates Chromium
   patch do
     url "https://raw.githubusercontent.com/Homebrew/formula-patches/92d4cf/qt/5.15.2.diff"
     sha256 "fa99c7ffb8a510d140c02694a11e6c321930f43797dbf2fe8f2476680db4c2b2"
+  end
+
+  # Fix build for GCC 11
+  patch do
+    url "https://invent.kde.org/qt/qt/qtbase/commit/8252ef5fc6d043004ddf7085e1c1fe1bf2ca39f7.patch"
+    sha256 "8ab742b991ed5c43e8da4b1ce1982fd38fe611aaac3d57ee37728b59932b518a"
+    directory "qtbase"
+  end
+
+  # Fix build for GCC 11
+  patch do
+    url "https://invent.kde.org/qt/qt/qtbase/commit/cb2da673f53815a5cfe15f50df49b98032429f9e.patch"
+    sha256 "33304570431c0dd3becc22f3f0911ccfc781a1ce6c7926c3acb08278cd2e60c3"
+    directory "qtbase"
+  end
+
+  # Fix build for GCC 11
+  patch do
+    url "https://invent.kde.org/qt/qt/qtdeclarative/commit/4f08a2da5b0da675cf6a75683a43a106f5a1e7b8.patch"
+    sha256 "193c2e159eccc0592b7092b1e9ff31ad9556b38462d70633e507822f75d4d24a"
+    directory "qtdeclarative"
   end
 
   # Patch for qmake on ARM
@@ -94,7 +118,14 @@ class QtAT5 < Formula
     if OS.mac?
       args << "-no-rpath"
       args << "-system-zlib"
-    elsif OS.linux?
+      if Hardware::CPU.arm?
+        # Temporarily fixes for Apple Silicon
+        args << "-skip" << "qtwebengine" << "-no-assimp"
+      else
+        # Should be reenabled unconditionally once it is fixed on Apple Silicon
+        args << "-proprietary-codecs"
+      end
+    else
       args << "-R#{lib}"
       # https://bugreports.qt.io/browse/QTBUG-71564
       args << "-no-avx2"
@@ -103,17 +134,11 @@ class QtAT5 < Formula
       # https://bugreports.qt.io/browse/QTBUG-60163
       # https://codereview.qt-project.org/c/qt/qtwebengine/+/191880
       args += %w[-skip qtwebengine]
-      args -= ["-proprietary-codecs"]
       args << "-no-sql-mysql"
-    end
-    if OS.mac?
-      if Hardware::CPU.arm?
-        # Temporarily fixes for Apple Silicon
-        args << "-skip" << "qtwebengine" << "-no-assimp"
-      else
-        # Should be reenabled unconditionnaly once it is fixed on Apple Silicon
-        args << "-proprietary-codecs"
-      end
+
+      # Change default mkspec for qmake on Linux to use brewed GCC
+      inreplace "qtbase/mkspecs/common/g++-base.conf", "$${CROSS_COMPILE}gcc", ENV.cc
+      inreplace "qtbase/mkspecs/common/g++-base.conf", "$${CROSS_COMPILE}g++", ENV.cxx
     end
 
     system "./configure", *args

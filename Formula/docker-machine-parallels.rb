@@ -19,9 +19,6 @@ class DockerMachineParallels < Formula
   depends_on "docker-machine"
   depends_on :macos
 
-  # Parallels Desktop is inherently Mac-only
-  depends_on :macos
-
   def install
     system "make", "build"
     bin.install "bin/docker-machine-driver-parallels"

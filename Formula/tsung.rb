@@ -4,7 +4,7 @@ class Tsung < Formula
   url "http://tsung.erlang-projects.org/dist/tsung-1.7.0.tar.gz"
   sha256 "6394445860ef34faedf8c46da95a3cb206bc17301145bc920151107ffa2ce52a"
   license "GPL-2.0"
-  head "https://github.com/processone/tsung.git"
+  head "https://github.com/processone/tsung.git", branch: "develop"
 
   bottle do
     rebuild 1
@@ -15,7 +15,7 @@ class Tsung < Formula
     sha256 cellar: :any_skip_relocation, high_sierra:   "64dba403e11577b28f3a80114158b96d8c74f58d09a4d9930801674031d4a7d9"
     sha256 cellar: :any_skip_relocation, sierra:        "e52abdb35507ceff03804d29a1ecf4e64d11e3345a9f095462cb653bba6cac6d"
     sha256 cellar: :any_skip_relocation, el_capitan:    "11f06a010b1a56d7a751bf5379d7d053c1befdf41f73aabeb79330761566724d"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "d37fdb75dabcd7066eda5e2c77906c51281892b7495a7481b19a7f017d3461e5"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "d37fdb75dabcd7066eda5e2c77906c51281892b7495a7481b19a7f017d3461e5" # linuxbrew-core
   end
 
   depends_on "erlang"

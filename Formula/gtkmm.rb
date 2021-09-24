@@ -17,7 +17,7 @@ class Gtkmm < Formula
     sha256 cellar: :any,                 big_sur:       "cf3e818aadeda99afd5c51cdfd8ae950bdf56ce16c090d78f23e5a80631f6f13"
     sha256 cellar: :any,                 catalina:      "bc967efcc4b25a56a79089c73db15a7fc61d5d83a62bd5c899777f7169f2e437"
     sha256 cellar: :any,                 mojave:        "1ed0b8b0445bcb223f2d20112004ead1c8b5d598f9e0012180831e069375b6f6"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "58c4635b43b22a97af7bc6857a04535f2db5b3024101e33bed29b9031f71ec3b"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "58c4635b43b22a97af7bc6857a04535f2db5b3024101e33bed29b9031f71ec3b" # linuxbrew-core
   end
 
   depends_on "pkg-config" => :build
@@ -110,7 +110,6 @@ class Gtkmm < Formula
       -latkmm-1.6
       -lcairo
       -lcairomm-1.0
-      -lgdk-#{OS.mac? ? "quartz" : "x11"}-2.0
       -lgdk_pixbuf-2.0
       -lgdkmm-2.4
       -lgio-2.0
@@ -118,7 +117,6 @@ class Gtkmm < Formula
       -lglib-2.0
       -lglibmm-2.4
       -lgobject-2.0
-      -lgtk-#{OS.mac? ? "quartz" : "x11"}-2.0
       -lgtkmm-2.4
       -lpango-1.0
       -lpangocairo-1.0
@@ -126,7 +124,13 @@ class Gtkmm < Formula
       -lsigc-2.0
     ]
     on_macos do
+      flags << "-lgdk-quartz-2.0"
+      flags << "-lgtk-quartz-2.0"
       flags << "-lintl"
+    end
+    on_linux do
+      flags << "-lgdk-x11-2.0"
+      flags << "-lgtk-x11-2.0"
     end
     system ENV.cxx, "-std=c++11", "test.cpp", "-o", "test", *flags
     system "./test"

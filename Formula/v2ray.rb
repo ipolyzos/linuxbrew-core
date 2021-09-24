@@ -1,10 +1,10 @@
 class V2ray < Formula
   desc "Platform for building proxies to bypass network restrictions"
   homepage "https://v2fly.org/"
-  url "https://github.com/v2fly/v2ray-core/archive/v4.37.3.tar.gz"
-  sha256 "b5001622b8a67c4a8e57651ef0f9d23f20604b7a65a18db47e51c1e19c3be08a"
+  url "https://github.com/v2fly/v2ray-core/archive/v4.42.2.tar.gz"
+  sha256 "70ffcb2719dd4d692266de75d40009d94a1374ced72546fbd9b0dba33b9bb3ea"
   license all_of: ["MIT", "CC-BY-SA-4.0"]
-  head "https://github.com/v2fly/v2ray-core.git"
+  head "https://github.com/v2fly/v2ray-core.git", branch: "master"
 
   livecheck do
     url :stable
@@ -12,22 +12,28 @@ class V2ray < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "40f99b12b5b55b47d14349c612d188df63931dca8d483b5da661d8f4fd21af97"
-    sha256 cellar: :any_skip_relocation, big_sur:       "a2f5f1604148a09afe67dc79ad2666fa4b64d21497a7b22f387db1a0619a3929"
-    sha256 cellar: :any_skip_relocation, catalina:      "8c62717111cbe94e31a5d180c78980159ed30c918534929c39841cdc369aecc5"
-    sha256 cellar: :any_skip_relocation, mojave:        "27b44137dd25340c495affb4023cc2c60f7ab0f772183574636f6d2780719008"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "58a341d97e01eade50de245608cf61069b372917e447c6fc5d478e38d76af786"
+    sha256 cellar: :any_skip_relocation, big_sur:       "58880e010e81991c51c3f1bf9347fab816a556b370481b048f28789c56e32b1d"
+    sha256 cellar: :any_skip_relocation, catalina:      "a6e0a954b4cec4600212e706d56bda7ae8d5b89467bacb5f73ee3f320a0fee5e"
+    sha256 cellar: :any_skip_relocation, mojave:        "7fbf1fc09f1b7ab1c6952c3d2a3e3042d36920c22558d7a42b5c2f6f06d27380"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "19fe8081c43b3b2b2419310a5966c6d016e2aaf7e42fc29af58b5b5ef6ff5259" # linuxbrew-core
   end
 
   depends_on "go" => :build
 
   resource "geoip" do
-    url "https://github.com/v2fly/geoip/releases/download/202104080008/geoip.dat"
-    sha256 "1ba724e396f31e89d05f4cc9e912e13c1c5ea4478a2a0901e9cbb9f9a8b9c5db"
+    url "https://github.com/v2fly/geoip/releases/download/202109160028/geoip.dat"
+    sha256 "530c8a8490f51eb5c2b9d24e4f4f114341f015a5193422aa20df0cf0cb2f50ca"
+  end
+
+  resource "geoip-only-cn-private" do
+    url "https://github.com/v2fly/geoip/releases/download/202109160028/geoip-only-cn-private.dat"
+    sha256 "19e682d3d56ebab82911ad91f10b45db73058aab2f380cf12a3ba83dea32cf88"
   end
 
   resource "geosite" do
-    url "https://github.com/v2fly/domain-list-community/releases/download/20210407065022/dlc.dat"
-    sha256 "3fb0dc75a94fafe55445ffd14c2317c8f871d63732170b5c8d5e9d2efcf9c655"
+    url "https://github.com/v2fly/domain-list-community/releases/download/20210920023411/dlc.dat"
+    sha256 "523a4e641ff07638f2105a62d900791e21503b579ce6956c07259818dbb22836"
   end
 
   def install
@@ -50,34 +56,18 @@ class V2ray < Formula
       pkgshare.install "geoip.dat"
     end
 
+    resource("geoip-only-cn-private").stage do
+      pkgshare.install "geoip-only-cn-private.dat"
+    end
+
     resource("geosite").stage do
       pkgshare.install "dlc.dat" => "geosite.dat"
     end
   end
 
-  plist_options manual: "v2ray -config=#{HOMEBREW_PREFIX}/etc/v2ray/config.json"
-
-  def plist
-    <<~EOS
-      <?xml version="1.0" encoding="UTF-8"?>
-        <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-        <plist version="1.0">
-        <dict>
-          <key>Label</key>
-          <string>#{plist_name}</string>
-          <key>ProgramArguments</key>
-          <array>
-            <string>#{bin}/v2ray</string>
-            <string>-config</string>
-            <string>#{etc}/v2ray/config.json</string>
-          </array>
-          <key>KeepAlive</key>
-          <true/>
-          <key>RunAtLoad</key>
-          <true/>
-        </dict>
-      </plist>
-    EOS
+  service do
+    run [bin/"v2ray", "-config", etc/"v2ray/config.json"]
+    keep_alive true
   end
 
   test do

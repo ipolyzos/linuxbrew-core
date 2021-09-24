@@ -1,6 +1,6 @@
 class Gtksourceviewmm3 < Formula
   desc "C++ bindings for gtksourceview3"
-  homepage "https://developer.gnome.org/gtksourceviewmm/"
+  homepage "https://gitlab.gnome.org/GNOME/gtksourceviewmm"
   url "https://download.gnome.org/sources/gtksourceviewmm/3.18/gtksourceviewmm-3.18.0.tar.xz"
   sha256 "51081ae3d37975dae33d3f6a40621d85cb68f4b36ae3835eec1513482aacfb39"
   license "LGPL-2.1-or-later"
@@ -16,7 +16,7 @@ class Gtksourceviewmm3 < Formula
     sha256 cellar: :any,                 big_sur:       "e1cc731cb3f1d99a040da7719e8d91f325d7c00a46e19a10ffca8d1ec87991e8"
     sha256 cellar: :any,                 catalina:      "2909f29ff9dce4266ba101d992bb8831487cd2084f467faad39198ce6923b729"
     sha256 cellar: :any,                 mojave:        "548c9dfe0eb1fbbe8bf9234a3d631bc232514855457372633f37bf240e427a5d"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "3c3468e7d01162a85e9d2c28386c0e6001dd02148668944638fadb8530d89c14"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "3c3468e7d01162a85e9d2c28386c0e6001dd02148668944638fadb8530d89c14" # linuxbrew-core
   end
 
   depends_on "pkg-config" => [:build, :test]

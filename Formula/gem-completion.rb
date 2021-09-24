@@ -8,10 +8,8 @@ class GemCompletion < Formula
   head "https://github.com/mernen/completion-ruby.git"
 
   livecheck do
-    skip "No version information available"
+    formula "ruby-completion"
   end
-
-  bottle :unneeded
 
   def install
     bash_completion.install "completion-gem" => "gem"

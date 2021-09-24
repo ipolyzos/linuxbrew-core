@@ -3,15 +3,19 @@ class Fastme < Formula
   homepage "http://www.atgc-montpellier.fr/fastme/"
   url "https://gite.lirmm.fr/atgc/FastME/raw/v2.1.6.1/tarball/fastme-2.1.6.1.tar.gz"
   sha256 "ac05853bc246ccb3d88b8bc075709a82cfe096331b0f4682b639f37df2b30974"
-  revision OS.mac? ? 2 : 3
+  revision OS.mac? ? 3 : 4
+
+  livecheck do
+    url "https://gite.lirmm.fr/atgc/FastME.git"
+    regex(/^v?(\d+(?:\.\d+)+)$/i)
+  end
 
   bottle do
-    rebuild 1
-    sha256 cellar: :any,                 arm64_big_sur: "100b27d15fd1bda9a876fd56185caed235f2f20f31a5a670ab02fd6a8252839d"
-    sha256 cellar: :any,                 big_sur:       "10a92caf705c888801b6346013c04751ed19ae70b10ffd6894017c6856f56c7c"
-    sha256 cellar: :any,                 catalina:      "0a6e916f7b223adef5ce24a90cf7e351a5839a47b345c328efcaacba5887bbee"
-    sha256 cellar: :any,                 mojave:        "fa7cad5f28e354eaa64c312c20afdcb786fd7b52b5c5f3fa010df6003e7b388f"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "91a3d4148ba81eedf2a0224a4c33bea2220f8db49e6b9285d5de1b2c768f63ac"
+    sha256                               arm64_big_sur: "a63f7a94429ad21604091dbec3fa347d83c81f335a0e112e3a601975c26593f3"
+    sha256 cellar: :any,                 big_sur:       "57efef94306e3b9dcbaa2b91289951b545b4ae49cdfe14fb444903e145485a49"
+    sha256 cellar: :any,                 catalina:      "0024bfdb601cd133d2d7a544fa04bb8ad6650f846eba08310a7d69458432d591"
+    sha256 cellar: :any,                 mojave:        "a685f1feb457d32b6df4444edec59913957347ae5bb3e3374ffedf334d07b210"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "e975f7a641a215a4d8c8b0826907dbdc2e05b6cee616bf5ea718f50b850fb0ba" # linuxbrew-core
   end
 
   on_macos do

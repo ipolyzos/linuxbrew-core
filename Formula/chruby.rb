@@ -4,7 +4,7 @@ class Chruby < Formula
   url "https://github.com/postmodern/chruby/archive/v0.3.9.tar.gz"
   sha256 "7220a96e355b8a613929881c091ca85ec809153988d7d691299e0a16806b42fd"
   license "MIT"
-  head "https://github.com/postmodern/chruby.git"
+  head "https://github.com/postmodern/chruby.git", branch: "master"
 
   bottle do
     sha256 cellar: :any_skip_relocation, arm64_big_sur: "97ca44a014def181a1bd3cacb5ff86783c6fddb1d1262336e9765d14a7d5959a"
@@ -15,7 +15,7 @@ class Chruby < Formula
     sha256 cellar: :any_skip_relocation, sierra:        "17dc507695fed71749b5a58152d652bb7b92a4574f200b631a39f5f004e86cca"
     sha256 cellar: :any_skip_relocation, el_capitan:    "ff70dff83817f093d39384a40d3dfb2aaccc1cbe475d58383d4ef157085f2c64"
     sha256 cellar: :any_skip_relocation, yosemite:      "eb14810c552b693c5ae82a577be81398e7dfeadc5489666bb0ff89581f09bfe4"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "4c70e64524d054d86b15f623df44c800640b9b8ca8ee62b4ae4c4585a4ea48c8"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "4c70e64524d054d86b15f623df44c800640b9b8ca8ee62b4ae4c4585a4ea48c8" # linuxbrew-core
   end
 
   def install

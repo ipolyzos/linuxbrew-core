@@ -4,7 +4,7 @@ class Pixz < Formula
   url "https://github.com/vasi/pixz/releases/download/v1.0.7/pixz-1.0.7.tar.gz"
   sha256 "d1b6de1c0399e54cbd18321b8091bbffef6d209ec136d4466f398689f62c3b5f"
   license "BSD-2-Clause"
-  head "https://github.com/vasi/pixz.git"
+  head "https://github.com/vasi/pixz.git", branch: "master"
 
   bottle do
     sha256 cellar: :any, arm64_big_sur: "ad1f4bab403a28e5828c010167bfe1f70eebbc1ef28385e1079115b5460ed40a"
@@ -12,7 +12,7 @@ class Pixz < Formula
     sha256 cellar: :any, catalina:      "fa271c0bbea97dccf10ae82803746f86ff67bfbd3a3fdc0c9786a6a6afb7f46d"
     sha256 cellar: :any, mojave:        "55562f5c1bc151210be9c85db0ecb3c4544a809793ea9330bc3b6d212b394778"
     sha256 cellar: :any, high_sierra:   "6df8ca6e7449ed6b76174ce16f7ed3433ca28afba82776630dbd31bc6a8fac17"
-    sha256 cellar: :any, x86_64_linux:  "d15eb116fc99b927f67976e356976c871cb26e4a2b5d24a55988dbd854ac76a4"
+    sha256 cellar: :any, x86_64_linux:  "d15eb116fc99b927f67976e356976c871cb26e4a2b5d24a55988dbd854ac76a4" # linuxbrew-core
   end
 
   depends_on "asciidoc" => :build

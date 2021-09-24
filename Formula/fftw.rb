@@ -1,22 +1,21 @@
 class Fftw < Formula
   desc "C routines to compute the Discrete Fourier Transform"
-  homepage "http://www.fftw.org"
-  url "http://fftw.org/fftw-3.3.9.tar.gz"
-  sha256 "bf2c7ce40b04ae811af714deb512510cc2c17b9ab9d6ddcf49fe4487eea7af3d"
+  homepage "https://fftw.org"
+  url "https://fftw.org/fftw-3.3.10.tar.gz"
+  sha256 "56c932549852cddcfafdab3820b0200c7742675be92179e59e6215b340e26467"
   license all_of: ["GPL-2.0-or-later", "BSD-2-Clause"]
-  revision 1 unless OS.mac?
 
   livecheck do
-    url "http://fftw.org/"
+    url :homepage
     regex(%r{latest official release.*? <b>v?(\d+(?:\.\d+)+)</b>}i)
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_big_sur: "06e4feb4413ac678d1dc9e8017fe86fd4a40ef114fca52d5145be2a4f182249b"
-    sha256 cellar: :any,                 big_sur:       "ef292d79d65468ae63a095477d2ab12e562b2f3920d75e820152a0fc93a9b6a1"
-    sha256 cellar: :any,                 catalina:      "cdf77b713ee891041ed9ea057bca05439b086a5d640fe95e6021326b4aebf95b"
-    sha256 cellar: :any,                 mojave:        "ad960c339268de67c1d6086b0d205336d1f61a86db8fd7528b98e0d8acf98df5"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "521f9a9c9355a66cc68e8fbaf9e29e04bbaf58ec23fa09ee647050c321674dd7"
+    sha256 cellar: :any,                 arm64_big_sur: "bad8b35844e916b0aee957da5f50f1aaf42c400582ca9e0c531d8b1d7cbf831c"
+    sha256 cellar: :any,                 big_sur:       "7f8815d58971d1c38465556b12b2fc2cdd5c1575174984a493080cbb88efb925"
+    sha256 cellar: :any,                 catalina:      "6189ebccb8f84d6aaf8139f877a0fed20605b749404b5e5296c2a673df681841"
+    sha256 cellar: :any,                 mojave:        "694f17490cf119dba54c4ab36fe4c777d916fade8629cc1a728ff2f698c135b6"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "9857c06bfd9eb89821aec3fe7a5a47283291ef9994b3167e8bbdb7e1f42784c2" # linuxbrew-core
   end
 
   depends_on "open-mpi"
@@ -28,6 +27,8 @@ class Fftw < Formula
   fails_with :clang
 
   def install
+    ENV.runtime_cpu_detection
+
     args = [
       "--enable-shared",
       "--disable-debug",
@@ -41,7 +42,7 @@ class Fftw < Formula
     # FFTW supports runtime detection of CPU capabilities, so it is safe to
     # use with --enable-avx and the code will still run on all CPUs
     simd_args = []
-    simd_args << "--enable-sse2" << "--enable-avx" if Hardware::CPU.intel?
+    simd_args += %w[--enable-sse2 --enable-avx --enable-avx2] if Hardware::CPU.intel?
 
     # single precision
     # enable-sse2, enable-avx and enable-avx2 work for both single and double precision
@@ -67,7 +68,7 @@ class Fftw < Formula
 
   test do
     # Adapted from the sample usage provided in the documentation:
-    # http://www.fftw.org/fftw3_doc/Complex-One_002dDimensional-DFTs.html
+    # https://www.fftw.org/fftw3_doc/Complex-One_002dDimensional-DFTs.html
     (testpath/"fftw.c").write <<~EOS
       #include <fftw3.h>
       int main(int argc, char* *argv)

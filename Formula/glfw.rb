@@ -11,18 +11,14 @@ class Glfw < Formula
     sha256 cellar: :any,                 big_sur:       "cc2a5ebed503daa988847659ce72bcbafd44387ecebb55fa422631edb731cade"
     sha256 cellar: :any,                 catalina:      "b6505ca02cb672280ce332952dd188b7ffd139b4b48b1afb33a1619143bfd126"
     sha256 cellar: :any,                 mojave:        "fb4c73abb6b230ffc2cacf187114584a1e589e67f399b78a56396911b2e1b483"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "9c52f68f2db30fa7b0ccfe392369c2734889f4e113f70ed3922ecc691c51179a"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "9c52f68f2db30fa7b0ccfe392369c2734889f4e113f70ed3922ecc691c51179a" # linuxbrew-core
   end
 
   depends_on "cmake" => :build
 
-  unless OS.mac?
+  on_linux do
     depends_on "freeglut"
-    depends_on "libx11"
     depends_on "libxcursor"
-    depends_on "libxi"
-    depends_on "libxinerama"
-    depends_on "libxrandr"
     depends_on "mesa"
   end
 
@@ -38,9 +34,6 @@ class Glfw < Formula
   end
 
   test do
-    # glfw doesn't work in headless mode
-    return if !OS.mac? && ENV["HOMEBREW_GITHUB_ACTIONS"]
-
     (testpath/"test.c").write <<~EOS
       #define GLFW_INCLUDE_GLU
       #include <GLFW/glfw3.h>

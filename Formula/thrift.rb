@@ -1,17 +1,17 @@
 class Thrift < Formula
   desc "Framework for scalable cross-language services development"
   homepage "https://thrift.apache.org/"
-  url "https://www.apache.org/dyn/closer.lua?path=thrift/0.14.1/thrift-0.14.1.tar.gz"
-  mirror "https://archive.apache.org/dist/thrift/0.14.1/thrift-0.14.1.tar.gz"
-  sha256 "13da5e1cd9c8a3bb89778c0337cc57eb0c29b08f3090b41cf6ab78594b410ca5"
+  url "https://www.apache.org/dyn/closer.lua?path=thrift/0.15.0/thrift-0.15.0.tar.gz"
+  mirror "https://archive.apache.org/dist/thrift/0.15.0/thrift-0.15.0.tar.gz"
+  sha256 "d5883566d161f8f6ddd4e21f3a9e3e6b8272799d054820f1c25b11e86718f86b"
   license "Apache-2.0"
 
   bottle do
-    sha256 cellar: :any,                 arm64_big_sur: "fd86b3329477abd74446f29de5b1c3b84705390b8d878b55f3ab2a83ef6511bc"
-    sha256 cellar: :any,                 big_sur:       "b408f5d8714788cb4d5ffa575718b78fa63233663b33d6932e3611e577a087eb"
-    sha256 cellar: :any,                 catalina:      "16d575e5eb6ed75e1fa0951ba708762fc6dd430522330bb36a50adcf47ffa835"
-    sha256 cellar: :any,                 mojave:        "0d8063ec5f3e3c2074749cc02826fb19331bf522d52e4439980d776c0e594392"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "0af6dbc2d7183e2f4967c515b0acaa5dba55c534281068cb8a902d0844767e9c"
+    sha256 cellar: :any,                 arm64_big_sur: "8352c16aaef3267d863dc31aa6e6562ab59ce5823b61296a0a2dfe62fb747112"
+    sha256 cellar: :any,                 big_sur:       "e371159616481c100f45d01660e70ff68d9df907baef025982e8650ff485b3f4"
+    sha256 cellar: :any,                 catalina:      "77ffd9f8aea765983f90ae45c94afd32502d035bb09f58b601290f65fc2966e0"
+    sha256 cellar: :any,                 mojave:        "e1f46a93099ec7b01caf380433a05d5014686cc5ea59293286fc55a5b0efd39c"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "fa1ac943dc0f963402b71ce1189f19e62aa51510165c4f3607dc45b6b95f273f" # linuxbrew-core
   end
 
   head do

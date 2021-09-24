@@ -1,22 +1,25 @@
 class Zoxide < Formula
   desc "Shell extension to navigate your filesystem faster"
   homepage "https://github.com/ajeetdsouza/zoxide"
-  url "https://github.com/ajeetdsouza/zoxide/archive/v0.6.0.tar.gz"
-  sha256 "fe93aa4d1fe8d4f94b302335f30bc543c7a1664df2a3fde73e6253c74f576c35"
+  url "https://github.com/ajeetdsouza/zoxide/archive/v0.7.5.tar.gz"
+  sha256 "138dad27a7a272171ee28aa34a10c3552154121c01bbe7b613cd4d12bfb07e41"
   license "MIT"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "01eb64d2102e80ebad17d54160c3b92eecc909e6c29dc7d158f62bc9d9538f96"
-    sha256 cellar: :any_skip_relocation, big_sur:       "3444b476a003119f6a08515b2846585c649a6b031932c1d18a04b7e346e92f32"
-    sha256 cellar: :any_skip_relocation, catalina:      "fca9616931ae7e885cb02c10eeae0e64582d4db3c0f2ba6b8578498e9a2dd231"
-    sha256 cellar: :any_skip_relocation, mojave:        "96040f379d0f9f4e2fe5838a5798565aff85dce06c93194bcf10dd7c20ec2cc3"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "52d163c8e2186c0b8e53e12bceae6982130e52713239bc853a13d5f03328a8b0"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "348e4070868a24b3eeceaeb2d6007813fc22f10f57ea3d0a3c5cea592c11b1de"
+    sha256 cellar: :any_skip_relocation, big_sur:       "b3ca78eeca3939e6b605cf5b7b686c7e6b7e23d2d452edf33c34bd2c130047dd"
+    sha256 cellar: :any_skip_relocation, catalina:      "b942b8bba6d03f72566d317837330d577c0d0fff45573baf3f2642ab88b50479"
+    sha256 cellar: :any_skip_relocation, mojave:        "01170393b63e4764b65a9e443dd46c8d4f952cff9114b6fe400d895e90de3ea7"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "b0cd12d8a9ea7ebfa0970d799baf7d1b3d3413c1b30a3c43421872d93db457fe" # linuxbrew-core
   end
 
   depends_on "rust" => :build
 
   def install
     system "cargo", "install", *std_cargo_args
+    bash_completion.install "contrib/completions/zoxide.bash" => "zoxide"
+    zsh_completion.install "contrib/completions/_zoxide"
+    fish_completion.install "contrib/completions/zoxide.fish"
   end
 
   test do

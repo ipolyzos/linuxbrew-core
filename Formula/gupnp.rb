@@ -3,18 +3,16 @@ class Gupnp < Formula
 
   desc "Framework for creating UPnP devices and control points"
   homepage "https://wiki.gnome.org/Projects/GUPnP"
-  url "https://download.gnome.org/sources/gupnp/1.2/gupnp-1.2.4.tar.xz"
-  sha256 "f7a0307ea51f5e44d1b832f493dd9045444a3a4e211ef85dfd9aa5dd6eaea7d1"
+  url "https://download.gnome.org/sources/gupnp/1.4/gupnp-1.4.0.tar.xz"
+  sha256 "590ffb02b84da2a1aec68fd534bc40af1b37dd3f6223f9d1577fc48ab48be36f"
   license "LGPL-2.0-or-later"
-  revision 1
 
   bottle do
-    sha256 cellar: :any,                 arm64_big_sur: "42df277f75efd31c355901035cf70f440078d5ef973fe3998ea9e0e53f6ffb61"
-    sha256 cellar: :any,                 big_sur:       "40c8a74e84cbf2826c098c04e888989166cbe27a9f387754c69b046b3761e6e9"
-    sha256 cellar: :any,                 catalina:      "0cb0e21dccf7a4cd8105303569e1f11409f46be63893eea7523d59eeff5b2398"
-    sha256 cellar: :any,                 mojave:        "24070ef84b5cad5ed79d0349b4f1bb41a1097aa20f0c401ab80b1c5646bdd153"
-    sha256 cellar: :any,                 high_sierra:   "0f0c2eb53f1182cb2b81ae49ba947d87c4ce1d0f3028c8aa5df2c0dc120e3ee8"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "7e433a1bdfbe692e3f4626fdea85edae388e1c5bedd88987e6d7949cfc5825f4"
+    sha256 cellar: :any, arm64_big_sur: "189d75ec84ee768b7788a884231ddaec044b2af8693cc57c6555b94ee34f320a"
+    sha256 cellar: :any, big_sur:       "af46ddf4a8872d6a181a4e71e2667ff3d2a9d99f15123d44c330b3dcce9a9ab0"
+    sha256 cellar: :any, catalina:      "2f4cde6e0b70a5bbfe8e32ed284b22499f05ed5d8b7e230af50a9b0ed6ce7c52"
+    sha256 cellar: :any, mojave:        "35c75d08d5898cc3477a118598d9439c3e717885ff6c351206a754456458e1e1"
+    sha256               x86_64_linux:  "ae792b6d48a5e51f6a30ae986909cc2a4cf59058e615d2a321ef431259900bf0" # linuxbrew-core
   end
 
   depends_on "docbook-xsl" => :build
@@ -63,13 +61,13 @@ class Gupnp < Formula
         return 0;
       }
     EOS
-    linker_flags = %W[
-      -L#{lib}
-      -lgupnp-1.2
-      -lglib-2.0
-      -lgobject-2.0
-    ]
-    system ENV.cc, "-I#{include}/gupnp-1.2", "-L#{lib}", "-lgupnp-1.2",
+
+    libxml2 = "-I#{MacOS.sdk_path}/usr/include/libxml2"
+    on_linux do
+      libxml2 = "-I#{Formula["libxml2"].include}/libxml2"
+    end
+
+    system ENV.cc, testpath/"test.c", "-I#{include}/gupnp-1.2", "-L#{lib}", "-lgupnp-1.2",
            "-I#{Formula["gssdp"].opt_include}/gssdp-1.2",
            "-L#{Formula["gssdp"].opt_lib}", "-lgssdp-1.2",
            "-I#{Formula["glib"].opt_include}/glib-2.0",
@@ -77,8 +75,7 @@ class Gupnp < Formula
            "-L#{Formula["glib"].opt_lib}",
            "-lglib-2.0", "-lgobject-2.0",
            "-I#{Formula["libsoup"].opt_include}/libsoup-2.4",
-           "-I" + (OS.mac? ? "#{MacOS.sdk_path}/usr/include/libxml2" : Formula["libxml2"].include/"libxml2"),
-           testpath/"test.c", *(linker_flags unless OS.mac?), "-o", testpath/"test"
+           libxml2, "-o", testpath/"test"
     system "./test"
   end
 end

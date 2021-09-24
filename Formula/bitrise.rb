@@ -1,33 +1,24 @@
 class Bitrise < Formula
   desc "Command-line automation tool"
   homepage "https://github.com/bitrise-io/bitrise"
-  url "https://github.com/bitrise-io/bitrise/archive/1.46.0.tar.gz"
-  sha256 "019ae87f0a758c4ba592841fff34226fa3b20c96b6ec983a3c1ffc9da8e20315"
+  url "https://github.com/bitrise-io/bitrise/archive/1.48.0.tar.gz"
+  sha256 "0800d63eaca091f6570e227dec26560483ed6c74ea43558781fb717b5dfbdb42"
   license "MIT"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, big_sur:      "60c88f3e8c3e8d1502a3077dfbc6e7a7c6cc4aa4de40232d5806e35cc7ed7a66"
-    sha256 cellar: :any_skip_relocation, catalina:     "97d8a8b544b3745bea17eb5df862e0b2b552a43df6b1febb5c57b4655af2d42c"
-    sha256 cellar: :any_skip_relocation, mojave:       "fe7e57492b270aa54cd10b78e141d4620905ce82dcc48f2cdffdf73455f1af81"
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "b413df2b3c7f66ad15ddd7829eac3fbe6849909b2eeff61f7e9bfabcf5d8e85c"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "973602302d6b4270875e82c41709f8cfe4171a3bd53c271ce69a199d524f3aa6"
+    sha256 cellar: :any_skip_relocation, big_sur:       "7b200d18f14e18e611c3fc9a98a6c1ef656f85d2f8d4df75f9d98c8a77067762"
+    sha256 cellar: :any_skip_relocation, catalina:      "5f7902cce52a17241873c3a172e018bd874dfb28f9159a838aa6f48cc3100704"
+    sha256 cellar: :any_skip_relocation, mojave:        "746b543d056b120d00af803f2170be17b3648c5fc7f8e100aa1d367817b3cf50"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "1609e537cca0ea8a5452b30eeeae470d8663f7942e2fc28b7e72c518d7bee9df" # linuxbrew-core
   end
 
   depends_on "go" => :build
-  depends_on "rsync" => :test
+
+  uses_from_macos "rsync"
 
   def install
-    ENV["GOPATH"] = buildpath
-    ENV["GO111MODULE"] = "auto"
-
-    # Install bitrise
-    bitrise_go_path = buildpath/"src/github.com/bitrise-io/bitrise"
-    bitrise_go_path.install Dir["*"]
-
-    cd bitrise_go_path do
-      prefix.install_metafiles
-
-      system "go", "build", "-o", bin/"bitrise"
-    end
+    system "go", "build", *std_go_args(ldflags: "-s -w")
   end
 
   test do

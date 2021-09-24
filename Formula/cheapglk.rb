@@ -6,6 +6,11 @@ class Cheapglk < Formula
   sha256 "2753562a173b4d03ae2671df2d3c32ab7682efd08b876e7e7624ebdc8bf1510b"
   license "MIT"
 
+  livecheck do
+    url :homepage
+    regex(/href=.*?cheapglk[._-]v?(?:\d+(?:\.\d+)*)\.t[^>]+?>\s*?CheapGlk library v?(\d+(?:\.\d+)+)/im)
+  end
+
   bottle do
     sha256 cellar: :any_skip_relocation, arm64_big_sur: "73f43be61554255b8b1bb6f2e185b567eca2c868f0c65ddf8a53020fddd8e35a"
     sha256 cellar: :any_skip_relocation, big_sur:       "9b3b09b201d58788157377de21147fc1dab74635912c3592626e9575905d9061"
@@ -15,7 +20,7 @@ class Cheapglk < Formula
     sha256 cellar: :any_skip_relocation, sierra:        "d76d29db8ea0201fcef949e02cbddb1c06311dece796a263192ffef487a3aa2c"
     sha256 cellar: :any_skip_relocation, el_capitan:    "497a5399738c026d318d3213b764f20fb80ccea94181919fad2e80eb75086055"
     sha256 cellar: :any_skip_relocation, yosemite:      "8351c9dec39fd8e860e50a8e693e1c648def81c3ddcbdd3a856f656d585b0082"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "bef666b5ffc26b22b763537ee7dc2b26854f2e329fb950194e4b5fd80151e50f"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "bef666b5ffc26b22b763537ee7dc2b26854f2e329fb950194e4b5fd80151e50f" # linuxbrew-core
   end
 
   keg_only "it conflicts with other Glk libraries"

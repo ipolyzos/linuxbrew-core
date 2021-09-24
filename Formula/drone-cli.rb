@@ -2,20 +2,22 @@ class DroneCli < Formula
   desc "Command-line client for the Drone continuous integration server"
   homepage "https://drone.io"
   url "https://github.com/drone/drone-cli.git",
-      tag:      "v1.2.4",
-      revision: "6f4c96818cf659f3f1bc44498e18ea93313d62ed"
+      tag:      "v1.4.0",
+      revision: "43e52be34cbf216fece99d8754b5ef96527566be"
   license "Apache-2.0"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, big_sur:      "5eb1960f5073fe2dbe0cebb658c9b31b905d9b77f9dea41a1e65cb01331875e9"
-    sha256 cellar: :any_skip_relocation, catalina:     "b0f855c942279e6f28de3fd52611f6e88f5d9a7feb008f49d1f66a00752f2b25"
-    sha256 cellar: :any_skip_relocation, mojave:       "1d6f199fd82f2da5bef17f40640011b69c3c1ba67816c2db6f5bbcbb1da52ba0"
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "af2957381fb2fe8dae4ed3d0b2f42d0d012321c58648d701f4592ed5821ddd4d"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "2506e576a09c124cfe6f6a5eb6906c49b04ce0090b3e05db980df3adb6d06c1c"
+    sha256 cellar: :any_skip_relocation, big_sur:       "7a76db340f0fe6269331b081004d40d152dddf8027514cbbbc6c075909bc0669"
+    sha256 cellar: :any_skip_relocation, catalina:      "7e5bfff2d039507cf02fd17ba86b3abd254b531eae177ff40ef4bb998e7e9473"
+    sha256 cellar: :any_skip_relocation, mojave:        "e0545bddd3c764979c708a80e6904c7f1ac5d0e8634da25f70f623098c6c0104"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "62a92781c865e68278cf222ebaa114a777634ddd29fb8dde0b8a599a891bdb5b" # linuxbrew-core
   end
 
   depends_on "go" => :build
 
   def install
+    ENV["CGO_ENABLED"] = "0"
     system "go", "build", "-ldflags", "-s -w -X main.version=#{version}", "-trimpath", "-o",
            bin/"drone", "drone/main.go"
     prefix.install_metafiles

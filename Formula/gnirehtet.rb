@@ -13,7 +13,7 @@ class Gnirehtet < Formula
     sha256 cellar: :any_skip_relocation, catalina:      "6f65def77cc1708e7a1ae8e85dfe2cbede4717225e8a5c2f7a9f09c8271282f3"
     sha256 cellar: :any_skip_relocation, mojave:        "7ebc9b16c6d6856be8604388d4ca2bfc9cc2c4ec02e255f1a462be681283c6e8"
     sha256 cellar: :any_skip_relocation, high_sierra:   "a57d5039af819db991968751511a63874cd0c20d1d10fe106ef92e83b216eb38"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "c06f01b8240bdf47fe053e4a485e2bb76762ae2861b3ccad5cde8eca59933f51"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "c06f01b8240bdf47fe053e4a485e2bb76762ae2861b3ccad5cde8eca59933f51" # linuxbrew-core
   end
 
   depends_on "rust" => :build
@@ -27,7 +27,7 @@ class Gnirehtet < Formula
   def install
     resource("java_bundle").stage { libexec.install "gnirehtet.apk" }
 
-    system "cargo", "install", "--locked", "--root", libexec, "--path", "relay-rust"
+    system "cargo", "install", *std_cargo_args(root: libexec, path: "relay-rust")
     mv "#{libexec}/bin/gnirehtet", "#{libexec}/gnirehtet"
 
     (bin/"gnirehtet").write_env_script("#{libexec}/gnirehtet", GNIREHTET_APK: "#{libexec}/gnirehtet.apk")
@@ -43,8 +43,8 @@ class Gnirehtet < Formula
   end
 
   test do
-    gnirehtet_err = "#{testpath}/gnirehtet.err"
-    gnirehtet_out = "#{testpath}/gnirehtet.out"
+    gnirehtet_err = testpath/"gnirehtet.err"
+    gnirehtet_out = testpath/"gnirehtet.out"
 
     port = free_port
     begin

@@ -1,17 +1,22 @@
 class KyotoTycoon < Formula
   desc "Database server with interface to Kyoto Cabinet"
-  homepage "https://fallabs.com/kyototycoon/"
-  url "https://fallabs.com/kyototycoon/pkg/kyototycoon-0.9.56.tar.gz"
+  homepage "https://dbmx.net/kyototycoon/"
+  url "https://dbmx.net/kyototycoon/pkg/kyototycoon-0.9.56.tar.gz"
   sha256 "553e4ea83237d9153cc5e17881092cefe0b224687f7ebcc406b061b2f31c75c6"
   license "GPL-3.0-or-later"
   revision 5
+
+  livecheck do
+    url "https://dbmx.net/kyototycoon/pkg/"
+    regex(/href=.*?kyototycoon[._-]v?(\d+(?:\.\d+)+)\.t/i)
+  end
 
   bottle do
     sha256 arm64_big_sur: "244a150072e722f1ee861425fdfd1cb12a6a09ee27899b998b0794bd01cd1f12"
     sha256 big_sur:       "30c5a805f4e4f672814b210a28567424b23af490a8d9555286dae17ee41506c4"
     sha256 catalina:      "575c025f8a4479503833b3d90c8054ed3b67e8f4a14a96978ec585a76bbf7963"
     sha256 mojave:        "aafcc936bd17bade9714e200c0e713ec4cd6ddc8f38a08d258cbf09437adec75"
-    sha256 x86_64_linux:  "7c8404f7b01aaa08f0ceb69696f11bdcc65599d2fe8f3889849bcf40f760d387"
+    sha256 x86_64_linux:  "7c8404f7b01aaa08f0ceb69696f11bdcc65599d2fe8f3889849bcf40f760d387" # linuxbrew-core
   end
 
   depends_on "lua" => :build

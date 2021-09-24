@@ -5,11 +5,10 @@ class Sdl2Mixer < Formula
   sha256 "b4cf5a382c061cd75081cf246c2aa2f9df8db04bdda8dcdc6b6cca55bede2419"
   license "Zlib"
   revision 1
-  head "https://hg.libsdl.org/SDL_mixer", using: :hg
 
   livecheck do
     url :homepage
-    regex(/SDL2_mixer[._-]v?(\d+(?:\.\d+)*)/i)
+    regex(/href=.*?SDL2_mixer[._-]v?(\d+(?:\.\d+)+)\.t/i)
   end
 
   bottle do
@@ -17,7 +16,15 @@ class Sdl2Mixer < Formula
     sha256 cellar: :any,                 big_sur:       "2fdc878fe345af8ab210786b42bfd998db006b990becd8f7f1bae1f2b2ab1b73"
     sha256 cellar: :any,                 catalina:      "3533275c4351a77010b161b24f195fd00ede8780e940a477773367eb97cb5008"
     sha256 cellar: :any,                 mojave:        "6d797207e602091ecee25168556e27f03665f5a9cb5d759152689b62e114f58b"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "d70cbd83404b632a8a908a0686f17f34a3f966d716c12b0512ac180ef8d4e861"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "d70cbd83404b632a8a908a0686f17f34a3f966d716c12b0512ac180ef8d4e861" # linuxbrew-core
+  end
+
+  head do
+    url "https://github.com/libsdl-org/SDL_mixer.git"
+
+    depends_on "autoconf" => :build
+    depends_on "automake" => :build
+    depends_on "libtool" => :build
   end
 
   depends_on "pkg-config" => :build
@@ -28,6 +35,11 @@ class Sdl2Mixer < Formula
 
   def install
     inreplace "SDL2_mixer.pc.in", "@prefix@", HOMEBREW_PREFIX
+
+    if build.head?
+      mkdir "build"
+      system "./autogen.sh"
+    end
 
     args = %W[
       --prefix=#{prefix}

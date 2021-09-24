@@ -6,12 +6,16 @@ class ScalaAT211 < Formula
   mirror "https://www.scala-lang.org/files/archive/scala-2.11.12.tgz"
   sha256 "b11d7d33699ca4f60bc3b2b6858fd953e3de2b8522c943f4cda4b674316196a8"
   revision 1
-  bottle :unneeded
+
+  bottle do
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "f2cd523e7746274f21c08e9cc4b4590a759186e44611ef25c43fe3812a526ec9" # linuxbrew-core
+  end
 
   keg_only :versioned_formula
 
   deprecate! date: "2017-11-09", because: :unsupported
 
+  depends_on arch: :x86_64 # openjdk@8 is not supported on ARM
   depends_on "openjdk@8"
 
   def install

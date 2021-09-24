@@ -4,7 +4,7 @@ class Tesseract < Formula
   url "https://github.com/tesseract-ocr/tesseract/archive/4.1.1.tar.gz"
   sha256 "2a66ff0d8595bff8f04032165e6c936389b1e5727c3ce5a27b3e059d218db1cb"
   license "Apache-2.0"
-  head "https://github.com/tesseract-ocr/tesseract.git"
+  head "https://github.com/tesseract-ocr/tesseract.git", branch: "master"
 
   livecheck do
     url :stable
@@ -17,7 +17,7 @@ class Tesseract < Formula
     sha256 cellar: :any_skip_relocation, catalina:      "81ff467946d9c85151c86819034cd183a983b4a3fa10374c7f039a5ec3ef0d82"
     sha256 cellar: :any_skip_relocation, mojave:        "34eee505fccec07eaab30f14c46f9688db9f3aa578306d47bbcd31801b0b849d"
     sha256 cellar: :any_skip_relocation, high_sierra:   "6b64585454bcca9b62945b284000723d76afad15b5e80109ca6cdc699ae50e25"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "c8ebfc3e13144818224ca4bd8048630dead1714f376b4bab0e59a4e5b2fe914b"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "c8ebfc3e13144818224ca4bd8048630dead1714f376b4bab0e59a4e5b2fe914b" # linuxbrew-core
   end
 
   depends_on "autoconf" => :build

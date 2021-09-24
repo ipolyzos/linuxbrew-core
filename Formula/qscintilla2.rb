@@ -1,46 +1,56 @@
 class Qscintilla2 < Formula
   desc "Port to Qt of the Scintilla editing component"
   homepage "https://www.riverbankcomputing.com/software/qscintilla/intro"
-  url "https://www.riverbankcomputing.com/static/Downloads/QScintilla/2.12.1/QScintilla_src-2.12.1.tar.gz"
-  sha256 "a7331c44b5d7320cbf58cb2382c38857e9e9f4fa52c405bd7776c8b6649836c2"
+  url "https://www.riverbankcomputing.com/static/Downloads/QScintilla/2.13.0/QScintilla_src-2.13.0.tar.gz"
+  sha256 "05116938bedfceb2953d3c24f862e1ab4d68ba7845f135d1d7aa1086595449b2"
   license "GPL-3.0-only"
 
+  # The downloads page also lists pre-release versions, which use the same file
+  # name format as stable versions. The only difference is that files for
+  # stable versions are kept in corresponding version subdirectories and
+  # pre-release files are in the parent QScintilla directory. The regex below
+  # omits pre-release versions by only matching tarballs in a version directory.
   livecheck do
     url "https://www.riverbankcomputing.com/software/qscintilla/download"
-    regex(/href=.*?QScintilla(?:[._-](?:gpl|src))?[._-]v?(\d+(?:\.\d+)+)\.t/i)
+    regex(%r{href=.*?QScintilla/v?\d+(?:\.\d+)+/QScintilla(?:[._-](?:gpl|src))?[._-]v?(\d+(?:\.\d+)+)\.t}i)
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_big_sur: "e8ce3df60b8f7de8340fadd1c831fb8ad187e096d1c86c4018ea3fa01fa29db1"
-    sha256 cellar: :any,                 big_sur:       "99fcaa6d776ba1ade8aa0a49f6dd92c75fbafedd1defae17ebf8df811fddf145"
-    sha256 cellar: :any,                 catalina:      "45540693835165a8841e92fa24bfe11c084375dcc932f1379c88ef53581a6692"
-    sha256 cellar: :any,                 mojave:        "9301017d40ca096b90daec0c01c55a89c29dd03d08c3d011fd7a798df2a1bff2"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "f1a93228600f9c4c2b95390f3e3e889540f4424dfb50922a0f22994c1b5884e7"
+    sha256 cellar: :any,                 arm64_big_sur: "f1eeb393d30c064ff26b314e477ac04c49c65e1e4f0798eff6511b717be14c5a"
+    sha256 cellar: :any,                 big_sur:       "673822543d6b2469f6dbcf7a7227f070ede7a104f53a09a3ba1aeec6d1c4cc2c"
+    sha256 cellar: :any,                 catalina:      "43c3199750767469f77fb742f40273f9860fcafeef580da2998a055c9aab379c"
+    sha256 cellar: :any,                 mojave:        "a89b1ca10b6df95e3a2d76fb71ff71546f4e8c9a5de6765f950af54394e42f68"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "30a6aa3971a33551be6eecfc449d51a1a84a4b98ea0a97d5a587225dd08f565d" # linuxbrew-core
   end
 
   depends_on "pyqt-builder" => :build
+  depends_on "sip"          => :build
 
   # TODO: use qt when octave can migrate to qt6
   depends_on "pyqt@5"
   depends_on "python@3.9"
   depends_on "qt@5"
-  depends_on "sip"
+
+  on_linux do
+    depends_on "gcc"
+  end
+
+  fails_with gcc: "5"
 
   def install
     args = []
     spec = ""
 
-    on_macos do
-      # TODO: when qt 6.1 is released, modify the spec
+    if OS.mac?
+      # TODO: when using qt 6, modify the spec
       spec = (ENV.compiler == :clang) ? "macx-clang" : "macx-g++"
       spec << "-arm64" if Hardware::CPU.arm?
       args = %W[-config release -spec #{spec}]
     end
 
     pyqt = Formula["pyqt@5"]
-    python = Formula["python@3.9"]
     qt = Formula["qt@5"]
-    site_packages = Language::Python.site_packages(python)
+    site_packages = Language::Python.site_packages("python3")
 
     cd "src" do
       inreplace "qscintilla.pro" do |s|

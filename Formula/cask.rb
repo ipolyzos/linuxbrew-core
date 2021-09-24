@@ -4,9 +4,7 @@ class Cask < Formula
   url "https://github.com/cask/cask/archive/v0.8.7.tar.gz"
   sha256 "6b664da044e8faef77717f79bb90069ec9e7868e9c47da498057236b409a501b"
   license "GPL-3.0-or-later"
-  head "https://github.com/cask/cask.git"
-
-  bottle :unneeded
+  head "https://github.com/cask/cask.git", branch: "master"
 
   depends_on "coreutils"
   depends_on "emacs"

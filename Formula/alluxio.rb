@@ -1,23 +1,24 @@
 class Alluxio < Formula
   desc "Open Source Memory Speed Virtual Distributed Storage"
   homepage "https://www.alluxio.io/"
-  url "https://downloads.alluxio.io/downloads/files/2.4.1/alluxio-2.4.1-bin.tar.gz"
-  sha256 "06c052761f597692a4427f08169f3277f458cf23847db4270b1f2dd75c14907a"
+  url "https://downloads.alluxio.io/downloads/files/2.6.2/alluxio-2.6.2-bin.tar.gz"
+  sha256 "f41ab75bb6105eca6c34b58bc1d60f4857816dd3cae8a21d599237568656dc2e"
   license "Apache-2.0"
 
   livecheck do
     url "https://downloads.alluxio.io/downloads/files/"
-    regex(%r{href=["']?v?(\d+(?:\.\d+)+)/?["' >]}i)
+    regex(%r{href=["']?v?(\d+(?:[.-]\d+)+)/?["' >]}i)
   end
 
-  bottle :unneeded
+  bottle do
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "9216fc23f390a794e4b0d6b54ff6ffb11fb0b1a15534d54de64af31a2d270078"
+    sha256 cellar: :any_skip_relocation, big_sur:       "616c3f9b7fde2974253baa71cd0289758d55e0fc8ecb0b591b7343932ad5fccd"
+    sha256 cellar: :any_skip_relocation, catalina:      "616c3f9b7fde2974253baa71cd0289758d55e0fc8ecb0b591b7343932ad5fccd"
+    sha256 cellar: :any_skip_relocation, mojave:        "616c3f9b7fde2974253baa71cd0289758d55e0fc8ecb0b591b7343932ad5fccd"
+  end
 
   # Alluxio requires Java 8 or Java 11
   depends_on "openjdk@11"
-
-  on_macos do
-    disable! date: "2021-10-13", because: "requires FUSE"
-  end
 
   def default_alluxio_conf
     <<~EOS
@@ -46,6 +47,9 @@ class Alluxio < Formula
       To configure alluxio, edit
         #{etc}/alluxio/alluxio-env.sh
         #{etc}/alluxio/alluxio-site.properties
+
+      To use `alluxio-fuse` on macOS:
+        brew install --cask macfuse
     EOS
   end
 

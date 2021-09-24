@@ -1,8 +1,8 @@
 class ExtraCmakeModules < Formula
   desc "Extra modules and scripts for CMake"
   homepage "https://api.kde.org/frameworks/extra-cmake-modules/html/index.html"
-  url "https://download.kde.org/stable/frameworks/5.80/extra-cmake-modules-5.80.0.tar.xz"
-  sha256 "2370fd80f685533d0b96efa6fa443ceea68e0ceba4e8a9d7c151d297b1c96f64"
+  url "https://download.kde.org/stable/frameworks/5.86/extra-cmake-modules-5.86.0.tar.xz"
+  sha256 "aacc5ccdc5799efe34e2dae33418c379466caf7c9802b78348ccfb5782fe6ab5"
   license all_of: ["BSD-2-Clause", "BSD-3-Clause", "MIT"]
   head "https://invent.kde.org/frameworks/extra-cmake-modules.git"
 
@@ -14,11 +14,11 @@ class ExtraCmakeModules < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "62c98704716218b86400a27d692c76a87adfc5f36601ade2f6e30329799d8836"
-    sha256 cellar: :any_skip_relocation, big_sur:       "0e426f7010c34f5c6a849b91d2554e40d652d159bac1aeabc6c0dd5c12dc5974"
-    sha256 cellar: :any_skip_relocation, catalina:      "219a0b0c84c3bf6a2665397e16f857edca27e38bbebb8d93421a7faf248a4371"
-    sha256 cellar: :any_skip_relocation, mojave:        "a60d655c7c7c75aeda3f0739dc17ad2281efbcaf55e093b60ce7ef794ea8c903"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "04a084451c3ac2fb0876fcf6388f765fc8261a766970ea8e716fa983ed01bdcc"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "0390fd3a6468ffb7eda9285c6ac330ca917e17dbfd20b0bc766fe228be98db9b"
+    sha256 cellar: :any_skip_relocation, big_sur:       "91846951ef36fafffa1260b280809d255dca77ef12eefdb6ac1fb44533591a16"
+    sha256 cellar: :any_skip_relocation, catalina:      "7dfe71bd0d8566568c661bcb5a04a91cba08e123c7dbc543c3cd2990fb942170"
+    sha256 cellar: :any_skip_relocation, mojave:        "7dfe71bd0d8566568c661bcb5a04a91cba08e123c7dbc543c3cd2990fb942170"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "ccd6f7dbc0abe72ce36b7ebef90a239febf3827e65c8ac2489dfc04e30c30e0d" # linuxbrew-core
   end
 
   depends_on "cmake" => [:build, :test]

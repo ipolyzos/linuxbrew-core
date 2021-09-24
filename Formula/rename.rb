@@ -3,25 +3,27 @@ class Rename < Formula
   homepage "http://plasmasturm.org/code/rename"
   url "https://github.com/ap/rename/archive/v1.601.tar.gz"
   sha256 "e8fd67b662b9deddfb6a19853652306f8694d7959dfac15538a9b67339c87af4"
-  head "https://github.com/ap/rename.git"
+  head "https://github.com/ap/rename.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "44f30a8e1f8b7e3c5f3a194285a2dac494389e837c490d8d8d7137c939fa4ee3"
-    sha256 cellar: :any_skip_relocation, big_sur:       "099d8a8cf234a34790ab0004433c3c83f74ef353ad030f2be14086758d5e3b89"
-    sha256 cellar: :any_skip_relocation, catalina:      "494aba9267348e401431cbcb1193df1c1138fda69d66aaa3c7ee229be51277fd"
-    sha256 cellar: :any_skip_relocation, mojave:        "13c919a8edd4935b7e5462a172b8336c0425a627f76fd3aa72c652c35ea233cc"
-    sha256 cellar: :any_skip_relocation, high_sierra:   "86b4b8a450b749f6fd84d86334d2d9f3a1c57fa3832f6e69d602369b4c6e5300"
-    sha256 cellar: :any_skip_relocation, sierra:        "ed4a9403e533b143f8f1ee307035b28c995a13970c64ed7646719e12688ec7a0"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "86fbff102a1ba09c3a0ea3391134cde7ce56b000bc8687552bfcd0c9fcfe4886"
+    rebuild 1
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "308b9f76cf8386eb9c5835204233f0869cc566d9995b383a5215649e8b1c7a48"
+    sha256 cellar: :any_skip_relocation, big_sur:       "308b9f76cf8386eb9c5835204233f0869cc566d9995b383a5215649e8b1c7a48"
+    sha256 cellar: :any_skip_relocation, catalina:      "2f1c70cacb289e2286bc6ec1e47319d197c2f0d74f8474b303aa2cb9aad8bb0e"
+    sha256 cellar: :any_skip_relocation, mojave:        "2f1c70cacb289e2286bc6ec1e47319d197c2f0d74f8474b303aa2cb9aad8bb0e"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "aa5d3a801d6f1807f2dc280b41bf6f4b20ff2c6fc53414a0644cd15c71488e22" # linuxbrew-core
   end
 
-  uses_from_macos "perl"
-  uses_from_macos "pod2man"
+  depends_on "pod2man" => :build
 
-  conflicts_with "util-linux", because: "both install `rename` binaries"
+  uses_from_macos "perl"
+
+  on_linux do
+    conflicts_with "util-linux", because: "both install `rename` binaries"
+  end
 
   def install
-    system "pod2man", "rename", "rename.1"
+    system "#{Formula["pod2man"].opt_bin}/pod2man", "rename", "rename.1"
     bin.install "rename"
     man1.install "rename.1"
   end

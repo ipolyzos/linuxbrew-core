@@ -6,15 +6,18 @@ class NetTools < Formula
   license "GPL-2.0-or-later"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "0a5be21d42280ba9e5bbbd99e94e3e2b7647741ffa36835a015c98b0aa3a1639"
+    rebuild 1
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "e08cb177a10583b6af76c29fa3c49c930d057aaa759946b72a579205d3fc093f" # linuxbrew-core
   end
 
-  depends_on "gettext" => :build
   depends_on "libdnet"
   depends_on :linux
 
   def install
-    system "yes '' | make config"
+    # Support non-interactive configuration
+    inreplace "configure.sh", "IFS='@' read ans || exit 1", ""
+
+    system "make", "config"
     system "make"
     system "make", "DESTDIR=#{prefix}", "install"
   end

@@ -1,11 +1,13 @@
-require "os/linux/glibc"
-
 class GccAT6 < Formula
   desc "GNU compiler collection"
   homepage "https://gcc.gnu.org"
   url "https://ftp.gnu.org/gnu/gcc/gcc-6.5.0/gcc-6.5.0.tar.xz"
   mirror "https://ftpmirror.gnu.org/gcc/gcc-6.5.0/gcc-6.5.0.tar.xz"
   sha256 "7ef1796ce497e89479183702635b14bb7a46b53249209a5e0f999bebf4740945"
+  license all_of: [
+    "LGPL-2.1-or-later",
+    "GPL-3.0-or-later" => { with: "GCC-exception-3.1" },
+  ]
   revision 7
 
   livecheck do
@@ -13,23 +15,16 @@ class GccAT6 < Formula
     regex(%r{href=.*?gcc[._-]v?(6(?:\.\d+)+)(?:/?["' >]|\.t)}i)
   end
 
-  # gcc is designed to be portable.
-  # reminder: always add 'cellar :any'
   bottle do
     sha256 big_sur:      "9fae646d3b49a384c6c524620f128ee5d7ee06811d5b2c9e67a06baa6e45201b"
     sha256 catalina:     "8b18ff45d42f712a6b384a75e0850b6c6a9a369cc186e8ec31e766742a86d4eb"
     sha256 mojave:       "9bec2c923e6cdcefc18b4c716b1b2bd93ce18ea30e8327aff93c0aaa3465c8b5"
-    sha256 x86_64_linux: "d8cc9cd05c83e973dbceb2b776ce2105fccfd5cefc51bd69f13f166eefaa5cdb"
+    sha256 x86_64_linux: "d8cc9cd05c83e973dbceb2b776ce2105fccfd5cefc51bd69f13f166eefaa5cdb" # linuxbrew-core
   end
 
   # The bottles are built on systems with the CLT installed, and do not work
   # out of the box on Xcode-only systems due to an incorrect sysroot.
-  pour_bottle? do
-    on_macos do
-      reason "The bottle needs the Xcode CLT to be installed."
-      satisfy { MacOS::CLT.installed? }
-    end
-  end
+  pour_bottle? only_if: :clt_installed
 
   depends_on arch: :x86_64
   depends_on "gmp"
@@ -45,6 +40,10 @@ class GccAT6 < Formula
 
   # GCC bootstraps itself, so it is OK to have an incompatible C++ stdlib
   cxxstdlib_check :skip
+
+  def version_suffix
+    version.major.to_s
+  end
 
   # Patch for Xcode bug, taken from https://gcc.gnu.org/bugzilla/show_bug.cgi?id=89864#c43
   # This should be removed in the next release of GCC if fixed by apple; this is an xcode bug,
@@ -63,16 +62,10 @@ class GccAT6 < Formula
     # C, C++, ObjC, Fortran compilers are always built
     languages = %w[c c++ objc obj-c++ fortran]
 
-    version_suffix = version.major.to_s
-
     # Even when suffixes are appended, the info pages conflict when
     # install-info is run so pretend we have an outdated makeinfo
     # to prevent their build.
     ENV["gcc_cv_prog_makeinfo_modern"] = "no"
-
-    # Change the default directory name for 64-bit libraries to `lib`
-    # http://www.linuxfromscratch.org/lfs/view/development/chapter06/gcc.html
-    inreplace "gcc/config/i386/t-linux64", "m64=../lib64", "m64=" unless OS.mac?
 
     args = [
       "--prefix=#{prefix}",
@@ -96,7 +89,7 @@ class GccAT6 < Formula
       "--disable-nls",
     ]
 
-    on_macos do
+    if OS.mac?
       args << "--build=x86_64-apple-darwin#{OS.kernel_version}"
       args << "--with-system-zlib"
 
@@ -113,17 +106,24 @@ class GccAT6 < Formula
       # Ensure correct install names when linking against libgcc_s;
       # see discussion in https://github.com/Homebrew/homebrew/pull/34303
       inreplace "libgcc/config/t-slibgcc-darwin", "@shlib_slibdir@", "#{HOMEBREW_PREFIX}/lib/gcc/#{version_suffix}"
-    end
-
-    on_linux do
+    else
       # Fix Linux error: gnu/stubs-32.h: No such file or directory.
       args << "--disable-multilib"
+
+      # Change the default directory name for 64-bit libraries to `lib`
+      # http://www.linuxfromscratch.org/lfs/view/development/chapter06/gcc.html
+      inreplace "gcc/config/i386/t-linux64", "m64=../lib64", "m64="
     end
 
     mkdir "build" do
       system "../configure", *args
       system "make", "bootstrap"
-      system "make", OS.mac? ? "install" : "install-strip"
+
+      if OS.mac?
+        system "make", "install"
+      else
+        system "make", "install-strip"
+      end
     end
 
     # Handle conflicts between GCC formulae and avoid interfering
@@ -142,8 +142,8 @@ class GccAT6 < Formula
   end
 
   def post_install
-    unless OS.mac?
-      gcc = bin/"gcc-6"
+    if OS.linux?
+      gcc = bin/"gcc-#{version_suffix}"
       libgcc = Pathname.new(Utils.safe_popen_read(gcc, "-print-libgcc-file-name")).parent
       raise "command failed: #{gcc} -print-libgcc-file-name" if $CHILD_STATUS.exitstatus.nonzero?
 
@@ -201,7 +201,7 @@ class GccAT6 < Formula
       #     Noted that it should only be passed for the `gcc@*` formulae.
       #   * `-L#{HOMEBREW_PREFIX}/lib` instructs gcc to find the rest
       #     brew libraries.
-      libdir = HOMEBREW_PREFIX/"lib/gcc/6"
+      libdir = HOMEBREW_PREFIX/"lib/gcc/#{version_suffix}"
       specs.write specs_string + <<~EOS
         *cpp_unique_options:
         + -isysroot #{HOMEBREW_PREFIX}/nonexistent #{system_header_dirs.map { |p| "-idirafter #{p}" }.join(" ")}

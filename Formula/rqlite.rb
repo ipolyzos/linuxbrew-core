@@ -1,23 +1,24 @@
 class Rqlite < Formula
   desc "Lightweight, distributed relational database built on SQLite"
   homepage "http://www.rqlite.com/"
-  url "https://github.com/rqlite/rqlite/archive/v5.11.1.tar.gz"
-  sha256 "7f577fd3ff6b4e2d1cf8557b52782489f9c8638502c1ff8c160ecf4f20153815"
+  url "https://github.com/rqlite/rqlite/archive/v6.6.0.tar.gz"
+  sha256 "5542ae0a9c70b8227a5893e7043aad17b0f8ce5f6174bed47add4c056e0ade4d"
   license "MIT"
+  head "https://github.com/rqlite/rqlite.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "d3dd360988ef54441bfa090c71b32294bf76df7a0eb7a1a69e0d1e7d803c9f36"
-    sha256 cellar: :any_skip_relocation, big_sur:       "e71df6cd1858c721a2eb4e98d668c16bd280d6feaa68f4a1047823fb23841495"
-    sha256 cellar: :any_skip_relocation, catalina:      "fd38b634ef7e878c3b2b9a68d21afb8885731280fc5b96e0fd0c5415b5de4e3d"
-    sha256 cellar: :any_skip_relocation, mojave:        "e0e43dc4463533c9193e54d3fd4344f89c728772155bb1ac99dac92d01794675"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "5444dcee192303971047600643110193fc7c9bef18e2a16153b927c5533a5c90"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "9ae2e96ec6e9e36cb6b0ec86975bd28807fcf10875fc37e18d3d592a66ae228d"
+    sha256 cellar: :any_skip_relocation, big_sur:       "148dcfb487280353a604d8a9ed7ce80a9dc12f222a8be9b643d128798e6b55b2"
+    sha256 cellar: :any_skip_relocation, catalina:      "f3b192707d25540cdd4f6b69841f01568fb6f1ae94cba20aa43a20df7410528c"
+    sha256 cellar: :any_skip_relocation, mojave:        "ae31f87efd80bc3d73418141b3ac66fd6473568a82a4fc38aa7999700605c320"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "d95c54ee35af8b9ebee9c1218daeca295e133bfd1834f50b0e9ec10303885ea2"
   end
 
   depends_on "go" => :build
 
   def install
-    ["rqbench", "rqlite", "rqlited"].each do |cmd|
-      system "go", "build", *std_go_args, "-o", bin/cmd, "./cmd/#{cmd}"
+    %w[rqbench rqlite rqlited].each do |cmd|
+      system "go", "build", *std_go_args(ldflags: "-s -w"), "-o", bin/cmd, "./cmd/#{cmd}"
     end
   end
 

@@ -3,17 +3,17 @@ class TranslateToolkit < Formula
 
   desc "Toolkit for localization engineers"
   homepage "https://toolkit.translatehouse.org/"
-  url "https://files.pythonhosted.org/packages/c1/84/a780fdb5a2f74783fa011169252e67af532146cc7a5d31be40e31e82bc42/translate-toolkit-3.3.4.tar.gz"
-  sha256 "907965b3990fc616c708794c02490bdd438193c76b47b2186ed82c911c99a415"
+  url "https://files.pythonhosted.org/packages/51/db/eabac6fb11d18cf0f2e55db661d98207ca3edfe7a90ea14c82ce5c87ac53/translate-toolkit-3.4.1.tar.gz"
+  sha256 "2edc72794513e33ece2a2ee5ee25709fe4fbeac4686ecf80366d4999dd98cfd0"
   license "GPL-2.0-or-later"
-  head "https://github.com/translate/translate.git"
+  head "https://github.com/translate/translate.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "f5e5a3810e2756658ce0992c926f9347c48177ea9a76069a7fd504a6d668f69c"
-    sha256 cellar: :any_skip_relocation, big_sur:       "a5af52630650fd236e33b0a27b43e6d88bc91f4a2c0e4fd544276747dc69cf6b"
-    sha256 cellar: :any_skip_relocation, catalina:      "15762fcfdcc621fbae65c399c5d0b553f03aa475f59c7fba5bee4d9159ebc05f"
-    sha256 cellar: :any_skip_relocation, mojave:        "8b6dee19aa31d7f02f9c5178f02b61b68dae8b71fb2d1c8c27b200551926b9c8"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "7ae134bed54fee691f5059935e69cf49f5546808a62a107dd20f5582843fafc2"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "07987b1dffacec39808bf49f5c0de6cacb60a2d4a0272223e457e71dd82494e8"
+    sha256 cellar: :any_skip_relocation, big_sur:       "59c2e81acb166823333a7e1d29233458190e0322251671dd058415abed477c2d"
+    sha256 cellar: :any_skip_relocation, catalina:      "9a54d5be8cb7bc27eec427f1432516f9e76fe96e2724644561a7fa42dac53ca9"
+    sha256 cellar: :any_skip_relocation, mojave:        "71bc173f6d2ceb3d533c76510cdaf367f417e1ff4daaf124a09fef2ff2a8c647"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "958c328014f1b6be1b372da6bf17e4098fd0d5d0d4dd33a5180cfacd5e3aabd9" # linuxbrew-core
   end
 
   depends_on "python@3.9"

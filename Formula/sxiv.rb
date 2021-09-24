@@ -5,7 +5,7 @@ class Sxiv < Formula
   sha256 "a382ad57734243818e828ba161fc0357b48d8f3a7f8c29cac183492b46b58949"
   license "GPL-2.0-or-later"
   revision 1
-  head "https://github.com/muennich/sxiv.git"
+  head "https://github.com/muennich/sxiv.git", branch: "master"
 
   bottle do
     sha256 cellar: :any,                 arm64_big_sur: "11aff8aaab1a32a0694672b802f9399d5002f1871329054671273a2d919b4d5d"
@@ -13,7 +13,7 @@ class Sxiv < Formula
     sha256 cellar: :any,                 catalina:      "caafa51424cd97f030b9156aeba0ba64f6ab5821197453136a240c7ca38869d9"
     sha256 cellar: :any,                 mojave:        "14b4f8a7137ea1ff12dde1d0a8cda063227e48d77ba75d93ecbde6193584d2cf"
     sha256 cellar: :any,                 high_sierra:   "b8f60f5b9bb6987f0042ac485eb0d4c5c5c3cdc4ea4c32fc13def537e51d39dc"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "161f9fb7a64662edabd4174ed175af98d1ac5b28d3bb7b33e3341bbbab6b1ab7"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "161f9fb7a64662edabd4174ed175af98d1ac5b28d3bb7b33e3341bbbab6b1ab7" # linuxbrew-core
   end
 
   depends_on "giflib"

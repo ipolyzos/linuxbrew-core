@@ -6,7 +6,7 @@ class Osmfilter < Formula
       revision: "f341f5f237737594c1b024338f0a2fc04fabdff3"
   license "AGPL-3.0"
   revision 1 unless OS.mac?
-  head "https://gitlab.com/osm-c-tools/osmctools.git"
+  head "https://gitlab.com/osm-c-tools/osmctools.git", branch: "master"
 
   bottle do
     sha256 cellar: :any_skip_relocation, arm64_big_sur: "4b37db3c9ebe77673bbd83fb7d2e6c215760450987df2ded64044eccf6f34d3b"
@@ -16,7 +16,7 @@ class Osmfilter < Formula
     sha256 cellar: :any_skip_relocation, high_sierra:   "b2e2d4190462b0b0e473da4a50ab5e25da007aca21db898d2d359e9e9eb2cde7"
     sha256 cellar: :any_skip_relocation, sierra:        "d7a8285fe18af71d0093b89e9b5613a4fe30ceb4978e07f61ad1974e734d7f50"
     sha256 cellar: :any_skip_relocation, el_capitan:    "6a0fd608e0bc8094f08edb6f86a51b45745506d3ef84e0454ef1498dd77f61b0"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "08c1e658dfd2df393acd89410720ae6825ec1abd175e358d9ebd0fa3436ddeaa"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "08c1e658dfd2df393acd89410720ae6825ec1abd175e358d9ebd0fa3436ddeaa" # linuxbrew-core
   end
 
   depends_on "autoconf" => :build

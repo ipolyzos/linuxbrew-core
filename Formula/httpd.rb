@@ -1,19 +1,17 @@
 class Httpd < Formula
   desc "Apache HTTP server"
   homepage "https://httpd.apache.org/"
-  url "https://www.apache.org/dyn/closer.lua?path=httpd/httpd-2.4.46.tar.bz2"
-  mirror "https://archive.apache.org/dist/httpd/httpd-2.4.46.tar.bz2"
-  sha256 "740eddf6e1c641992b22359cabc66e6325868c3c5e2e3f98faf349b61ecf41ea"
+  url "https://www.apache.org/dyn/closer.lua?path=httpd/httpd-2.4.49.tar.bz2"
+  mirror "https://archive.apache.org/dist/httpd/httpd-2.4.49.tar.bz2"
+  sha256 "65b965d6890ea90d9706595e4b7b9365b5060bec8ea723449480b4769974133b"
   license "Apache-2.0"
-  revision OS.mac? ? 2 : 3
 
   bottle do
-    rebuild 1
-    sha256 arm64_big_sur: "4c58ed58ba2e47a10192bffb9bcf067e7d6b947819ee85bd014e9c67cf8be5d8"
-    sha256 big_sur:       "9c6b3d19822ad929ef477fd6936c753e37477315b3011754858013f4a355f7cb"
-    sha256 catalina:      "28299ea97da7c443d880865b5669fd0341e01d2891f91095ebcfd5ad30679452"
-    sha256 mojave:        "d5ef11b940eda27e5fda1addb6b914b76768f3fc0fa5652aa4470d22a87de4d9"
-    sha256 x86_64_linux:  "ac55ff63106e66ee2f6c3e31236c6ab955b83eeef6707f86f3ee44bbcda20d22"
+    sha256 arm64_big_sur: "e6ebcb4a1307a3e8c9c8dcb41d5a702398b38ca537e14502dc898acce3c78000"
+    sha256 big_sur:       "ade7dbaf67d42a5e71e08fb34d771df23f2b8be478507679ba6ca9593ca74673"
+    sha256 catalina:      "657cba33ccfe3498613f48112b1e28181237fa56674e3d29bc4be5ab4e6218d6"
+    sha256 mojave:        "645aca6e1cf953f13bc527bb434c765025b270a9b65f52cc4522673a16a2101b"
+    sha256 x86_64_linux:  "7c43dc2976906851c2aac25cce3f34e7a7646190902e49edc4d71c7844ba8d84" # linuxbrew-core
   end
 
   depends_on "apr"
@@ -47,6 +45,13 @@ class Httpd < Formula
       s.gsub! "${datadir}/icons",   "#{pkgshare}/icons"
     end
 
+    libxml2 = "#{MacOS.sdk_path_if_needed}/usr"
+    libxml2 = Formula["libxml2"].opt_prefix if OS.linux?
+    zlib = if OS.mac?
+      "#{MacOS.sdk_path_if_needed}/usr"
+    else
+      Formula["zlib"].opt_prefix
+    end
     system "./configure", "--enable-layout=Slackware-FHS",
                           "--prefix=#{prefix}",
                           "--sbindir=#{bin}",
@@ -67,18 +72,16 @@ class Httpd < Formula
                           "--with-apr=#{Formula["apr"].opt_prefix}",
                           "--with-apr-util=#{Formula["apr-util"].opt_prefix}",
                           "--with-brotli=#{Formula["brotli"].opt_prefix}",
-                          *("--with-libxml2=#{MacOS.sdk_path_if_needed}/usr" if OS.mac?),
+                          "--with-libxml2=#{libxml2}",
                           "--with-mpm=prefork",
                           "--with-nghttp2=#{Formula["nghttp2"].opt_prefix}",
                           "--with-ssl=#{Formula["openssl@1.1"].opt_prefix}",
                           "--with-pcre=#{Formula["pcre"].opt_prefix}",
-                          *("--with-libxml2=#{Formula["libxml2"].opt_prefix}" unless OS.mac?),
-                          *("--with-z=#{MacOS.sdk_path_if_needed}/usr" if OS.mac?),
-                          *("--with-z=#{Formula["zlib"].opt_prefix}" unless OS.mac?),
+                          "--with-z=#{zlib}",
                           "--disable-lua",
                           "--disable-luajit"
     system "make"
-    ENV.deparallelize unless OS.mac?
+    ENV.deparallelize if OS.linux?
     system "make", "install"
 
     # suexec does not install without root
@@ -93,7 +96,7 @@ class Httpd < Formula
       #{include}/httpd/ap_config_layout.h
       #{lib}/httpd/build/config_vars.mk
     ] do |s|
-      s.gsub! "#{lib}/httpd/modules", "#{HOMEBREW_PREFIX}/lib/httpd/modules"
+      s.gsub! lib/"httpd/modules", HOMEBREW_PREFIX/"lib/httpd/modules"
     end
 
     inreplace %W[
@@ -110,8 +113,8 @@ class Httpd < Formula
     inreplace "#{lib}/httpd/build/config_vars.mk" do |s|
       pcre = Formula["pcre"]
       s.gsub! pcre.prefix.realpath, pcre.opt_prefix
-      s.gsub! "${prefix}/lib/httpd/modules",
-              "#{HOMEBREW_PREFIX}/lib/httpd/modules"
+      s.gsub! "${prefix}/lib/httpd/modules", HOMEBREW_PREFIX/"lib/httpd/modules"
+      s.gsub! Superenv.shims_path, HOMEBREW_PREFIX/"bin"
     end
   end
 

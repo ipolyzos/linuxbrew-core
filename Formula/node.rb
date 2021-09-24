@@ -1,10 +1,10 @@
 class Node < Formula
   desc "Platform built on V8 to build network applications"
   homepage "https://nodejs.org/"
-  url "https://nodejs.org/dist/v16.0.0/node-v16.0.0.tar.xz"
-  sha256 "47cb90111e8c3dc42dc538464789415354f0d933587fc89fff71f9bd816aaa02"
+  url "https://nodejs.org/dist/v16.9.1/node-v16.9.1.tar.xz"
+  sha256 "97f50ec53c050e7ac97bdbe5586aaca380dd23064064c85a1f2017a35244131c"
   license "MIT"
-  head "https://github.com/nodejs/node.git"
+  head "https://github.com/nodejs/node.git", branch: "master"
 
   livecheck do
     url "https://nodejs.org/dist/"
@@ -12,11 +12,11 @@ class Node < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_big_sur: "12394e6dda1b975663326cf3d3fc1acf4f2bf8c64135655e621338a0a1989e0a"
-    sha256 cellar: :any,                 big_sur:       "505415a36c64abbc6c6db51dee26da92e3f6acc37a8bb81c1329672ef721fc21"
-    sha256 cellar: :any,                 catalina:      "2ecf00685d3b91c44f117c78d36884114e426ec6334faf3b2a34325b30926818"
-    sha256 cellar: :any,                 mojave:        "aef2639f94eae4825cec3012b64c5f76cc43dfcd6a669869b1933c4d47bfca50"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "fd43ee7a7a392a1cc67952a7eede7d5694cc00ea6005a3094a9cb9e8e9d79909"
+    sha256 cellar: :any,                 arm64_big_sur: "4ba5a338cf6594b57bd3d4d08f6bd82c9f54a39e7fca7cdb98efee5af83ac26e"
+    sha256 cellar: :any,                 big_sur:       "41336818ebd9fc549ccb3e7a0b4786056d48deb255afafd2c1a2b7ca8e1128d0"
+    sha256 cellar: :any,                 catalina:      "4917ded2791d441804e9a250390aed235fc263a6c4a840829e78e8794f4d1504"
+    sha256 cellar: :any,                 mojave:        "117c5f364e689be28cc6a7508b37d435730063fbd6f6b011693e34bd1c972f36"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "570ab0413359584007a031f910100a799d99ff4c1a9b4292e8af3d07f6c50a3c" # linuxbrew-core
   end
 
   depends_on "pkg-config" => :build
@@ -30,11 +30,33 @@ class Node < Formula
 
   uses_from_macos "zlib"
 
+  on_linux do
+    depends_on "gcc"
+  end
+
+  fails_with :clang do
+    build 1099
+    cause "Node requires Xcode CLT 11+"
+  end
+
+  fails_with gcc: "5"
+
   # We track major/minor from upstream Node releases.
   # We will accept *important* npm patch releases when necessary.
   resource "npm" do
-    url "https://registry.npmjs.org/npm/-/npm-7.10.0.tgz"
-    sha256 "a8e88cd338da1ba283d857fc4e9b5ac27d8a42e248f1beb522110d14a94f34c2"
+    url "https://registry.npmjs.org/npm/-/npm-7.21.1.tgz"
+    sha256 "92626ba6f8c2ddb7966fe154833b9df3fec89ee366f7dabe5ab852773cfb5e02"
+  end
+
+  # Fix build with brewed c-ares.
+  # https://github.com/nodejs/node/pull/39739
+  #
+  # Remove when the following lands in a *c-ares* release:
+  # https://github.com/c-ares/c-ares/commit/7712fcd17847998cf1ee3071284ec50c5b3c1978
+  # https://github.com/c-ares/c-ares/pull/417
+  patch do
+    url "https://github.com/nodejs/node/commit/8699aa501c4d4e1567ebe8901e5ec80cadaa9323.patch?full_index=1"
+    sha256 "678643c79258372d5054d3da16bc0c5db17130f151f0e72b6e4f20817987aac9"
   end
 
   def install

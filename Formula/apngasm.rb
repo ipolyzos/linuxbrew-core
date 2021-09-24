@@ -4,15 +4,15 @@ class Apngasm < Formula
   url "https://github.com/apngasm/apngasm/archive/3.1.6.tar.gz"
   sha256 "0068e31cd878e07f3dffa4c6afba6242a753dac83b3799470149d2e816c1a2a7"
   license "Zlib"
-  revision 1
-  head "https://github.com/apngasm/apngasm.git"
+  revision 3
+  head "https://github.com/apngasm/apngasm.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any,                 arm64_big_sur: "e939020f3749911eb164d7fa1703ed627dfe82a9721747019aa2c8408ab33e98"
-    sha256 cellar: :any,                 big_sur:       "989fab4ac0fef9191cc97100d9a6aa84e559d01b1adc2026f8b1dd8e300a2550"
-    sha256 cellar: :any,                 catalina:      "d77102b0795a702c5c0c84b96b6ea06d6c96d33a8e9bf70dcdbb170cf932869f"
-    sha256 cellar: :any,                 mojave:        "bab451c492901331dc7ff809aa1d553c9a5069e65cbbe8834ecfa2a771f102cc"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "efad1c584abb2b150dc064194f924b078b8d1d9523a3b34ef7a9e58a73e463f7"
+    sha256 cellar: :any,                 arm64_big_sur: "e7ae49e492cf07670d473742b64ab25103e0e94780181b78173c10b5f5c4fba7"
+    sha256 cellar: :any,                 big_sur:       "d94b80958f9782e98a7bcd7461b22d5239c376d4b1fb26b49bfb9d5c5c25b6e6"
+    sha256 cellar: :any,                 catalina:      "db0dc40f3fd4e8a8b7435da56211356e669b42ba47b8107d0f840777197202cf"
+    sha256 cellar: :any,                 mojave:        "569b760c848add596a639397ebe63f631e2ad3faabd1fa77ea6609f24f240e2f"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "fd723c581739c21323fcba6aaf920532144aac609a0f7b30d124fc69f0487d9c" # linuxbrew-core
   end
 
   depends_on "cmake" => :build
@@ -23,8 +23,11 @@ class Apngasm < Formula
   def install
     inreplace "cli/CMakeLists.txt", "${CMAKE_INSTALL_PREFIX}/man/man1",
                                     "${CMAKE_INSTALL_PREFIX}/share/man/man1"
-    system "cmake", ".", *std_cmake_args
-    system "make", "install"
+    mkdir "build" do
+      ENV.cxx11
+      system "cmake", "..", *std_cmake_args
+      system "make", "install"
+    end
     (pkgshare/"test").install "test/samples"
   end
 

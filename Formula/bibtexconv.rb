@@ -1,23 +1,23 @@
 class Bibtexconv < Formula
   desc "BibTeX file converter"
   homepage "https://www.uni-due.de/~be0001/bibtexconv/"
-  url "https://github.com/dreibh/bibtexconv/archive/bibtexconv-1.1.22.tar.gz"
-  sha256 "dfa7d12223100d04d4bdb2a26c8dec2efacf872140f5301ab111af8497b7163f"
+  url "https://github.com/dreibh/bibtexconv/archive/bibtexconv-1.3.0.tar.gz"
+  sha256 "1d15a474f723ef251eb0ad13fc3578dac7b17504b4d8de36bcde7c1584a48852"
   license "GPL-3.0-or-later"
-  head "https://github.com/dreibh/bibtexconv.git"
+  head "https://github.com/dreibh/bibtexconv.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any,                 arm64_big_sur: "61628b4d7ad5508ba641b305478fd6f457e30e73c23c22bd69883237c918ce22"
-    sha256 cellar: :any,                 big_sur:       "00f142e76fa6306e5de3ea352f81c8061119a8abdba4ec678f9c74efae97ca56"
-    sha256 cellar: :any,                 catalina:      "989c035897f4c7ae44ccffc47b8bfcd7f52cedbe7cdd7bf909c994892a447262"
-    sha256 cellar: :any,                 mojave:        "d6ebc4679598215456f0c608430b58621b8404f1fb8f467d14da6353b7f8478c"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "cb479382cdd311b493d5eed7b2085fd7d2ca50faa9ec45882679692147c03154"
+    sha256 cellar: :any,                 arm64_big_sur: "75b1b0a5166222d906d2fa962f5617ee8e2bcb67e806bc90213fc618a8107498"
+    sha256 cellar: :any,                 big_sur:       "483f1ea3375504b76437e54d3b20aa867a0153c0e273646494aad63b9aae1680"
+    sha256 cellar: :any,                 catalina:      "d14665d2cfd8c82a44dd80fdabe428c2af7c2a8ec686e7d9122e1590de7accc9"
+    sha256 cellar: :any,                 mojave:        "b086275062e61738d48b34c87a15896ff0d32db7f89819a137cd2b0a91079f8c"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "8f9d4aeb501f8a5e0bb54ab68f2907503df017a4b18b68f63a97099cbafe591c" # linuxbrew-core
   end
 
+  depends_on "bison" => :build
   depends_on "cmake" => :build
   depends_on "openssl@1.1"
 
-  uses_from_macos "bison" => :build
   uses_from_macos "flex" => :build
   uses_from_macos "curl"
 

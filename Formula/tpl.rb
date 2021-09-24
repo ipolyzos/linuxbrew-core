@@ -4,7 +4,7 @@ class Tpl < Formula
   url "https://github.com/troydhanson/tpl/archive/v1.6.1.tar.gz"
   sha256 "0b3750bf62f56be4c42f83c89d8449b24f1c5f1605a104801d70f2f3c06fb2ff"
   license "BSD-1-Clause"
-  head "https://github.com/troydhanson/tpl.git"
+  head "https://github.com/troydhanson/tpl.git", branch: "master"
 
   bottle do
     sha256 cellar: :any,                 arm64_big_sur: "28d206fb0a8b3d318bbb8281a2cf64cb371f6a78896bc6c4b0b4187a2c109e96"
@@ -15,7 +15,7 @@ class Tpl < Formula
     sha256 cellar: :any,                 sierra:        "1d8a496506b276702c07d594e17b9c7be4f43c1a4651120b765b2015c18bbe54"
     sha256 cellar: :any,                 el_capitan:    "a887350815a2791312bdec2ecdf82795d6f54c67f9e76842236e8bb1f507108d"
     sha256 cellar: :any,                 yosemite:      "2587ed48c7a6ff2c309e688695c79d845b5fe2a06eae1189dc1c9de21f9bceaa"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "e7a5b2db59ce7aa6eb4b2a374ff9a38a0f7511219bc5562f342b4a36a761f91e"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "e7a5b2db59ce7aa6eb4b2a374ff9a38a0f7511219bc5562f342b4a36a761f91e" # linuxbrew-core
   end
 
   depends_on "autoconf" => :build

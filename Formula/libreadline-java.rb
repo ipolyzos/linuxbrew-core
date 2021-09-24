@@ -3,15 +3,18 @@ class LibreadlineJava < Formula
   homepage "https://java-readline.sourceforge.io/"
   url "https://downloads.sourceforge.net/project/java-readline/java-readline/0.8.0/libreadline-java-0.8.0-src.tar.gz"
   sha256 "cdcfd9910bfe2dca4cd08b2462ec05efee7395e9b9c3efcb51e85fa70548c890"
+  license "LGPL-2.1-or-later"
   revision 3
 
   bottle do
-    sha256 cellar: :any, big_sur:     "73b6dbaa9a738c05b8195665829637d9c4e5c1be74f7059ee17e97e2ab879e01"
-    sha256 cellar: :any, catalina:    "cc49470dde32faf6c0621944621af9684366e6897a4994b5b021e63a8422f78e"
-    sha256 cellar: :any, mojave:      "65444e90dded6862954e3105db11a2918554c866a1a3a344e0414d0db810f55d"
-    sha256 cellar: :any, high_sierra: "3dc9c829727655f811d50c6ae215b2ae3130e8c4f13c0be8e48fd5b2d62349f3"
+    sha256 cellar: :any,                 big_sur:      "73b6dbaa9a738c05b8195665829637d9c4e5c1be74f7059ee17e97e2ab879e01"
+    sha256 cellar: :any,                 catalina:     "cc49470dde32faf6c0621944621af9684366e6897a4994b5b021e63a8422f78e"
+    sha256 cellar: :any,                 mojave:       "65444e90dded6862954e3105db11a2918554c866a1a3a344e0414d0db810f55d"
+    sha256 cellar: :any,                 high_sierra:  "3dc9c829727655f811d50c6ae215b2ae3130e8c4f13c0be8e48fd5b2d62349f3"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "97f4e0e3b95f1c5b59a6651b74dd7b0c33ee3fd1488eac22a239b93275f566ad" # linuxbrew-core
   end
 
+  depends_on arch: :x86_64 # openjdk@8 is not supported on ARM
   depends_on "openjdk@8"
   depends_on "readline"
 
@@ -20,7 +23,7 @@ class LibreadlineJava < Formula
   patch :DATA
 
   def install
-    java_home = Formula["openjdk@8"].opt_prefix
+    java_home = Language::Java.java_home("1.8")
 
     # Reported 4th May 2016: https://sourceforge.net/p/java-readline/bugs/12/
     # JDK 8 doclint for Javadoc complains about minor HTML conformance issues
@@ -32,13 +35,13 @@ class LibreadlineJava < Formula
 
     # Current Oracle JDKs put the jni.h and jni_md.h in a different place than the
     # original Apple/Sun JDK used to.
-    if File.exist? "#{java_home}/include/jni.h"
-      ENV["JAVAINCLUDE"] = "#{java_home}/include"
-      ENV["JAVANATINC"]  = "#{java_home}/include/#{OS.mac? ? "darwin" : "linux"}"
-    elsif File.exist? "/System/Library/Frameworks/JavaVM.framework/Versions/Current/Headers/jni.h"
-      ENV["JAVAINCLUDE"] = "/System/Library/Frameworks/JavaVM.framework/Versions/Current/Headers/"
-      ENV["JAVANATINC"]  = "/System/Library/Frameworks/JavaVM.framework/Versions/Current/Headers/"
+    os = if OS.mac?
+      "darwin"
+    else
+      "linux"
     end
+    ENV["JAVAINCLUDE"] = "#{java_home}/include"
+    ENV["JAVANATINC"]  = "#{java_home}/include/#{os}"
 
     # Take care of some hard-coded paths,
     # adjust postfix of jni libraries,
@@ -86,8 +89,9 @@ class LibreadlineJava < Formula
 
   # Testing libreadline-java (can we execute and exit libreadline without exceptions?)
   test do
+    java_path = Formula["openjdk@8"].opt_bin/"java"
     assert(/Exception/ !~ pipe_output(
-      "java -Djava.library.path=#{lib} -cp #{pkgshare}/libreadline-java.jar test.ReadlineTest",
+      "#{java_path} -Djava.library.path=#{lib} -cp #{pkgshare}/libreadline-java.jar test.ReadlineTest",
       "exit",
     ))
   end

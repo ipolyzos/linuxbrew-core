@@ -1,21 +1,26 @@
 class RubyAT26 < Formula
   desc "Powerful, clean, object-oriented scripting language"
   homepage "https://www.ruby-lang.org/"
-  url "https://cache.ruby-lang.org/pub/ruby/2.6/ruby-2.6.6.tar.xz"
-  sha256 "5db187882b7ac34016cd48d7032e197f07e4968f406b0690e20193b9b424841f"
+  url "https://cache.ruby-lang.org/pub/ruby/2.6/ruby-2.6.8.tar.xz"
+  sha256 "8262e4663169c85787fdc9bfbd04d9eb86eb2a4b56d7f98373a8fcaa18e593eb"
   license "Ruby"
-  revision 1
+
+  livecheck do
+    url "https://www.ruby-lang.org/en/downloads/"
+    regex(/href=.*?ruby[._-]v?(2\.6(?:\.\d+)+)\.t/i)
+  end
 
   bottle do
-    rebuild 1
-    sha256 arm64_big_sur: "a96708875a8876b485f3363013325280b7bc430b2476f1a96eec868a576c3767"
-    sha256 big_sur:       "90a02e7c3985c005348fb1b750c22dce1ebbbd1a8854f3250da9956308c0c65f"
-    sha256 catalina:      "9a4c70bb351c889e3b529be56eeb5699331f6de5bd0564e1baf14c94af37f523"
-    sha256 mojave:        "30328442ad700d940208b1423bab0a0cdc84aaa02501de820ca6d7903fee09a3"
-    sha256 x86_64_linux:  "5245ec0a73e09b30fc85627310b6454cfa82c55572b27aac58a918826ecae983"
+    sha256 arm64_big_sur: "db4973da791592864ef717aa6c2df7cd8fd94f077573c07f4d3acebde8c358b5"
+    sha256 big_sur:       "f468588cf536eb0e87d47802c8b2b72e49804674d17f94364f1bd603787e772c"
+    sha256 catalina:      "92f28ded4949798be9f44a3c68624c63e36a6dfb2ab0fbc05f2dee06fc6a28d9"
+    sha256 mojave:        "7b0bd8c3357a44fa869beefc973d484107b9fcaeaf0778768a6112742d3539dd"
+    sha256 x86_64_linux:  "f436319bb56d2027971aa218306775049bd49cf356993dafffbdd60ff0140abe" # linuxbrew-core
   end
 
   keg_only :versioned_formula
+
+  deprecate! date: "2022-04-05", because: :unsupported
 
   depends_on "pkg-config" => :build
   depends_on "libyaml"
@@ -46,10 +51,7 @@ class RubyAT26 < Formula
       --with-opt-dir=#{paths.join(":")}
       --without-gmp
     ]
-
-    on_macos do
-      args << "--disable-dtrace" unless MacOS::CLT.installed?
-    end
+    args << "--disable-dtrace" if OS.mac? && !MacOS::CLT.installed?
 
     # Correct MJIT_CC to not use superenv shim
     args << "MJIT_CC=/usr/bin/#{DevelopmentTools.default_compiler}"

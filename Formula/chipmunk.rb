@@ -5,7 +5,7 @@ class Chipmunk < Formula
   mirror "https://www.mirrorservice.org/sites/distfiles.macports.org/chipmunk/Chipmunk-7.0.3.tgz"
   sha256 "048b0c9eff91c27bab8a54c65ad348cebd5a982ac56978e8f63667afbb63491a"
   license "MIT"
-  head "https://github.com/slembcke/Chipmunk2D.git"
+  head "https://github.com/slembcke/Chipmunk2D.git", branch: "master"
 
   bottle do
     sha256 cellar: :any, arm64_big_sur: "53a1d8968efd45940eda303182f7a68be0e31221295a85e803f92f3c968c45ad"
@@ -14,7 +14,7 @@ class Chipmunk < Formula
     sha256 cellar: :any, mojave:        "16292e5518bae60c6990a6f1565e1416f91ffe1c878ab43b58465bb2a24d3d11"
     sha256 cellar: :any, high_sierra:   "5370b9d8db489d6b8944c23fd4906768c84d87e22f054ca3381c7ee527233f4d"
     sha256 cellar: :any, sierra:        "c92a9c1134a272244ca3936b2c94431df7ed7002a9eec99f6914fe1128adae12"
-    sha256 cellar: :any, x86_64_linux:  "01338d806746c74b8500036c3014a0fdba695cedc95c58a7938046698191aecb"
+    sha256 cellar: :any, x86_64_linux:  "01338d806746c74b8500036c3014a0fdba695cedc95c58a7938046698191aecb" # linuxbrew-core
   end
 
   depends_on "cmake" => :build
@@ -40,8 +40,8 @@ class Chipmunk < Formula
         return 0;
       }
     EOS
-    system ENV.cc, "-pthread", "-I#{include}/chipmunk", "-L#{lib}", "-lchipmunk",
-           testpath/"test.c", "-o", testpath/"test"
+    system ENV.cc, testpath/"test.c", "-o", testpath/"test", "-pthread",
+                   "-I#{include}/chipmunk", "-L#{lib}", "-lchipmunk"
     system "./test"
   end
 end

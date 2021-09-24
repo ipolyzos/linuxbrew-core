@@ -10,7 +10,7 @@ class Wdc < Formula
     sha256 cellar: :any_skip_relocation, catalina:      "18365f76dafd05a312e9a7862f2fa747caa8c63e881469719a8ef45d07dce3c6"
     sha256 cellar: :any_skip_relocation, mojave:        "fbcaccbaa2440ac38f9efa41a342eef4d883e522fa5df7d642aaa1563d38f28b"
     sha256 cellar: :any_skip_relocation, high_sierra:   "92dcb68d02f64ff51446052bf5c41fa178cc48ade406a9533199461476f7c849"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "4c21710c2179857f5e8b45c6090e8ef50cf44cea42ce657c10befa814ff8c839"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "4c21710c2179857f5e8b45c6090e8ef50cf44cea42ce657c10befa814ff8c839" # linuxbrew-core
   end
 
   depends_on "cmake" => :build
@@ -51,24 +51,19 @@ class Wdc < Formula
     EOS
     pugixml = Formula["pugixml"]
     openssl = Formula["openssl@1.1"]
-    if OS.mac?
-      system ENV.cxx, "test.cpp", "-o", "test", "-lcurl", "-std=c++11",
-                     "-L#{lib}", "-lwdc", "-I#{include}",
-                     "-L#{openssl.opt_lib}", "-lssl", "-lcrypto",
-                     "-I#{openssl.opt_include}",
-                     "-L#{pugixml.opt_lib}", "-lpugixml",
-                     "-I#{pugixml.opt_include}"
-    else
+    curl_args = ["-lcurl"]
+    on_linux do
       curl = Formula["curl"]
-      system ENV.cxx, "test.cpp", "-o", "test", "-std=c++11", "-pthread",
-                     "-L#{lib}", "-lwdc", "-I#{include}",
-                     "-L#{curl.opt_lib}", "-lcurl",
-                     "-I#{curl.opt_include}",
-                     "-L#{openssl.opt_lib}", "-lssl", "-lcrypto",
-                     "-I#{openssl.opt_include}",
-                     "-L#{pugixml.opt_lib}", "-lpugixml",
-                     "-I#{pugixml.opt_include}"
+      curl_args << "-L#{curl.opt_lib}"
+      curl_args << "-I#{curl.opt_include}"
     end
+    system ENV.cxx, "test.cpp", "-o", "test", "-std=c++11", "-pthread",
+                   "-L#{lib}", "-lwdc", "-I#{include}",
+                   "-L#{openssl.opt_lib}", "-lssl", "-lcrypto",
+                   "-I#{openssl.opt_include}",
+                   "-L#{pugixml.opt_lib}", "-lpugixml",
+                   "-I#{pugixml.opt_include}",
+                   *curl_args
     system "./test"
   end
 end

@@ -2,10 +2,10 @@ class Octant < Formula
   desc "Kubernetes introspection tool for developers"
   homepage "https://octant.dev"
   url "https://github.com/vmware-tanzu/octant.git",
-      tag:      "v0.19.0",
-      revision: "ed8bc93fcd68c6a49f73416c656d97b7341ac528"
+      tag:      "v0.24.0",
+      revision: "5a8648921cc2779eb62a0ac11147f12aa29f831c"
   license "Apache-2.0"
-  head "https://github.com/vmware-tanzu/octant.git"
+  head "https://github.com/vmware-tanzu/octant.git", branch: "master"
 
   livecheck do
     url :stable
@@ -13,15 +13,19 @@ class Octant < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "93e34686fb232785fd3ac1d129bf2c894e051cd319cbe3e467e88e39f42b878e"
-    sha256 cellar: :any_skip_relocation, big_sur:       "36e9b9827682f65037c3a3444158e4141f1683f8f77ca019046c2516bbd871fb"
-    sha256 cellar: :any_skip_relocation, catalina:      "d9c994e38bb99a84d6515db3da2c74c664424b2eddf92af57b9ff34597d8f0f1"
-    sha256 cellar: :any_skip_relocation, mojave:        "43d701dc172ed5844c50e180aa988c93718ceea6e1d650f51f4553c6188ef784"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "153d8ecc5185eb8dfbfa512dc9b2f6350b189a06733b18bf6d9e6f09de53fcac"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "779435947bf68cdda1fed06f6dc3986f6818afd6a4c71e42524d865dd2afb9b4"
+    sha256 cellar: :any_skip_relocation, big_sur:       "7b5920d5e5e9ca14e34d27d09fa32877f20818d136470896d1e2434f1e09aa3e"
+    sha256 cellar: :any_skip_relocation, catalina:      "8e29c1b51ec3b2d1c9b5cdc0de357cd41851f4f0df42c07afe270b6078595cf4"
+    sha256 cellar: :any_skip_relocation, mojave:        "e8d3d6fbaf7cd9f368ab7f010be4ce869e841aea1e124f7dd69ebcb98310eb75"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "34bc51622f9141e09ab52b6d607cf366180cc5412985238c13aa6b66c6010770" # linuxbrew-core
   end
 
   depends_on "go" => :build
   depends_on "node" => :build
+
+  on_linux do
+    depends_on "pkg-config" => :build
+  end
 
   def install
     ENV["GOPATH"] = buildpath
@@ -38,13 +42,14 @@ class Octant < Formula
 
       system "go", "run", "build.go", "web-build"
 
-      build_time = Time.now.utc.strftime("%Y-%m-%dT%H:%M:%SZ")
       ldflags = ["-X \"main.version=#{version}\"",
                  "-X \"main.gitCommit=#{Utils.git_head}\"",
-                 "-X \"main.buildTime=#{build_time}\""]
+                 "-X \"main.buildTime=#{time.iso8601}\""].join(" ")
 
-      system "go", "build", "-tags", "embedded", "-o", bin/"octant", "-ldflags", ldflags.join(" "),
-              "-v", "./cmd/octant"
+      tags = "embedded exclude_graphdriver_devicemapper exclude_graphdriver_btrfs containers_image_openpgp"
+
+      system "go", "build", *std_go_args(ldflags: ldflags),
+             "-tags", tags, "-v", "./cmd/octant"
     end
   end
 

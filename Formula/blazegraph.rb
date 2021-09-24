@@ -10,9 +10,8 @@ class Blazegraph < Formula
     regex(/^BLAZEGRAPH(?:_RELEASE)?[._-]v?(\d+(?:[._]\d+)+)$/i)
   end
 
-  bottle :unneeded
-
-  # dependnecy can be lifted in the upcoming release, > 2.1.5
+  # Dependencies can be lifted in the upcoming release, > 2.1.5
+  depends_on arch: :x86_64 # openjdk@8 doesn't support ARM
   depends_on "openjdk@8"
 
   def install
@@ -20,26 +19,11 @@ class Blazegraph < Formula
     bin.write_jar_script libexec/"blazegraph.jar", "blazegraph", java_version: "1.8"
   end
 
-  plist_options startup: "true", manual: "blazegraph start"
+  plist_options startup: "true"
 
-  def plist
-    <<~EOS
-      <?xml version="1.0" encoding="UTF-8"?>
-      <!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN"
-      "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-      <plist version="1.0">
-        <dict>
-          <key>Label</key>
-          <string>#{plist_name}</string>
-          <key>Program</key>
-          <string>#{opt_bin}/blazegraph</string>
-          <key>RunAtLoad</key>
-          <true/>
-          <key>WorkingDirectory</key>
-          <string>#{opt_prefix}</string>
-        </dict>
-      </plist>
-    EOS
+  service do
+    run opt_bin/"blazegraph"
+    working_dir opt_prefix
   end
 
   test do

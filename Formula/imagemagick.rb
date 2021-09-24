@@ -1,10 +1,10 @@
 class Imagemagick < Formula
   desc "Tools and libraries to manipulate images in many formats"
-  homepage "https://www.imagemagick.org/"
-  url "https://www.imagemagick.org/download/releases/ImageMagick-7.0.11-8.tar.xz"
-  sha256 "7a0938d01224de0c9bc1a6e14fb91ae37479c2d38035e54541466cb7138988e0"
+  homepage "https://imagemagick.org/index.php"
+  url "https://www.imagemagick.org/download/releases/ImageMagick-7.1.0-8.tar.xz"
+  sha256 "393280a93396cbb10f4a88e4dafaa03b0bc8031a86d92fb80948f814fc5d0c01"
   license "ImageMagick"
-  head "https://github.com/ImageMagick/ImageMagick.git"
+  head "https://github.com/ImageMagick/ImageMagick.git", branch: "main"
 
   livecheck do
     url "https://download.imagemagick.org/ImageMagick/download/"
@@ -12,11 +12,11 @@ class Imagemagick < Formula
   end
 
   bottle do
-    sha256 arm64_big_sur: "976cbeb601da3b3799bc586841a9f20ac6eedab45215b85a92bbde5d7b570c8d"
-    sha256 big_sur:       "8fc205bd38b79d6279979bdb935a745bd86d5a2bda6a027cde6631a55baff97b"
-    sha256 catalina:      "9dfd36195add8e3b78d328342a06f25a3fad67d448558c7e4e9342541d780098"
-    sha256 mojave:        "b31a1c23d65d18abe4ef58e28d8329dc56c6ab53d875bf550601def953ef07c9"
-    sha256 x86_64_linux:  "0ee6e8e56a28dd76dce87a8643f4a7701a92551873f95aced576d2371e98948a"
+    sha256 arm64_big_sur: "2793c19efd7621da0bf55f09c78bf832aaf47ba56363df190fff63c8608f2165"
+    sha256 big_sur:       "1f1259530e487bb2c82376ef90ae6524a63ff4abe73434ba43f81bd701c1e31c"
+    sha256 catalina:      "d26b278da457c41e7839853412e93e1bc16930cc411553b7a120a62921e4144c"
+    sha256 mojave:        "acbb14d98c907ccf7c73db12b893e01e8c9d776f2bcf5af192c562491e65e3bf"
+    sha256 x86_64_linux:  "2206b601aa06008965b84f24eb8f945a8f89bfa07c6e73dfa6116ea9ca4e49a7" # linuxbrew-core
   end
 
   depends_on "pkg-config" => :build
@@ -49,36 +49,34 @@ class Imagemagick < Formula
     # Avoid references to shim
     inreplace Dir["**/*-config.in"], "@PKG_CONFIG@", Formula["pkg-config"].opt_bin/"pkg-config"
 
-    args = %W[
-      --enable-osx-universal-binary=no
-      --prefix=#{prefix}
-      --disable-dependency-tracking
-      --disable-silent-rules
-      --disable-opencl
-      --enable-shared
-      --enable-static
-      --with-freetype=yes
-      --with-gvc=no
-      --with-modules
-      --with-openjp2
-      --with-openexr
-      --with-webp=yes
-      --with-heic=yes
-      --with-gslib
-      --with-gs-font-dir=#{HOMEBREW_PREFIX}/share/ghostscript/fonts
-      --with-lqr
-      --without-fftw
-      --without-pango
-      --without-wmf
-      --enable-openmp
-      ac_cv_prog_c_openmp=-Xpreprocessor\ -fopenmp
-      ac_cv_prog_cxx_openmp=-Xpreprocessor\ -fopenmp
-      LDFLAGS=-lomp\ -lz
+    args = [
+      "--enable-osx-universal-binary=no",
+      "--prefix=#{prefix}",
+      "--disable-dependency-tracking",
+      "--disable-silent-rules",
+      "--disable-opencl",
+      "--enable-shared",
+      "--enable-static",
+      "--with-freetype=yes",
+      "--with-gvc=no",
+      "--with-modules",
+      "--with-openjp2",
+      "--with-openexr",
+      "--with-webp=yes",
+      "--with-heic=yes",
+      "--with-gslib",
+      "--with-gs-font-dir=#{HOMEBREW_PREFIX}/share/ghostscript/fonts",
+      "--with-lqr",
+      "--without-fftw",
+      "--without-pango",
+      "--without-wmf",
+      "--enable-openmp",
+      "ac_cv_prog_c_openmp=-Xpreprocessor -fopenmp",
+      "ac_cv_prog_cxx_openmp=-Xpreprocessor -fopenmp",
+      "LDFLAGS=-lomp -lz",
     ]
 
-    on_macos do
-      args << "--without-x"
-    end
+    args << "--without-x" if OS.mac?
 
     # versioned stuff in main tree is pointless for us
     inreplace "configure", "${PACKAGE_NAME}-${PACKAGE_BASE_VERSION}", "${PACKAGE_NAME}"

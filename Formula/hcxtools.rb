@@ -1,30 +1,23 @@
 class Hcxtools < Formula
   desc "Utils for conversion of cap/pcap/pcapng WiFi dump files"
   homepage "https://github.com/ZerBea/hcxtools"
+  url "https://github.com/ZerBea/hcxtools/archive/6.2.4.tar.gz"
+  sha256 "74299313dd15ed38f07b42201903ab85ebbc3ad220a01fff1bd5c967cfea817d"
   license "MIT"
   head "https://github.com/ZerBea/hcxtools.git"
 
-  stable do # remove block when patch is no longer needed
-    url "https://github.com/ZerBea/hcxtools/archive/6.1.6.tar.gz"
-    sha256 "27b1b1ad722b9d82f8e92c6bec92d081159e5b8225bd2a477bf8d304ff4aeb03"
-
-    # Fix build failure on macOS. Remove at next release.
-    # https://github.com/ZerBea/hcxtools/issues/186
-    patch do
-      url "https://github.com/ZerBea/hcxtools/commit/f592df4bd1bfcc4ade8e6396587fd27dc8f154f5.patch?full_index=1"
-      sha256 "9393c16de231d6a77d395c4200e094bff38a937ae300dc7f56a69cc4a26644a1"
-    end
-  end
-
   bottle do
-    sha256 cellar: :any, arm64_big_sur: "7562b2f0cef1710c74d5e0fadfa3c1af96ae9efb377047ddfdb12458d1e6fbdd"
-    sha256 cellar: :any, big_sur:       "0c554af41156ff6960244494343c41a5847cd25eaeb503029220b4bb5e29fcc6"
-    sha256 cellar: :any, catalina:      "31d5436dd03434c52eb41d9624ef83f16fbdb17067d801d9f04c7f86928d258b"
-    sha256 cellar: :any, mojave:        "30d1a53db076b0bd9056e5daf2eebde64f97c977fa31de06461dfcaa04e4407b"
+    sha256 cellar: :any,                 arm64_big_sur: "71ab36699020855a425e5dab7dd64e6ed2de1dbbbedc3a84ca48c99ec60ab29d"
+    sha256 cellar: :any,                 big_sur:       "e823f093cc594fcd8cec3c9fe7c5743d37323bfefc1f0c423ae7cab401936830"
+    sha256 cellar: :any,                 catalina:      "97f4b6d9401be82a0d1c48ed80be2070147ff374be07a3123b763cc0f7210696"
+    sha256 cellar: :any,                 mojave:        "9a93ac0c1f2b3172d3eb2b5f822c9c043a1d269fa881f35172f195f10628ff60"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "ad17f6c779701195a56f451f8e862f3b7b6e13739cc4de746b76fd3da4996456" # linuxbrew-core
   end
 
   depends_on "pkg-config" => :build
   depends_on "openssl@1.1"
+
+  uses_from_macos "curl"
 
   def install
     bin.mkpath

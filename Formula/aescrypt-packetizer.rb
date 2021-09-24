@@ -16,7 +16,7 @@ class AescryptPacketizer < Formula
     sha256 cellar: :any_skip_relocation, mojave:        "063038d7a6789ce5052fa1f7bf1be43ab9cd5c4157d5f9d1d37a91382b007958"
     sha256 cellar: :any_skip_relocation, high_sierra:   "ad36c0bff9d673c364b18795669f51329d8e7c5ea862af2ef3614051976cf601"
     sha256 cellar: :any_skip_relocation, sierra:        "39463bd2c693eaa4060f10e8d663346189ff1ebcc9bfa20971158e9e265b7b1c"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "34e5489f89b519308a003cc00a544d184463c19e25a7168a33f96ba0faae499c"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "34e5489f89b519308a003cc00a544d184463c19e25a7168a33f96ba0faae499c" # linuxbrew-core
   end
 
   head do
@@ -38,9 +38,7 @@ class AescryptPacketizer < Formula
         prefix=#{prefix}
         --disable-gui
       ]
-      on_macos do
-        args << "--enable-iconv"
-      end
+      args << "--enable-iconv" if OS.mac?
 
       system "./configure", *args
       system "make", "install"
@@ -67,7 +65,6 @@ class AescryptPacketizer < Formula
   end
 
   test do
-    aescrypt = bin/"paescrypt"
     path = testpath/"secret.txt"
     original_contents = "What grows when it eats, but dies when it drinks?"
     path.write original_contents
@@ -75,7 +72,7 @@ class AescryptPacketizer < Formula
     system bin/"paescrypt", "-e", "-p", "fire", path
     assert_predicate testpath/"#{path}.aes", :exist?
 
-    system aescrypt, "-d", "-p", "fire", "#{path}.aes"
+    system bin/"paescrypt", "-d", "-p", "fire", "#{path}.aes"
     assert_equal original_contents, path.read
   end
 end

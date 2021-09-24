@@ -4,9 +4,7 @@ class BashPreexec < Formula
   url "https://github.com/rcaloras/bash-preexec/archive/0.4.1.tar.gz"
   sha256 "5e6515d247e6156c99a31de6db58e9cbef53071806292a1ca10b7af74633a8c9"
   license "MIT"
-  head "https://github.com/rcaloras/bash-preexec.git"
-
-  bottle :unneeded
+  head "https://github.com/rcaloras/bash-preexec.git", branch: "master"
 
   def install
     (prefix/"etc/profile.d").install "bash-preexec.sh"

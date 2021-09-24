@@ -1,16 +1,22 @@
 class Groovysdk < Formula
   desc "SDK for Groovy: a Java-based scripting language"
   homepage "https://www.groovy-lang.org/"
-  url "https://dl.bintray.com/groovy/maven/apache-groovy-sdk-3.0.7.zip"
-  sha256 "dd45ea5349cd6d037ba3296c9be0521da1d8422d76e0c817f928007c7387027e"
+  url "https://groovy.jfrog.io/artifactory/dist-release-local/groovy-zips/apache-groovy-sdk-3.0.9.zip"
+  sha256 "8bce7b90612bcfe8d19adce26335b25a9955aeaaa8a9e89df8b8769a77e97187"
   license "Apache-2.0"
 
   livecheck do
-    url "https://dl.bintray.com/groovy/maven/"
+    url "https://groovy.apache.org/download.html"
     regex(/href=.*?apache-groovy-sdk[._-]v?(\d+(?:\.\d+)+)\.zip/i)
   end
 
-  bottle :unneeded
+  bottle do
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "a3103793592e4d8c6392f5bf218e91698ffd2ad53a99002963ca4b8dd3c03fa7"
+    sha256 cellar: :any_skip_relocation, big_sur:       "a0d0761356557724fede393dc0168097b07340a626875936dfca34dacc5a9f71"
+    sha256 cellar: :any_skip_relocation, catalina:      "a0d0761356557724fede393dc0168097b07340a626875936dfca34dacc5a9f71"
+    sha256 cellar: :any_skip_relocation, mojave:        "a0d0761356557724fede393dc0168097b07340a626875936dfca34dacc5a9f71"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "a3103793592e4d8c6392f5bf218e91698ffd2ad53a99002963ca4b8dd3c03fa7" # linuxbrew-core
+  end
 
   depends_on "openjdk"
 

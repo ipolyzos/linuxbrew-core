@@ -2,10 +2,10 @@ class Minio < Formula
   desc "High Performance, Kubernetes Native Object Storage"
   homepage "https://min.io"
   url "https://github.com/minio/minio.git",
-      tag:      "RELEASE.2021-02-24T18-44-45Z",
-      revision: "c1a49be639e6e0e297e39b4001672eb08f4c8b92"
-  version "20210224184445"
-  license "Apache-2.0"
+      tag:      "RELEASE.2021-09-18T18-09-59Z",
+      revision: "829ecb20867dae80a75f9ca8e1e89d7caa892bac"
+  version "20210918180959"
+  license "AGPL-3.0-or-later"
   head "https://github.com/minio/minio.git"
 
   livecheck do
@@ -17,11 +17,11 @@ class Minio < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "3cb06f1245819f6622a26dc7b0c618e40d88c6cb6c80ac47d5dfa7465c64976a"
-    sha256 cellar: :any_skip_relocation, big_sur:       "5ca9f975f6e12c5ebb751d94b4149c5686ed47eaaab8ce0a04bc3b9dcd37ce05"
-    sha256 cellar: :any_skip_relocation, catalina:      "d116e20ebf0aee3804a351235298115ad03c4d9bb48128870d834a60535ba806"
-    sha256 cellar: :any_skip_relocation, mojave:        "e704ee0a811c0ca8eb35d35e92f70615956b074d6e1e956c93d47744adbcfa5c"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "d7365f0b446f63986bf8222042667722636b937b2fdcb157e5a6cd4238276c71"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "7192edadb49a8c61084385c25cf83241f4264907b95baa0701764421c0ac136c"
+    sha256 cellar: :any_skip_relocation, big_sur:       "9638804a872196ec6ea544201429af94c29e77f1975a985ce7c6ce3ce7bc6f2f"
+    sha256 cellar: :any_skip_relocation, catalina:      "a6563ff55345bb900b7dc40b5dbb7a1c83905bba2ae73ffb9a1d711811106bc0"
+    sha256 cellar: :any_skip_relocation, mojave:        "dd84ec77eecd80b0ffb72a63025acf87046beb27865236f63d8d6bf9ff1451ba"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "20da8e49da90b88f9d164d3d1c5e02abbd7033f6866fafde2c45b52e9ab0134a" # linuxbrew-core
   end
 
   depends_on "go" => :build
@@ -32,13 +32,15 @@ class Minio < Formula
     else
       release = `git tag --points-at HEAD`.chomp
       version = release.gsub(/RELEASE\./, "").chomp.gsub(/T(\d+)-(\d+)-(\d+)Z/, 'T\1:\2:\3Z')
-      proj = "github.com/minio/minio"
 
-      system "go", "build", *std_go_args, "-ldflags", <<~EOS
-        -X #{proj}/cmd.Version=#{version}
-        -X #{proj}/cmd.ReleaseTag=#{release}
-        -X #{proj}/cmd.CommitID=#{Utils.git_head}
-      EOS
+      ldflags = %W[
+        -s -w
+        -X github.com/minio/minio/cmd.Version=#{version}
+        -X github.com/minio/minio/cmd.ReleaseTag=#{release}
+        -X github.com/minio/minio/cmd.CommitID=#{Utils.git_head}
+      ]
+
+      system "go", "build", *std_go_args(ldflags: ldflags.join(" "))
     end
   end
 
@@ -47,41 +49,12 @@ class Minio < Formula
     (etc/"minio").mkpath
   end
 
-  plist_options manual: "minio server"
-
-  def plist
-    <<~EOS
-      <?xml version="1.0" encoding="UTF-8"?>
-      <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-      <plist version="1.0">
-        <dict>
-          <key>KeepAlive</key>
-          <true/>
-          <key>Label</key>
-          <string>#{plist_name}</string>
-          <key>ProgramArguments</key>
-          <array>
-            <string>#{opt_bin}/minio</string>
-            <string>server</string>
-            <string>--config-dir=#{etc}/minio</string>
-            <string>--address=:9000</string>
-            <string>#{var}/minio</string>
-          </array>
-          <key>RunAtLoad</key>
-          <true/>
-          <key>KeepAlive</key>
-          <true/>
-          <key>WorkingDirectory</key>
-          <string>#{HOMEBREW_PREFIX}</string>
-          <key>StandardErrorPath</key>
-          <string>#{var}/log/minio.log</string>
-          <key>StandardOutPath</key>
-          <string>#{var}/log/minio.log</string>
-          <key>RunAtLoad</key>
-          <true/>
-        </dict>
-      </plist>
-    EOS
+  service do
+    run [opt_bin/"minio", "server", "--config-dir=#{etc}/minio", "--address=:9000", var/"minio"]
+    keep_alive true
+    working_dir HOMEBREW_PREFIX
+    log_path var/"log/minio.log"
+    error_log_path var/"log/minio.log"
   end
 
   test do

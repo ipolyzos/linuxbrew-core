@@ -1,10 +1,10 @@
 class Poppler < Formula
   desc "PDF rendering library (based on the xpdf-3.0 code base)"
   homepage "https://poppler.freedesktop.org/"
-  url "https://poppler.freedesktop.org/poppler-21.04.0.tar.xz"
-  sha256 "5e2219656c6bbd36154133fef2e12b7d0938464518827098b29a10b1697ea79c"
+  url "https://poppler.freedesktop.org/poppler-21.09.0.tar.xz"
+  sha256 "5a47fef738c2b99471f9b459a8bf8b40aefb7eed92caa4861c3798b2e126d05b"
   license "GPL-2.0-only"
-  head "https://gitlab.freedesktop.org/poppler/poppler.git"
+  head "https://gitlab.freedesktop.org/poppler/poppler.git", branch: "master"
 
   livecheck do
     url :homepage
@@ -12,11 +12,10 @@ class Poppler < Formula
   end
 
   bottle do
-    sha256 arm64_big_sur: "7148b5e91e1d970f7f01503ce5cae97ed4181f97bab57eb534da86be04b30d57"
-    sha256 big_sur:       "e07d0062fcd15b1ff6049cf574be263a653e30fae19452f402cde0bdcd84964c"
-    sha256 catalina:      "b3050e69f06358caf79eacd19e4bb09d8bf94e156936f31e6b1d080983dd1d12"
-    sha256 mojave:        "816fd20c2e5c6dac33871c1c416bed4a8bbf37b98d747c694f91787f25f23e90"
-    sha256 x86_64_linux:  "72fd6260337440edc221a21316fa722ce563741b322c4ad7f6e49c5ed305f004"
+    sha256 arm64_big_sur: "1dd6f10a72ad0f63afef4f7d408446a173a8c7a305a419a11e80c6495c6f17bd"
+    sha256 big_sur:       "ac1bbd7709dd6cccbfced46079c03a775c3981b467ee087255fb9f8f1fce4ec0"
+    sha256 catalina:      "831a96471fe69af4d86767d162c24c6cb43184229bbe5915105970f9f2b9c6a6"
+    sha256 mojave:        "0366441466951432fb7ccebb1cf4a213f858b7ccee3743ad5b05dbe822f43319"
   end
 
   depends_on "cmake" => :build
@@ -33,7 +32,7 @@ class Poppler < Formula
   depends_on "little-cms2"
   depends_on "nss"
   depends_on "openjpeg"
-  depends_on "qt@5"
+  depends_on "qt"
 
   uses_from_macos "gperf" => :build
   uses_from_macos "curl"
@@ -42,8 +41,8 @@ class Poppler < Formula
     because: "poppler, pdftohtml, pdf2image, and xpdf install conflicting executables"
 
   resource "font-data" do
-    url "https://poppler.freedesktop.org/poppler-data-0.4.10.tar.gz"
-    sha256 "6e2fcef66ec8c44625f94292ccf8af9f1d918b410d5aa69c274ce67387967b30"
+    url "https://poppler.freedesktop.org/poppler-data-0.4.11.tar.gz"
+    sha256 "2cec05cd1bb03af98a8b06a1e22f6e6e1a65b1e2f3816cb3069bb0874825f08c"
   end
 
   def install
@@ -51,10 +50,11 @@ class Poppler < Formula
 
     args = std_cmake_args + %w[
       -DBUILD_GTK_TESTS=OFF
+      -DENABLE_BOOST=OFF
       -DENABLE_CMS=lcms2
       -DENABLE_GLIB=ON
-      -DENABLE_QT5=ON
-      -DENABLE_QT6=OFF
+      -DENABLE_QT5=OFF
+      -DENABLE_QT6=ON
       -DENABLE_UNSTABLE_API_ABI_HEADERS=ON
       -DWITH_GObjectIntrospection=ON
     ]
@@ -71,12 +71,12 @@ class Poppler < Formula
       system "make", "install", "prefix=#{prefix}"
     end
 
-    on_macos do
+    if OS.mac?
       libpoppler = (lib/"libpoppler.dylib").readlink
       [
         "#{lib}/libpoppler-cpp.dylib",
         "#{lib}/libpoppler-glib.dylib",
-        "#{lib}/libpoppler-qt5.dylib",
+        "#{lib}/libpoppler-qt#{Formula["qt"].version.major}.dylib",
         *Dir["#{bin}/*"],
       ].each do |f|
         macho = MachO.open(f)

@@ -13,7 +13,7 @@ class Make < Formula
     sha256 catalina:      "39fc5ebff5ff708c2e3eea597b9f2eb79b910a122d30c3ac9bb93ebe313f030c"
     sha256 mojave:        "0c0a08eef68bcd78b0345f5f57a6efffcc7be877bcb3b803f39ac8916b882477"
     sha256 high_sierra:   "429177235322c3209e1657bea36364cd84222075b636939f6ed93a1cd04aeb21"
-    sha256 x86_64_linux:  "25cd50df4aeaca83d76d545b8b6b3b180a9af28a19c279463bf22d1d648462b6"
+    sha256 x86_64_linux:  "25cd50df4aeaca83d76d545b8b6b3b180a9af28a19c279463bf22d1d648462b6" # linuxbrew-core
   end
 
   conflicts_with "remake", because: "both install texinfo files for make"
@@ -24,13 +24,11 @@ class Make < Formula
       --prefix=#{prefix}
     ]
 
-    on_macos do
-      args << "--program-prefix=g"
-    end
+    args << "--program-prefix=g" if OS.mac?
     system "./configure", *args
     system "make", "install"
 
-    on_macos do
+    if OS.mac?
       (libexec/"gnubin").install_symlink bin/"gmake" =>"make"
       (libexec/"gnuman/man1").install_symlink man1/"gmake.1" => "make.1"
     end
@@ -55,6 +53,7 @@ class Make < Formula
       default:
       \t@echo Homebrew
     EOS
+
     on_macos do
       assert_equal "Homebrew\n", shell_output("#{bin}/gmake")
       assert_equal "Homebrew\n", shell_output("#{opt_libexec}/gnubin/make")

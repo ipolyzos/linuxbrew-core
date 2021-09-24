@@ -12,13 +12,13 @@ class Glew < Formula
     sha256 cellar: :any, big_sur:       "9e0b9a17a4d7372d191d377ae63e6bb0070434eefc997299fe708ca12c02bfb5"
     sha256 cellar: :any, catalina:      "d3113b746275f48d4f50316c9ddf0ce27e7a11e20ffaac33dd1a2aaf9e59d52a"
     sha256 cellar: :any, mojave:        "728dbc75cee45763fcc89605d758de1ed950cf219012a1614808a6abd8883ae8"
-    sha256 cellar: :any, x86_64_linux:  "0c7121cdf0692adceb4b3ec0cacefce1938e2ec54e91fab624b74245e0bc7e10"
+    sha256 cellar: :any, x86_64_linux:  "0c7121cdf0692adceb4b3ec0cacefce1938e2ec54e91fab624b74245e0bc7e10" # linuxbrew-core
   end
 
   depends_on "cmake" => [:build, :test]
-  unless OS.mac?
+
+  on_linux do
     depends_on "freeglut" => :test
-    depends_on "mesa"
     depends_on "mesa-glu"
   end
 
@@ -34,35 +34,10 @@ class Glew < Formula
   end
 
   test do
-    if ENV["DISPLAY"].nil?
-      ohai "Can not test without a display."
-      return true
-    end
-    (testpath/"test.c").write <<~EOS
-      #include <GL/glew.h>
-      #include <#{OS.mac? ? "GLUT" : "GL"}/glut.h>
-
-      int main(int argc, char** argv) {
-        glutInit(&argc, argv);
-        glutCreateWindow("GLEW Test");
-        GLenum err = glewInit();
-        if (GLEW_OK != err) {
-          return 1;
-        }
-        return 0;
-      }
-    EOS
-    flags = %W[-L#{lib} -lGLEW]
-    if OS.mac?
-      flags << "-framework" << "GLUT"
-    else
-      flags << "-lglut"
-    end
-    system ENV.cc, testpath/"test.c", "-o", "test", *flags
-    system "./test"
-
     (testpath/"CMakeLists.txt").write <<~EOS
       project(test_glew)
+
+      set(CMAKE_CXX_STANDARD 11)
 
       find_package(OpenGL REQUIRED)
       find_package(GLEW REQUIRED)
@@ -82,5 +57,37 @@ class Glew < Formula
 
     system "cmake", ".", "-Wno-dev"
     system "make"
+
+    glut = "GLUT"
+    on_linux do
+      glut = "GL"
+    end
+    (testpath/"test.c").write <<~EOS
+      #include <GL/glew.h>
+      #include <#{glut}/glut.h>
+
+      int main(int argc, char** argv) {
+        glutInit(&argc, argv);
+        glutCreateWindow("GLEW Test");
+        GLenum err = glewInit();
+        if (GLEW_OK != err) {
+          return 1;
+        }
+        return 0;
+      }
+    EOS
+    flags = %W[-L#{lib} -lGLEW]
+    on_macos do
+      flags << "-framework" << "GLUT"
+    end
+    on_linux do
+      flags << "-lglut"
+    end
+    system ENV.cc, testpath/"test.c", "-o", "test", *flags
+    on_linux do
+      # Fails in Linux CI with: freeglut (./test): failed to open display ''
+      return if ENV["HOMEBREW_GITHUB_ACTIONS"]
+    end
+    system "./test"
   end
 end

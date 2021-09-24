@@ -1,10 +1,10 @@
 class Cmake < Formula
   desc "Cross-platform make"
   homepage "https://www.cmake.org/"
-  url "https://github.com/Kitware/CMake/releases/download/v3.20.1/cmake-3.20.1.tar.gz"
-  sha256 "3f1808b9b00281df06c91dd7a021d7f52f724101000da7985a401678dfe035b0"
+  url "https://github.com/Kitware/CMake/releases/download/v3.21.3/cmake-3.21.3.tar.gz"
+  sha256 "d14d06df4265134ee42c4d50f5a60cb8b471b7b6a47da8e5d914d49dd783794f"
   license "BSD-3-Clause"
-  head "https://gitlab.kitware.com/cmake/cmake.git"
+  head "https://gitlab.kitware.com/cmake/cmake.git", branch: "master"
 
   # The "latest" release on GitHub has been an unstable version before, so we
   # check the Git tags instead.
@@ -14,11 +14,11 @@ class Cmake < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "b94fa9c13065ce31259621e1ac1ff8f46c0a6ee606a5944f2562ed86c7fcf2a6"
-    sha256 cellar: :any_skip_relocation, big_sur:       "c8b975b0911f9125065459e9b55da2c43fc58485446ec35d8294d2db2ad77972"
-    sha256 cellar: :any_skip_relocation, catalina:      "1875ab07ed5843cdc06368ae851ec1232a72bb679f70f816e549acfe5fff6c31"
-    sha256 cellar: :any_skip_relocation, mojave:        "0af0a3d97a83dcdece0c5a8ba867d6b199b928f1c4e0a325eef785af6b8f2f1e"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "4c64015ce31e53a875f3e1f88e5177ad858d9ba1f7c387c64502d8b3a91a84c5"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "16378902f233d8570cd0a67a1dd255acabdd29ff84d85e16cdbce68049d1e263"
+    sha256 cellar: :any_skip_relocation, big_sur:       "871469119eb1fc5b005971866925259b27960e2105935ad70e934002e429eaa9"
+    sha256 cellar: :any_skip_relocation, catalina:      "1cb1c2477f326aff08671d605564b0357a8a26257b9e94f73e44192690b5d241"
+    sha256 cellar: :any_skip_relocation, mojave:        "b1745442cd4e9e0c9614ae9dd7d587558af9ba7b438fc22e012d3c1300747b44"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "9b03442d17987d5e409890873bc6ebd6ecaa7ee3cbe4d63ba1ae317db3c8621e" # linuxbrew-core
   end
 
   depends_on "sphinx-doc" => :build
@@ -36,10 +36,6 @@ class Cmake < Formula
   # For the GUI application please instead use `brew install --cask cmake`.
 
   def install
-    on_linux do
-      ENV.cxx11
-    end
-
     args = %W[
       --prefix=#{prefix}
       --no-system-libs
@@ -51,7 +47,7 @@ class Cmake < Formula
       --sphinx-html
       --sphinx-man
     ]
-    on_macos do
+    if OS.mac?
       args += %w[
         --system-zlib
         --system-bzip2
@@ -60,9 +56,14 @@ class Cmake < Formula
     end
 
     system "./bootstrap", *args, "--", *std_cmake_args,
-                                       "-DCMake_INSTALL_EMACS_DIR=#{elisp}"
+                                       "-DCMake_INSTALL_EMACS_DIR=#{elisp}",
+                                       "-DCMake_BUILD_LTO=ON"
     system "make"
     system "make", "install"
+
+    # Remove deprecated and unusable binary
+    # https://gitlab.kitware.com/cmake/cmake/-/issues/20235
+    (pkgshare/"Modules/Internal/CPack/CPack.OSXScriptLauncher.in").unlink
   end
 
   test do

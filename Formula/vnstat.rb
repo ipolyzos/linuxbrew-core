@@ -1,17 +1,17 @@
 class Vnstat < Formula
   desc "Console-based network traffic monitor"
   homepage "https://humdi.net/vnstat/"
-  url "https://humdi.net/vnstat/vnstat-2.6.tar.gz"
-  sha256 "89276e0a7281943edb554b874078278ad947dc312938a2451e03eb80679f7ff7"
-  license "GPL-2.0"
+  url "https://humdi.net/vnstat/vnstat-2.8.tar.gz"
+  sha256 "03f858a7abf6bd85bb8cd595f3541fc3bd31f8f400ec092ef3034825ccb77c25"
+  license "GPL-2.0-only"
   head "https://github.com/vergoh/vnstat.git"
 
   bottle do
-    sha256 big_sur:      "f2927c9530127989258ee417145dc37f3bb958086724c143051f4d9c5b93e7d1"
-    sha256 catalina:     "c4087b24e69aa3bbf9ccb7f58ca3d942bc3403bcfff47df7657cac00e8c9fc75"
-    sha256 mojave:       "795d67ae3e4d0f8683ee0812d29a4205aab38a2f453a09cd714adac7f00aaea8"
-    sha256 high_sierra:  "5e873fe1cb03aecfc02e0a5224f2fa222ef9e3f2a2e8a007a031cf4a1f9cf3ee"
-    sha256 x86_64_linux: "0cff69af2c373c36bcae73018ad8c77fc7f3e8350ab028a58866329ea66a3867"
+    sha256 arm64_big_sur: "1b3dd9ca73892c5a80eaf5be1e7e71a8ec7035a8539ebefff3108c169b264871"
+    sha256 big_sur:       "fd1ec9717260fdab127a4bedc0b37fa8e7ddf7cbf98f580d4a09ee83c8732fa8"
+    sha256 catalina:      "f77d3b9d0d6255cb9e25bf8d55f4b77e65bb4d042e4967994694f86f02efc403"
+    sha256 mojave:        "6dcdff6ebc18f04db1c1774a170111147a30a2b9b1fa9c3aede34ef0af7ed683"
+    sha256 x86_64_linux:  "6741cfc8070a737a45db2a57c4a9fc3b9a6e505e4a1cbf97be5b37bbeb33a58e" # linuxbrew-core
   end
 
   depends_on "gd"
@@ -24,7 +24,9 @@ class Vnstat < Formula
       s.gsub! "/etc/vnstat.conf", "#{etc}/vnstat.conf", false
       s.gsub! "/var/", "#{var}/", false
       s.gsub! "var/lib", "var/db", false
-      s.gsub! "\"eth0\"", "\"en0\"", false
+      # https://github.com/Homebrew/homebrew-core/pull/84695#issuecomment-913043888
+      # network interface difference between macos and linux
+      s.gsub! "\"eth0\"", "\"en0\"", false if OS.mac?
     end
 
     system "./configure", "--disable-dependency-tracking",
@@ -80,7 +82,7 @@ class Vnstat < Formula
 
   test do
     cp etc/"vnstat.conf", testpath
-    inreplace "vnstat.conf", "#{HOMEBREW_PREFIX}/var", testpath/"var"
+    inreplace "vnstat.conf", var, testpath/"var"
     (testpath/"var/db/vnstat").mkpath
 
     begin

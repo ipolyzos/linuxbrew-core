@@ -6,6 +6,10 @@ class Nylon < Formula
   license "BSD-3-Clause"
   revision 2
 
+  livecheck do
+    skip "No version information available to check"
+  end
+
   bottle do
     sha256 cellar: :any, arm64_big_sur: "26d58c80e5db471ca253930300316cfc77dd1b53fae4ebd38502a48e69d4af8a"
     sha256 cellar: :any, big_sur:       "dffadaeddcde173302400dfc71686048edf9944a3543ac578ce634d9f283870d"
@@ -13,7 +17,7 @@ class Nylon < Formula
     sha256 cellar: :any, mojave:        "cb2cbfbd8df94b8581a116807075daf9fadbe9b9c5cfa537ea30dfa76537dd5c"
     sha256 cellar: :any, high_sierra:   "3df9b3197c8dc9a227221027047c8de77ddb6ad9ce2edd14544c2d6e4923b660"
     sha256 cellar: :any, sierra:        "b7eeab5896aaaca9c73166e519d092a71f15a36e800a28742729f8cbc270e6d8"
-    sha256 cellar: :any, x86_64_linux:  "efbd60188c728e74d073afe553a4512222850758de3221a4fe8a51486a48dc09"
+    sha256 cellar: :any, x86_64_linux:  "efbd60188c728e74d073afe553a4512222850758de3221a4fe8a51486a48dc09" # linuxbrew-core
   end
 
   depends_on "libevent"

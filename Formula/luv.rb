@@ -1,18 +1,17 @@
 class Luv < Formula
   desc "Bare libuv bindings for lua"
   homepage "https://github.com/luvit/luv"
-  url "https://github.com/luvit/luv/archive/1.41.0-0.tar.gz"
-  version "1.41.0-0"
-  sha256 "13382bc5e896f6247c0e8f7b7cbc12c99388b9a858118a8dc5477f5b7a977c8e"
+  url "https://github.com/luvit/luv/archive/1.42.0-0.tar.gz"
+  sha256 "8caee38de2fba0da32abbe96f55244e4a2c67d6cdde161a1935af94bffd5470f"
   license "Apache-2.0"
   head "https://github.com/luvit/luv.git"
 
   bottle do
-    sha256 cellar: :any,                 arm64_big_sur: "9d8f0a28026c84843af527dc31766bcfb89761f16ad12ad0eeeb6104514693b0"
-    sha256 cellar: :any,                 big_sur:       "08713383f4168d0104f123d1cad78bdeb843f26527a7d68c74aba555883c5b60"
-    sha256 cellar: :any,                 catalina:      "b3c644231c6c5d55f82770cf8d0db7649347ec28dc430f6e983f17b9c19febc9"
-    sha256 cellar: :any,                 mojave:        "a6cb63c24bba31847e55d04c4426eb84c6eaf24efa38ed55c7d0dd3ff800b32f"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "94eb6923ecc3bf66bf55ca93d21d31b74ea806ab383ac2edc977b9e88fc09c1e"
+    sha256 cellar: :any,                 arm64_big_sur: "0f12b7109db61ed5b8277dbdc7a0720ca2ae5605c4fd78b86164ddeaf62e9264"
+    sha256 cellar: :any,                 big_sur:       "b54904cab847bb6fe8ddf6b9d8cc8aff79339c89f4cd5986d0ccf9dc52a1754c"
+    sha256 cellar: :any,                 catalina:      "2741dd32a1eb404de14e58395e2eed255307f456498cfd5391635de964268cd4"
+    sha256 cellar: :any,                 mojave:        "bd07948d9f6c3af48b153c591c206553a36242a428ba675ce7fe3e2d635d1f81"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "368050bf1c69408ab73970e90d7024d427c0192ba0978b48c6f97b4bf4a5e1da" # linuxbrew-core
   end
 
   depends_on "cmake" => :build

@@ -1,15 +1,19 @@
 class QtMysql < Formula
   desc "Qt SQL Database Driver"
   homepage "https://www.qt.io/"
-  url "https://download.qt.io/official_releases/qt/6.0/6.0.3/submodules/qtbase-everywhere-src-6.0.3.tar.xz"
-  sha256 "1a45b61c2a349964625c50e3ea40cbb309e269762dd0786397e0e18e7e10d394"
+  url "https://download.qt.io/official_releases/qt/6.1/6.1.3/submodules/qtbase-everywhere-src-6.1.3.tar.xz"
+  sha256 "1e9abb2ea4daa0fd11f46fc871d9e896b916e1b7130fed74c83d66221bb4fe78"
   license all_of: ["LGPL-2.1-only", "LGPL-3.0-only"]
 
+  livecheck do
+    formula "qt"
+  end
+
   bottle do
-    sha256 cellar: :any, arm64_big_sur: "d76cc888ba43cd6ac5518bf668b9fb438362b1e4f7f6cb4725b875b46f434ae4"
-    sha256 cellar: :any, big_sur:       "de31674cd4806465fed2f387e67ce2e791f33462df09d8bf44b29af6e9ed9f8c"
-    sha256 cellar: :any, catalina:      "1fe85d7d7af7e036e652ca1a79a7f59055f1db29309498db8fd87837f375bd17"
-    sha256 cellar: :any, mojave:        "b36545cbc96fca2ab14c5ddd19d63790ee0de9d6ce7cf27645d2b61b4044262a"
+    sha256 cellar: :any, arm64_big_sur: "61be830194b14e1567a6944e7b5206644c3d09f8f919b5994c0c4c246fc7106a"
+    sha256 cellar: :any, big_sur:       "7043d15f3feb5cb2554c78e691c2e4fdb93043815307d0ac8ec6cf218db71517"
+    sha256 cellar: :any, catalina:      "e06e68074df8d15e79b6bcde4810f5641f9ea2f215e13f0cf59c5837370c1c61"
+    sha256 cellar: :any, mojave:        "12e12bfffc87b73d1d25ae0c08a10db20dc85a09af38ba2dff260fe1d1842b74"
   end
 
   depends_on "cmake" => [:build, :test]
@@ -18,7 +22,7 @@ class QtMysql < Formula
   depends_on "qt"
 
   conflicts_with "qt-mariadb", "qt-percona-server",
-    because: "qt-mysql, qt-mariadb, and qt-percona install the same binaries"
+    because: "qt-mysql, qt-mariadb, and qt-percona-server install the same binaries"
 
   def install
     args = std_cmake_args + %W[

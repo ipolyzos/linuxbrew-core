@@ -1,17 +1,17 @@
 class Ormolu < Formula
   desc "Formatter for Haskell source code"
   homepage "https://github.com/tweag/ormolu"
-  url "https://github.com/tweag/ormolu/archive/0.1.4.1.tar.gz"
-  sha256 "de36baec878120d7d4602737e7313ae82483e2817f9ed1b972da9e016be9fbcb"
+  url "https://github.com/tweag/ormolu/archive/0.3.0.0.tar.gz"
+  sha256 "710ae7d57ff5cbb6589a4b068f4157a20bc119bc0eecb40d2c8d0efd9877bce9"
   license "BSD-3-Clause"
-  head "https://github.com/tweag/ormolu.git"
+  head "https://github.com/tweag/ormolu.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, big_sur:      "a136e8a7b7839d42ee7e915628e5e3c61fc404268f0a83de74dcfac8f2590910"
-    sha256 cellar: :any_skip_relocation, catalina:     "697dea7abb9261e00041c55500af7401db6a3662b1f37f68e767da86dc06c193"
-    sha256 cellar: :any_skip_relocation, mojave:       "c8cbdf23ff7783d693aa5e70da34d8b81952cddda88c75583c96cb9831733736"
-    sha256 cellar: :any_skip_relocation, high_sierra:  "2c9bc44aab587a3c8938765dc0b9b1923fe259fa900a9d1e10400a4ad54cdf4e"
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "fa9ff543b89fd08a2f3c7b67ef56d768d26be2637e8b3360c3d1ca17b38a850e"
+    sha256 cellar: :any_skip_relocation, arm64_big_sur: "20985d0d7f3ecdc40e4e446237dd00beee5549586c31b8e5397d30a63e57a1c0"
+    sha256 cellar: :any_skip_relocation, big_sur:       "366b87413d6e300e9d089f35e550ca02db32156a837ebd7549bdf83d1188c170"
+    sha256 cellar: :any_skip_relocation, catalina:      "bd06fd5e6eb8b540a95bd9e857701f4b4eedd66239c780d9fe5aa01f83517dc4"
+    sha256 cellar: :any_skip_relocation, mojave:        "0963f25611342146a3435f4f65610c1a29441ba94ad52670a2a4baa47ff6da56"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "d3a5e8d85fdf38ad734ec9b3bba18afe8fa30b2004830ed9e4ef3d23fff3a2ce" # linuxbrew-core
   end
 
   depends_on "cabal-install" => :build

@@ -4,15 +4,14 @@ class Assimp < Formula
   url "https://github.com/assimp/assimp/archive/v5.0.1.tar.gz"
   sha256 "11310ec1f2ad2cd46b95ba88faca8f7aaa1efe9aa12605c55e3de2b977b3dbfc"
   license :cannot_represent
-  head "https://github.com/assimp/assimp.git"
+  head "https://github.com/assimp/assimp.git", branch: "master"
 
   bottle do
-    rebuild 1
-    sha256 cellar: :any, arm64_big_sur: "987d2ce0acc2fbfd488f82ce67c0eb47845f8b0a832cbae8c7d1a2090e81ada3"
-    sha256 cellar: :any, big_sur:       "1a4511b5f06aa0e9d579b72af3aa4dd0d43b93860d17dfacfab586ca2947d1be"
-    sha256 cellar: :any, catalina:      "28224c17d5d250055b39990a54de9e744f30b59950ed12d2a08ff0192d029c0c"
-    sha256 cellar: :any, mojave:        "85dc308dfd468a6dd66978d890106b777829b7b4a04970c395c04aa832ad4931"
-    sha256 cellar: :any, x86_64_linux:  "c1b0b289501af472530329e8b9e2b9f590571577e7b605e7b2d0660b91c5e44a"
+    sha256 cellar: :any,                 arm64_big_sur: "0571a9c07e7166cbfbd2c12b17f121c718204491501f268cdd904791df3c3697"
+    sha256 cellar: :any,                 big_sur:       "8cd36113e1e7db18e625e652a522374bf6158306254f31627f2e8f067ae665db"
+    sha256 cellar: :any,                 catalina:      "b2450bc0cc287a25a2e4ca42ff229ee104a6de51ef3a8cc02603850572126f18"
+    sha256 cellar: :any,                 mojave:        "4ee11342b9d284810e88828be1662ee5be09a161f2c1353648e63255bbf4375b"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "2e3ac1d327084657319b78eb9c6f6e9ca6b8d700ca0dc59461676805be2fa733" # linuxbrew-core
   end
 
   depends_on "cmake" => :build
@@ -22,7 +21,7 @@ class Assimp < Formula
   def install
     args = std_cmake_args
     args << "-DASSIMP_BUILD_TESTS=OFF"
-    args << "-DCMAKE_INSTALL_RPATH=#{lib}"
+    args << "-DCMAKE_INSTALL_RPATH=#{rpath}"
     system "cmake", *args
     system "make", "install"
   end

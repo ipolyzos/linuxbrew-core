@@ -1,16 +1,16 @@
 class Webdis < Formula
   desc "Redis HTTP interface with JSON output"
   homepage "https://webd.is/"
-  url "https://github.com/nicolasff/webdis/archive/0.1.14.tar.gz"
-  sha256 "8c2ba6b85d6fda15acd13eb9705c0b6a19e178a2358c034e5690ef7ca0ebf5d7"
+  url "https://github.com/nicolasff/webdis/archive/0.1.17.tar.gz"
+  sha256 "c5e97b17f03e2759e6351581c72e582e28ea8d97210fe178c5851020540962f6"
   license "BSD-2-Clause"
 
   bottle do
-    sha256 cellar: :any,                 arm64_big_sur: "57ad10bbc7423105340a30cf343464817333326f8f8e43f931caae6b0f9d33c7"
-    sha256 cellar: :any,                 big_sur:       "5fbab9f061bca674858c2df166b88b975867d9265d899f080485ff980bca6eb4"
-    sha256 cellar: :any,                 catalina:      "c7c27f44aecb863db1a23e9b697224fa6e5a8d0a3bbed50afca6f6d15069b85c"
-    sha256 cellar: :any,                 mojave:        "604aeef8d58e1df2f1912f163b82a6b5a16f022133311a81d259a02769ce42c5"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "7f4513067f240c79d2c082e05a40a77f68a7d03777f980972f982e0b10276d00"
+    sha256 cellar: :any,                 arm64_big_sur: "7b3e184e84fdd31b0aed68c2f4bd1b318947fdb344d2c1f36759c6bea2ce7b14"
+    sha256 cellar: :any,                 big_sur:       "33a5078811ac044bf21ca447260c1beb7e86dbb47f3839e428195698d4a021b0"
+    sha256 cellar: :any,                 catalina:      "5961e52d1a4464c1127705803497314ff2c9974d7408d6e99443c36c7f788224"
+    sha256 cellar: :any,                 mojave:        "36f98a66206c0638e8b1e2eae4fb9a7ec0a852375bd43f830793cf28f1dfec6b"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "bb6c4092bb84f5ff66f72a1866276ab40046f06ee3a22728a5507de48265a521" # linuxbrew-core
   end
 
   depends_on "libevent"
@@ -31,33 +31,10 @@ class Webdis < Formula
     (var/"log").mkpath
   end
 
-  plist_options manual: "webdis #{HOMEBREW_PREFIX}/etc/webdis.json"
-
-  def plist
-    <<~EOS
-      <?xml version="1.0" encoding="UTF-8"?>
-      <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-      <plist version="1.0">
-        <dict>
-          <key>Label</key>
-          <string>#{plist_name}</string>
-          <key>ProgramArguments</key>
-          <array>
-              <string>#{opt_bin}/webdis</string>
-              <string>#{etc}/webdis.prod.json</string>
-          </array>
-          <key>RunAtLoad</key>
-          <true/>
-          <key>KeepAlive</key>
-          <dict>
-              <key>SuccessfulExit</key>
-              <false/>
-          </dict>
-          <key>WorkingDirectory</key>
-          <string>#{var}</string>
-        </dict>
-      </plist>
-    EOS
+  service do
+    run [opt_bin/"webdis", etc/"webdis.prod.json"]
+    keep_alive true
+    working_dir var
   end
 
   test do

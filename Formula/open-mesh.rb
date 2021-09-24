@@ -6,11 +6,12 @@ class OpenMesh < Formula
   head "https://www.graphics.rwth-aachen.de:9000/OpenMesh/OpenMesh.git"
 
   bottle do
-    sha256 cellar: :any, big_sur:      "1162cfaad47a077402ef01854605a5fe5ab7e696ea56ab9352f753c25df231d6"
-    sha256 cellar: :any, catalina:     "40eabd6160d88b74bb3298b42dfce249c327bee9a596b5911a4015462b457dfb"
-    sha256 cellar: :any, mojave:       "3c523efbed147ef236ba22b7fdfc8fddae883b4ce7b9f03e970af199416adbe5"
-    sha256 cellar: :any, high_sierra:  "a1b6514505ea011f01e8a61fd20dec9f31b900a42e8581e24a23beca738dc5f3"
-    sha256 cellar: :any, x86_64_linux: "b4da74f89c5ab22af8184e3220565d078d3b3084f1eaeeecd0ad991b116e171f"
+    sha256 cellar: :any, arm64_big_sur: "4602ad1fc42a6aa33f4198ad3a3ea165e65303936d16444a5002821d013463cb"
+    sha256 cellar: :any, big_sur:       "1162cfaad47a077402ef01854605a5fe5ab7e696ea56ab9352f753c25df231d6"
+    sha256 cellar: :any, catalina:      "40eabd6160d88b74bb3298b42dfce249c327bee9a596b5911a4015462b457dfb"
+    sha256 cellar: :any, mojave:        "3c523efbed147ef236ba22b7fdfc8fddae883b4ce7b9f03e970af199416adbe5"
+    sha256 cellar: :any, high_sierra:   "a1b6514505ea011f01e8a61fd20dec9f31b900a42e8581e24a23beca738dc5f3"
+    sha256 cellar: :any, x86_64_linux:  "f699d117079902daba17000a533e0c9d7167629b43fa277796e6e2e63969305a" # linuxbrew-core
   end
 
   depends_on "cmake" => :build
@@ -19,7 +20,7 @@ class OpenMesh < Formula
     ENV.cxx11
 
     mkdir "build" do
-      system "cmake", "..", "-DBUILD_APPS=OFF", *std_cmake_args
+      system "cmake", "..", "-DBUILD_APPS=OFF", *std_cmake_args, "-DCMAKE_INSTALL_RPATH=#{rpath}"
       system "make", "install"
     end
   end
@@ -68,6 +69,7 @@ class OpenMesh < Formula
       -lOpenMeshCore
       -lOpenMeshTools
       --std=c++11
+      -Wl,-rpath,#{lib}
     ]
     system ENV.cxx, "test.cpp", "-o", "test", *flags
     system "./test"

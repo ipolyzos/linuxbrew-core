@@ -1,9 +1,9 @@
 class Libedit < Formula
   desc "BSD-style licensed readline alternative"
   homepage "https://thrysoee.dk/editline/"
-  url "https://thrysoee.dk/editline/libedit-20210216-3.1.tar.gz"
-  version "20210216-3.1"
-  sha256 "2283f741d2aab935c8c52c04b57bf952d02c2c02e651172f8ac811f77b1fc77a"
+  url "https://thrysoee.dk/editline/libedit-20210910-3.1.tar.gz"
+  version "20210910-3.1"
+  sha256 "6792a6a992050762edcca28ff3318cdb7de37dccf7bc30db59fcd7017eed13c5"
   license "BSD-3-Clause"
 
   livecheck do
@@ -12,11 +12,11 @@ class Libedit < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_big_sur: "4d147b3faf124f55ff09117d8882ba96b605c29939c238083c13ad750d2749f2"
-    sha256 cellar: :any,                 big_sur:       "c56ab224f48f895bcd3220fbb6c0b05d625d5e720785abab4c10f28ff8af1837"
-    sha256 cellar: :any,                 catalina:      "6991169e0e1908adbcbdc1a578a27a47f237f9a1497bac29cfffa65055b0c9c7"
-    sha256 cellar: :any,                 mojave:        "a5ba27ac97b4033f4277624712038bdae55865258b74bc2302c3c810218204a4"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "713fc214775aff0f86bcc4a8c99d77d99e1cf6ffc1d175114060144b55e58e06"
+    sha256 cellar: :any,                 arm64_big_sur: "87f49ccb584888cb95885c09a586ec0d97f7d3813cdc38f66e07690143226583"
+    sha256 cellar: :any,                 big_sur:       "f1c631b30d1daf17da2bdd3d1f59330d99439ff15dd573e52364bc014a664803"
+    sha256 cellar: :any,                 catalina:      "38e6ae9c4fd560bc93003106a786fac1e26749426b837e8f92fb38b547b0edb7"
+    sha256 cellar: :any,                 mojave:        "44e7ce6ef6d1f558f565d03e4287d6da98a36e120b736a083d5c751669fdb7c1"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "c0bdbd74d04e366389621c1951d0a1de06a359c19da5c2c5b847605bca617753" # linuxbrew-core
   end
 
   keg_only :provided_by_macos
@@ -29,7 +29,7 @@ class Libedit < Formula
                           "--prefix=#{prefix}"
     system "make", "install"
 
-    on_linux do
+    if OS.linux?
       # Conflicts with readline.
       mv man3/"history.3", man3/"history_libedit.3"
     end

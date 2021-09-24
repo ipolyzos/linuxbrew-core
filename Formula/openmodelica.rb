@@ -3,15 +3,16 @@ class Openmodelica < Formula
   homepage "https://openmodelica.org/"
   # GitHub's archives lack submodules, must pull:
   url "https://github.com/OpenModelica/OpenModelica.git",
-    tag:      "v1.16.5",
-    revision: "11fcab4f2d6895f2db073572b2bff1a43177313f"
+      tag:      "v1.18.0",
+      revision: "49be4faa5a625a18efbbd74cc2f5be86aeea37bb"
   license "GPL-3.0-only"
-  head "https://github.com/OpenModelica/OpenModelica.git"
+  head "https://github.com/OpenModelica/OpenModelica.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any, big_sur:  "e6360f11e4eeaec8010b41b880867f5be1ffe445f60ce46e36ed18108b445954"
-    sha256 cellar: :any, catalina: "f16736174646351d55ad03fd7af8f69b0de282adf343782216259aaf271cba36"
-    sha256 cellar: :any, mojave:   "488cb4da54c5c608d9a835c58484fe7acaab4ec4edcdf258fcf5d084045533d7"
+    sha256 cellar: :any, arm64_big_sur: "1c6072cfb6fcbd9070f0034e0ee5f6cf07644b5ab166e2d2b76697a228cff90b"
+    sha256 cellar: :any, big_sur:       "c146bb1c66a1b2520a6fc62a332f7ce123390340f387aaf3d97f0cc61b828726"
+    sha256 cellar: :any, catalina:      "64d475196245720a5db041f8d9d9818a1e9e40d7d120270d4542890e728b9d45"
+    sha256 cellar: :any, mojave:        "7baffdeff87bb5b6d2a044d75d50afb65ddb86033db9fbca48108cfb6da3a5cc"
   end
 
   depends_on "autoconf" => :build
@@ -36,11 +37,15 @@ class Openmodelica < Formula
 
   uses_from_macos "curl"
   uses_from_macos "expat"
-  uses_from_macos "libffi"
+  uses_from_macos "libffi", since: :catalina
   uses_from_macos "ncurses"
 
   def install
-    ENV.append_to_cflags "-I#{MacOS.sdk_path_if_needed}/usr/include/ffi"
+    if MacOS.version >= :catalina
+      ENV.append_to_cflags "-I#{MacOS.sdk_path_if_needed}/usr/include/ffi"
+    else
+      ENV.append_to_cflags "-I#{Formula["libffi"].opt_include}"
+    end
     args = %W[
       --prefix=#{prefix}
       --disable-debug
@@ -52,7 +57,7 @@ class Openmodelica < Formula
       --with-omniORB
     ]
 
-    system "autoconf"
+    system "autoreconf", "--install", "--verbose", "--force"
     system "./configure", *args
     # omplot needs qt & OpenModelica #7240.
     # omparser needs OpenModelica #7247
